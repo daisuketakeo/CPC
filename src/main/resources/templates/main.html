@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head th:replace="common/head :: head_fragment(title = 'dummy', scripts = ~{::script}, links = ~{::link})"></head>
+	<body>
+	  	<div id="navigation" th:replace="~{common/navigation :: navigation}"></div>
+	  	<div id="body" th:replace="${body}"></div>
+		<!-- ダイアログ -->
+		<div id="confirmdialog" style="display:none;">
+			<p id="confirmdialog_p">Complete the work?</p>
+		</div>
+		<div id="errordialog" style="display:none;">
+			<p id="errordialog_p">error</p>
+		</div>
+		<div id="alertdialog" style="display:none;">
+			<p id="alertdialog_p">alert</p>
+		</div>
+	</body>
+</html>

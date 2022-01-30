@@ -1,0 +1,476 @@
+<div th:fragment="paramset(wgrp)" th:remove="tag">
+<script th:inline="javascript">
+$(function() {
+	
+	var wgrp = /*[[${wgrp}]]*/ '';
+	
+	// 作業グループ名セット
+	getWorkGroupName(wgrp, wgrp, "work_group_name");
+	
+	// 要素名
+	var setbtn = '#setbtn'+wgrp;
+	var okbtn = '#okbtn'+wgrp;
+	
+	var tdcheck = '#tdcheck'+wgrp;
+	var tdcoa = '#tdcoa'+wgrp;
+	var td = '#td'+wgrp;
+	
+	var work_id = '#work_id'+wgrp;
+	
+	var lotno = '#lotno'+wgrp;
+	var expdate = '#expdate'+wgrp;
+	var checkpass = '#checkpass'+wgrp;
+	var checkfail = '#checkfail'+wgrp;
+	var checkreason = '#checkreason'+wgrp;
+	var coapass = '#coapass'+wgrp;
+	var coafail = '#coafail'+wgrp;
+	var coareason = '#coareason'+wgrp;
+	
+	var btnBrowse = '#btnBrowse'+wgrp;
+ 	var btnSubmit = '#btnSubmit'+wgrp;
+ 	var downfile_text = '#downfile_text'+wgrp;
+  	var upfile_text = '#upfile_text'+wgrp;
+  	var upfile = '#upfile'+wgrp;
+	
+	// 作業手順取得
+	var args = "?WORK_GROUP="+wgrp;
+	$.ajax({
+	    type: "GET", 
+	    url: '/rest/workmst/select'+args,
+	}).done(function(data, dataType) {
+	    var usage_arr = JSON.parse(data);
+	    if(usage_arr.list.length>0){
+ 	    	WORK_MASTER = usage_arr.list[0];
+ 		    $(td).text(WORK_MASTER.work);
+ 		    $(work_id).val(WORK_MASTER.work_ID);
+ 	    }
+	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+	});
+ 	
+	// チェックリストの手順名取得
+	$.ajax({
+	    type: "GET", 
+	    url: '/ajax/fixed_work',
+	}).done(function(data, dataType) {
+	    var msgs = JSON.parse(data);
+	    $(tdcheck).text(msgs.CHECKLIST_MSG1);
+		$(tdcoa).text(msgs.CHECKLIST_MSG2);
+	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+	});
+	
+	// カレンダーの設定
+	$( expdate ).datepicker({
+		changeYear: true, //年を表示
+		changeMonth: true, //月を選択
+		minDate: '-1y -1m',
+		maxDate: '+1y +1m'
+	});
+	
+	// チェックボックスの設定
+	$(checkpass).on("click", function(){
+        $(checkfail).prop('checked', false);
+        $(this).prop('checked', true);
+	});
+	$(checkfail).on("click", function(){
+        $(checkpass).prop('checked', false);
+        $(this).prop('checked', true);
+	});
+	$(coapass).on("click", function(){
+        $(coafail).prop('checked', false);
+        $(this).prop('checked', true);
+	});
+	$(coafail).on("click", function(){
+        $(coapass).prop('checked', false);
+        $(this).prop('checked', true);
+	});
+	
+	// 一覧行クリック時の処理
+	$(setbtn).click(function(event, id) {
+		$(upfile_text).val('');
+		// ステータスチェック
+		var args = 
+			"?WORK_GROUP="+wgrp+
+			"&WORK_ID="+$(work_id).val()+
+			"&ID="+id;
+
+		$.ajax({
+		type: "GET", 
+		url: '/ajax/check_status'+args,
+		}).done(function(data, dataType) {
+			if(data==false){
+				setDisabled(okbtn, true);
+				setDisabled(lotno, true);
+				setDisabled(expdate, true);
+				setDisabled(checkpass, true);
+				setDisabled(checkfail, true);
+				setDisabled(checkreason, true);
+				setDisabled(coapass, true);
+				setDisabled(coafail, true);
+				setDisabled(coareason, true);
+				setDisabled(upfile_text, true);
+				setDisabled(btnBrowse, true);
+				setDisabled(btnSubmit, true);
+			}else{
+				open_work(wgrp, true);	// 作業手順表示
+				setDisabled(okbtn, false);
+				setDisabled(lotno, false);
+				setDisabled(expdate, false);
+				setDisabled(checkpass, false);
+				setDisabled(checkfail, false);
+				setDisabled(checkreason, false);
+				setDisabled(coapass, false);
+				setDisabled(coafail, false);
+				setDisabled(coareason, false);
+				setDisabled(upfile_text, false);
+				setDisabled(btnBrowse, false);
+				setDisabled(btnSubmit, false);
+			}
+		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+			console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+		});
+		
+		// 受入情報セット
+		var args = "?MATERIAL_NO="+id;
+		$.ajax({
+		    type: "GET", 
+		    url: '/rest/accept/select'+args,
+		}).done(function(data, dataType) {
+		    var usage_arr = JSON.parse(data);
+		    if(usage_arr.list.length>0){
+	 	    	// 受入情報が存在する場合
+	 	    	initAT();
+	 		    select_ACCEPT_TABLE = usage_arr.list[0];
+	 		    setTextBox(lotno,select_ACCEPT_TABLE.lot_NO);
+	 		    setTextBox(expdate,select_ACCEPT_TABLE.exp_DATE);
+	 	    }
+
+		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+		  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+		});
+	  	
+	    // 作業実績取得
+	 	args = 
+			"?WORK_GROUP="+wgrp+
+			"&WORK_ID="+$("#work_id"+wgrp).val()+
+			"&ID="+id;
+	    
+		$.ajax({
+		type: "GET", 
+		url: '/rest/workresult/select'+args,
+		}).done(function(data, dataType) {
+			var usage_arr = JSON.parse(data);
+	 	    if(usage_arr.list.length>0){
+	 	    	
+	 	    	// 作業実績が存在する場合
+	 		    var WORK_RESULT_TABLE = usage_arr.list[0];
+	 	    	
+	 			if(WORK_RESULT_TABLE.check_FILE_NAME!=''){
+	 				// ファイル登録済みの場合
+	 				
+	 				// アップロードボタン：無効
+	 				$(btnBrowse).prop("disabled",true);
+	 				$(btnSubmit).prop("disabled",true);
+	 				// ダウンロードリンク：表示
+	 		 		$(downfile_text).text(WORK_RESULT_TABLE.check_FILE_NAME);
+	 		 		$(downfile_text).attr("href", WORK_RESULT_TABLE.check_FILE_BASE64);
+	 		 		$(downfile_text).attr("download", WORK_RESULT_TABLE.check_FILE_NAME);
+	 		 		$(downfile_text).show();
+	 		 		$(upfile_text).hide();
+	 		 		
+	 			}else{
+	 				// ファイル登録未登録の場合
+	 				
+	 				// アップロードボタン：有効
+	 				$(btnBrowse).prop("disabled",false);
+	 				$(btnSubmit).prop("disabled",false);
+	 				// ダウンロードリンク：非表示
+	 		  		$(downfile_text).hide();
+	 		  		$(upfile_text).show();
+	 			}
+	 			
+	 			// チェックリストのデータ設定
+	 			setTextBox(checkreason, WORK_RESULT_TABLE.check_REASON);
+	 			setTextBox(coareason, WORK_RESULT_TABLE.check_COA_REASON);
+	 			setCheckBoxPassFail(checkpass, checkfail, WORK_RESULT_TABLE.check_RESULT);
+	 			setCheckBoxPassFail(coapass, coafail, WORK_RESULT_TABLE.check_COA);
+	 			
+	 	    }else{
+		 	    // 作業実績が存在しない場合
+ 				// ダウンロードリンク：非表示
+ 		  		$(downfile_text).hide();
+ 		  		$(upfile_text).show();
+		 	    
+	 			// チェックリストのデータ設定
+	 			setTextBox(checkreason, '');
+	 			setTextBox(coareason, '');
+	 			setCheckBoxPassFail(checkpass, checkfail, '');
+	 			setCheckBoxPassFail(coapass, coafail, '');
+	 	    }
+	 	    
+		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+			console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+		});
+	})
+	
+	// OKボタンクリック時の処理
+	$(okbtn).click(function() {
+		
+		// チェックボックスの状態によってデータをセット
+		var CHECK_RESULT = '';
+		if($(checkpass).prop('checked')) CHECK_RESULT='1';
+		if($(checkfail).prop('checked')) CHECK_RESULT='0';
+		var CHECK_COA = '';
+		if($(coapass).prop('checked')) CHECK_COA='1';
+		if($(coafail).prop('checked')) CHECK_COA='0';
+		
+		// 入力チェック
+		// Lot #
+		if($(lotno).val()==''){
+			alertdialog('Please input Lot #.');
+			return;
+		}
+		// 消費期限
+		if($(expdate).val()==''){
+			alertdialog('Please input Exp Date.');
+			return;
+		}
+		// Visually check
+		if(CHECK_RESULT==''){
+			alertdialog('Please check PASS or FAIL.(Visually check)');
+			return;
+		}
+		if(CHECK_RESULT=='0' && $(checkreason).val()==''){
+			alertdialog('Please input reason.(Visually check)');
+			return;
+		}
+		// COA
+		if(CHECK_COA==''){
+			alertdialog('Please check PASS or FAIL.(COA)');
+			return;
+		}
+		if(CHECK_COA=='0' && $(coareason).val()==''){
+			alertdialog('Please input reason.(COA)');
+			return;
+		}
+		
+		$('#confirmdialog').dialog({
+			dialogClass:'confirm_dialog',
+			modal:true, //モーダル表示
+			title:"Confirm", //タイトル
+			buttons: { //ボタン
+			"OK": function() {
+				$(this).dialog("close");
+				
+				try{
+					// 受入情報更新＋作業実績登録
+					update_ac_wr(
+							wgrp,$(work_id).val(),
+							$(lotno).val(), $(expdate).val(),null,null,
+						 	CHECK_RESULT,
+						 	$(checkreason).val(),
+						 	CHECK_COA,
+						 	$(coareason).val()
+						 	);
+				}catch(e){
+					console.log(e);
+				}
+				
+				},
+			"Cancel": function() {
+				$(this).dialog("close");
+				}
+			}
+		});
+	})
+	
+	// ファイルアップロードボタンクリック時の処理
+	$(btnSubmit).click(function() {
+		// 選択されたファイル情報を取得
+		
+	    var files = $(upfile).prop('files');
+		if(files[0]==null) return;
+
+	    var reader = new FileReader();
+	    reader.readAsDataURL(files[0]);
+	    reader.onload = function() {
+
+			// ファイルアプロード
+	    	fileupload(wgrp,$(work_id).val(),files[0].name,reader.result);
+	    	
+	    	// アップロードボタン：無効
+			$(btnBrowse).prop("disabled",true);
+			$(btnSubmit).prop("disabled",true);
+			// ダウンロードリンク：表示
+	 		$(downfile_text).text(files[0].name);
+	 		$(downfile_text).attr("href", reader.result);
+	 		$(downfile_text).attr("download", files[0].name);
+	 		$(downfile_text).show();
+	 		$(upfile_text).hide();
+			
+	     }
+	})
+ 	
+});
+</script>
+<!-- コンテンツ -->
+<input type="hidden" th:id="'work_id'+${wgrp}" >
+<input type="button" th:id="'setbtn'+${wgrp}" style="display:none;">
+<table style="width:100%;">
+<tr th:id="'tr_header'+${wgrp}">
+<td>
+<input type="checkbox" th:id="'header_check'+${wgrp}" checked="checked" style="display:none;">
+
+<!-- 作業手順ヘッダ START -->
+<table th:id="'header'+${wgrp}"class="wgrpheader" th:onclick="|header_click('__${wgrp}__')|">
+	<tr>
+		<td class="workheader_wgrp">
+			<labeL th:id="'work_group_name'+${wgrp}"></labeL>
+		<td>
+		<td class="workheader_allow">
+			<labeL th:id="'allow'+${wgrp}">▲</labeL>
+		<td>
+	</tr>
+</table>
+<!-- 作業手順ヘッダ END -->
+
+<table th:id="'proc_table'+${wgrp}" class="wgrpwork">
+<tr><td>
+
+<!-- 作業手順 START -->
+<table style="width:100%">
+	<tr>
+		<td>
+		<table style="width:100%">
+			<tr style="text-align: left;"><td>
+				<!-- 作業手順 -->
+				<table class="worktable">
+					<tr>
+						<td th:id="'td'+${wgrp}"></td>
+					</tr>
+				</table>
+			<td></tr>
+			<tr>
+				<td>
+				<table>
+				<tr>
+				<td>Lot #</td>
+				<td><input type="text" th:id="'lotno'+${wgrp}" ></td>
+				</tr>
+				<tr>
+				<td>有効期限</td>
+				<td>
+					<input type="text" th:id="'expdate'+${wgrp}">
+				</td>
+				</tr>
+				</table>
+				</td>
+			</tr>
+		</table>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<table class="checklist">
+				<tr class="checklistheader">
+					<td>
+						<label for="file_upload">
+							Checklist
+						</label>
+					</td>
+				</tr>
+				
+				<tr>
+					<td>
+						<table class="checklistcontens">
+							<tr><td th:id="'tdcheck'+${wgrp}"></td></tr>
+						</table>
+					</td>
+				</tr>
+				<tr class="checklistcheckbox">
+					<td>
+						<label>
+							<input type="checkbox" th:id="'checkpass'+${wgrp}">
+							PASS
+						</label>
+						<label class="checklistcheckbox">
+							<input type="checkbox" th:id="'checkfail'+${wgrp}">
+							FAIL
+						</label>
+					</td>
+				</tr>
+				<tr class="checklistreaoson">
+					<td>
+						<label>
+							Reason：
+							<input type="text" th:id="'checkreason'+${wgrp}" >
+						</label>
+					</td>
+				</tr>
+				
+				<tr>
+					<td>
+						<table class="checklistcontens">
+							<tr><td th:id="'tdcoa'+${wgrp}"></td></tr>
+						</table>
+					</td>
+				</tr>
+				<tr class="checklistcheckbox">
+					<td>
+						<label>
+							<input type="checkbox" th:id="'coapass'+${wgrp}">
+							PASS
+						</label>
+						<label class="checklistcheckbox">
+							<input type="checkbox" th:id="'coafail'+${wgrp}">
+							FAIL
+						</label>
+					</td>
+				</tr>
+				<tr class="checklistreaoson">
+					<td>
+						<label>
+							Reason：
+							<input type="text" th:id="'coareason'+${wgrp}" >
+						</label>
+					</td>
+				</tr>
+				
+				<tr>
+					<td>
+					<table>
+						<tr>
+							<td class="checklistfile">
+								<label for="file_upload">
+									Attached file：
+									<input type="text" th:id="'upfile_text'+${wgrp}" value="" size="40" readonly>
+									<a href="" th:id="'downfile_text'+${wgrp}"></a>
+									<input type="file" th:id="'upfile'+${wgrp}" th:onchange="|$('#upfile_text__${wgrp}__').val($(this).val())|" style="display:none;">
+								</label>
+							</td>
+							<td>
+								<input type="button" th:id="'btnBrowse'+${wgrp}" class="btn custombtn" value="Browse"
+									th:onclick="|$('#upfile__${wgrp}__').click()|">
+								<input type="button" th:id="'btnSubmit'+${wgrp}" class="btn custombtn" value="Submit">
+							</td>
+						</tr>
+					</table>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr style="text-align: right;"><td>
+		<!-- 処理 -->
+		<input type="button" th:id="'okbtn'+${wgrp}" value="OK" 
+			class="btn custombtn" style="width:100px;" disabled="disabled">
+	<td></tr>
+</table>
+<!-- 作業手順 END -->
+
+</td></tr>
+</table>
+<td>
+</tr>
+</table>

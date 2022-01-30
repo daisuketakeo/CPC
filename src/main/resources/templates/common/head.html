@@ -1,0 +1,20 @@
+<head th:fragment="head_fragment(title, scripts, links)">
+ 	<title th:text="${system_name}"></title>
+ 	<meta charset="utf-8" />
+ 	
+ 	<!-- スクリプト読み込み -->
+	<script th:src="@{/js/jquery-3.6.0.min.js}"></script>
+	<script th:src="@{/js/jquery-ui.min.js}"></script>
+	<script th:src="@{/js/datepicker-ja.js.js}"></script>
+	<script th:src="@{/js/cpc-ds.js}"></script>
+	<script th:src="@{/js/pdfmake.min.js}"></script>
+	<script th:src="@{/js/vfs_fonts.js}"></script>
+	
+	<!-- スタイル読み込み(CSSフレームワーク) -->
+	<link th:href="@{/css/jquery-ui.min.css}" rel="stylesheet" type="text/css">
+	<link th:href="@{/css/jquery-ui.structure.min.css}" rel="stylesheet" type="text/css">
+	<link th:href="@{/css/jquery-ui.theme.min.css}" rel="stylesheet" type="text/css">
+	<link th:href="@{/css/spectre.min.css}" rel="stylesheet" type="text/css">
+	<link th:href="@{/css/cpc-ds.css}" rel="stylesheet" type="text/css">
+	
+</head>

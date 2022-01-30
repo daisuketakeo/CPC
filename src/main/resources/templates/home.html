@@ -1,0 +1,54 @@
+<div fragment="body" remove="tag">
+<script>
+$(function(){
+	change_header_style(0);
+	
+	sessionStorage.clear();
+	
+	$("#manufacturing").on('click', function() {
+		sessionStorage.setItem(['DISP_FLG'],['2']);
+		$("#manufacturing").prop("href","/instructions");
+	});
+	
+	$("#quality_control").on('click', function() {
+		sessionStorage.setItem(['DISP_FLG'],['3']);
+		$("#quality_control").prop("href","/instructions");
+	});
+	
+	$("#review").on('click', function() {
+		sessionStorage.setItem(['DISP_FLG'],['4']);
+		$("#review").prop("href","/instructions");
+	});
+	
+});
+</script>
+
+<table class="home">
+	<tr>
+		<td>
+			<a href="/accept">
+				<img src="/images/home_ic.png">
+			</a>
+		</td>
+		<td>
+			<a id="manufacturing" href="#">
+				<img src="/images/home_mf.png">
+			</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<a id="quality_control" href="#">
+				<img src="/images/home_qc.png">
+			</a>
+		</td>
+		<td>
+			<a id="review" href="#">
+				<img src="/images/home_rv.png">
+			</a>
+		</td>
+	</tr>
+</table>
+
+	
+</div>

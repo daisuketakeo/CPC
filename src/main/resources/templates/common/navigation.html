@@ -1,0 +1,29 @@
+<div th:fragment="navigation" th:remove="tag">
+
+<div id="header_bar" class="navbar" style="max-height: 50px">
+	<section class="navbar-section">
+		<!-- <span class="navbar-brand m-2" style="min-width: 200px;" th:text="${system_name}"></span> -->
+		<label class="navbar-brand m-2" style="min-width: 300px;" th:text="${user_name}"></label>
+		<a href="#" class="btn btn-link m-2 text-secondary" style="min-width: 80px;" th:href="@{/home}">Home</a>
+		<a href="#" class="btn btn-link m-2 text-secondary" style="min-width: 80px;" th:href="@{/logout}">Logout</a>
+	</section>
+	<!-- ハンバーガーメニュー -->
+	<span class="hamberger"><hr><hr><hr></span>
+	<div class="hamberger_menu">
+		<ul id="hamberger_menu_list">
+			<li><a href="#">TOP</a></li>
+			<li><a href="#">ABOUT</a></li>
+		</ul>
+	</div>
+</div>
+
+<script>
+$(function(){
+    $(".hamberger").click(function() {
+        $(this).toggleClass("close");
+        $('.hamberger_menu').toggleClass("show");
+    });
+}());
+</script>
+
+</div>

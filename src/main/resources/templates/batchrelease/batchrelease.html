@@ -1,0 +1,110 @@
+<div th:fragment="body">
+<script th:inline="javascript">
+
+var disp_flg = sessionStorage.getItem(['DISP_FLG']);
+
+var wgrp_diviation_status = 'W99';		// 作業グループの逸脱ステータス
+
+/***********************************
+画面初期処理
+***********************************/
+$(function(){
+	
+	// ヘッダスタイル変更
+	change_header_style(disp_flg);
+	
+	// 一覧取得
+	search();
+	
+	// キャンセルボタンクリック
+	$("#closebtn").click(function(){
+		location.href="/instructions";
+	});
+	
+});
+
+/***********************************
+作業手順表示
+***********************************/
+function search(){
+	
+	// tbodyをクリア
+	$("#tbl1 > tbody").html("");
+	
+	var args = "?BATCH_ID="+$("#BATCH_ID").val();
+	
+	// テーブルの明細部分(tbody)を生成
+	$.ajax({
+	    type: "GET", 
+	    url: '/rest/instructions/select'+args,
+	}).done(function(data, dataType) {
+		
+	    var usage_arr = JSON.parse(data);
+	    
+	    //データをテーブル形式にする 
+	    $.each(usage_arr.list,function(i,INSTRUCTIONS_TABLE){
+	    	var tbody = $('<tbody />');
+	    	
+	        var tr1 = $('<tr/>');
+	        tr1.append($('<td/>').text(INSTRUCTIONS_TABLE.batch_ID));
+	        tr1.append($('<td/>').text(INSTRUCTIONS_TABLE.protocol));
+	        
+	        // 逸脱チェック
+	     	// 作業グループステータス取得
+			args = "?PROCESS_ID="+$("#PROCESS_ID").val();
+			$.ajax({
+			type: "GET", 
+			url: '/rest/processmst/select'+args,
+			}).done(function(wgrpdata, wgrpdataType) {
+				var wgrp_arr = JSON.parse(wgrpdata);
+				$.each(wgrp_arr.list,function(j,PROCESS_MASTER){
+					tr1.append($('<td/>').text(PROCESS_MASTER.process_NAME));
+				});
+			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+				console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+			});
+
+	        tbody.append(tr1);
+	        
+	        $('#tbl1').append(tbody);
+	        
+	    });
+
+	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+	});
+	
+}
+
+</script>
+<!-- コンテンツ -->
+<input type="hidden" id="WORK_GROUP_JSON" th:value="${WORK_GROUP_JSON}">
+<input type="hidden" id="BATCH_ID" th:value="${BATCH_ID}">
+<input type="hidden" id="PROCESS_ID" th:value="${PROCESS_ID}">
+
+<div class="panel_ebr">
+
+ 	<div class="headername_ebr"><h4>Batch release</h4></div>
+    <!-- ヘッダ -->
+    <div class="tablepanel_ebr">
+		<table id="tbl1" class="table_ebr">
+			<thead>
+				<tr>
+					<th class="th_ebr" style="min-width:150px">Batch ID</th>
+					<th class="th_ebr" style="min-width:150px">Protocol</th>
+					<th class="th_ebr" style="min-width:150px">Process</th>
+				</tr>
+	        </thead>
+		</table>
+	</div>
+	<div class="workpanel_ebr">
+	    <table style="width:100%;">
+		    <tr style="text-align: right;"><td>
+			    <input type="button" id="closebtn" value="Close" class="btn custombtn">
+			    <input type="button" id="okbtn" value="OK" class="btn custombtn" onclick="test()">
+		    <td></tr>
+	    </table>
+    </div>​
+    
+  </div>
+</div>

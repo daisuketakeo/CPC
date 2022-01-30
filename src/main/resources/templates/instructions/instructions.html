@@ -1,0 +1,449 @@
+<div th:fragment="body">
+<script th:inline="javascript">
+
+// 工程情報
+// PROCESS_ID, 要素名, 画面フラグ 
+var PROCESS = new Map([
+    ['EP1', ['PrecultureKitting','2', '/manufacturing']],
+    ['EP2', ['Preculture'       ,'2', '/manufacturing']],
+    ['EP3', ['ExpansionKitting' ,'2', '/manufacturing']],
+    ['EP4', ['Expansion'        ,'2', '/manufacturing']],
+    ['EP5', ['BufferExchange'   ,'2', '/manufacturing']],
+    ['EP6', ['Freezing'         ,'2', '/manufacturing']],
+    ['ET1', ['QC1'              ,'2', '/manufacturing']],
+    ['ET2', ['QC2'              ,'3', '/qualitycontrol']],
+    ['ET3', ['QC3'              ,'3', '/qualitycontrol']],
+    ['ET4', ['QC4'              ,'3', '/qualitycontrol']],
+    ['BR',  ['BatchRelease'     ,'4', '/batchrelease']]
+])
+
+var disp_flg = sessionStorage.getItem(['DISP_FLG']);
+var errmsg = 'Cannot be operated.';		// 操作不可工程クリック時エラーメッセージ
+var deviation = 'Deviation';			// 逸脱
+var wgrp_diviation_status = 'W99';		// 作業グループの逸脱ステータス
+var end_status = ['P05','T05','B03'];	// 工程の完了ステータス
+var current_status = ['P02','P03','P04','T02','T03','T04','B02'];	// 工程の仕掛ステータス
+
+/***********************************
+画面初期処理
+***********************************/
+$(function(){
+	
+	// ヘッダスタイル変更
+	change_header_style(disp_flg);
+
+	// 一覧取得
+	search();
+	
+	// キャンセルボタンクリック
+	$("#closebtn").click(function(){
+		location.href="/home";
+	});
+	
+	// 工程フロー図非表示
+	$("#process_flow").hide();
+	
+	// 工程フロー図 工程図クリック
+	for (let [key, value] of PROCESS) {
+		$("#"+value[0]).click(function(){
+			if(disp_flg==value[1]){
+				// 作業手順の画面へ遷移				
+				  $('<form/>', {action: value[2], method: 'post'})
+				  .append($('<input/>', {type: 'hidden', name: 'PROCESS_ID', value: key}))
+				  .append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: $("#batch_id").val()}))
+				  .appendTo(document.body)
+				  .submit();
+			}else{
+				// 対象工程以外は操作不可
+				alertdialog(errmsg);
+			}
+		});
+	}
+	
+});
+
+/***********************************
+受入一覧表示
+***********************************/
+function search(){
+	
+	// tbodyをクリア
+	$("#tbl1 > tbody").html("");
+	
+	// テーブル初期状態セット
+	tbody_default("#tbl1");
+	
+	// テーブルの明細部分(tbody)を生成
+	$.ajax({
+	    type: "GET", 
+	    url: '/rest/instructions/select',
+	}).done(function(data, dataType) {
+		
+	    var usage_arr = JSON.parse(data);
+	    const status_json = JSON.parse($("#status_list").val());
+	    
+	    //データをテーブル形式にする 
+	    $.each(usage_arr.list,function(i,INSTRUCTIONS_TABLE){
+	    	var tbody = $('<tbody />');
+	    	
+	        var tr1 = $('<tr id="tr'+INSTRUCTIONS_TABLE.batch_ID+'"/>');
+	        
+	        var tdbatchid = $('<td/>');
+	        tdbatchid.append($("<a></a>", {
+	        	  href: "/home",	// 指図詳細画面のリンク
+	        	  text: INSTRUCTIONS_TABLE.batch_ID,
+	        	}));
+	        tr1.append(tdbatchid);
+	        tr1.append($('<td/>').text(INSTRUCTIONS_TABLE.protocol));
+	        tr1.append($('<td/>').text(INSTRUCTIONS_TABLE.starting_TIME));
+	        tr1.append($('<td/>').text(INSTRUCTIONS_TABLE.finish_TIME));
+	        
+	        var tdstatus = $('<td/>');
+	        tdstatus.text(status_json[INSTRUCTIONS_TABLE.status]);
+	        
+	        // 逸脱チェック
+	     	// 作業グループステータス取得
+			var args = "?BATCH_ID="+INSTRUCTIONS_TABLE.batch_ID;
+			$.ajax({
+			type: "GET", 
+			url: '/rest/workgroupstatus/select'+args,
+			}).done(function(wgrpdata, wgrpdataType) {
+			
+				var wgrp_arr = JSON.parse(wgrpdata);
+				var diviation_flg = false;
+				$.each(wgrp_arr.list,function(j,WORK_GROUP_STATUS_TABLE){
+					if(WORK_GROUP_STATUS_TABLE.status==wgrp_diviation_status){
+						diviation_flg = true;
+					}
+				});
+				
+				if(diviation_flg){
+					// 作業グループステータスに１つ以上逸脱があれば
+					// ステータスを逸脱に変更＋逸脱アイコン表示
+					tdstatus.text(deviation);
+			        tdstatus.append($("<img></img>", {
+			        	  id: "divaicon"+INSTRUCTIONS_TABLE.batch_ID,
+			        	  src: "/images/exclamation_mark.png",
+			        	  addClass: "aicon",
+			        	}));
+				}
+			
+			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+				console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+			});
+			   
+	        tr1.append(tdstatus);
+	        tbody.append(tr1);
+	        
+	        $('#tbl1').append(tbody);
+	        
+	        // 一覧の行ダブルクリック
+	        $('#tr'+INSTRUCTIONS_TABLE.batch_ID).dblclick(function(){
+	        	alert('「Batch Record Review」 Open ['+INSTRUCTIONS_TABLE.batch_ID+']');
+	        });
+	        // 一覧の行クリック
+	        $('#tr'+INSTRUCTIONS_TABLE.batch_ID).click(function(){
+	        	select_row(this);
+	        });
+	    });
+
+	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+	});
+	
+	// 工程フロー図の工程名称取得
+	$.ajax({
+	    type: "GET", 
+	    url: '/rest/processmst/select',
+	}).done(function(data, dataType) {
+	    var usage_arr = JSON.parse(data); 
+	    $.each(usage_arr.list,function(i,PROCESS_MASTER){
+	    	// 工程フロー図の工程名称セット
+	    	for (let [key, value] of PROCESS) {
+	    		if(PROCESS_MASTER.process_ID==key){
+		    		$('#lbl'+value[0]).text(PROCESS_MASTER.process_NAME);
+		    	}
+	    	}
+	    });
+	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+	});
+}
+/***********************************
+工程図のステータスセット
+***********************************/
+function setProcessStatus(batch_id, process_id){
+	
+	var args = "?BATCH_ID="+batch_id+
+				"&PROCESS_ID="+process_id;
+	
+	// 工程ステータス取得
+	$.ajax({
+	    type: "GET", 
+	    url: '/rest/processstatus/select'+args,
+	}).done(function(data, dataType) {
+		
+	    var usage_arr = JSON.parse(data);
+	    var end_flg = false;
+	    var current_flg = false;
+	    $.each(usage_arr.list,function(i,PROCESS_STATUS_TABLE){
+	    	// 完了チェック
+	    	for (const end of end_status) {
+	    		if(PROCESS_STATUS_TABLE.status==end){
+	    			end_flg = true;
+		    	}
+    		}
+	    	// 仕掛チェック
+	    	for (const current of current_status) {
+	    		if(PROCESS_STATUS_TABLE.status==current){
+	    			current_flg = true;
+		    	}
+    		}
+	    });
+	    
+	    if(end_flg){
+	    	// 完了アイコン表示
+	    	$('#cm'+PROCESS.get(process_id)[0]).show();
+	    }else{
+	    	$('#cm'+PROCESS.get(process_id)[0]).hide();
+	    }
+	    if(current_flg){
+	    	// 仕掛アイコン表示
+	    	$('#ar'+PROCESS.get(process_id)[0]).show();
+	    }else{
+	    	$('#ar'+PROCESS.get(process_id)[0]).hide();
+	    }
+	    
+	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+	});
+	
+	// 作業グループステータス取得
+	$.ajax({
+	    type: "GET", 
+	    url: '/rest/workgroupstatus/select'+args,
+	}).done(function(data, dataType) {
+		
+	    var usage_arr = JSON.parse(data);
+	    var diviation_flg = false;
+	    $.each(usage_arr.list,function(i,WORK_GROUP_STATUS_TABLE){
+	    	if(WORK_GROUP_STATUS_TABLE.status==wgrp_diviation_status){
+	    		diviation_flg = true;
+	    	}
+	    });
+	    
+	    if(diviation_flg){
+	    	// 作業グループステータスに１つ以上逸脱があれば逸脱アイコン表示
+	    	$('#ex'+PROCESS.get(process_id)[0]).show();
+	    }else{
+	    	$('#ex'+PROCESS.get(process_id)[0]).hide();
+	    }
+	    
+	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+	});
+	
+}
+/***********************************
+一覧の行クリック
+***********************************/
+function select_row(obj){
+
+	// テーブル初期状態セット
+	tbody_default("#tbl1");
+	
+	var tb = $(obj).parent();
+	
+	// テーブル行選択状態セット
+	row_click($(tb));
+	
+	// 選択行のMATERIAL_NO取得
+	var childtr = $(tb).children();
+	var childtd = $(childtr).children();
+	var batch_id = $(childtd.eq(0)).text();
+
+	// データ保持
+	$("#batch_id").val(batch_id);
+	
+	// 工程フロー図表示
+	$("#process_flow").show();
+	
+	// 工程図のステータスセット
+	for (let [key, value] of PROCESS) {
+		setProcessStatus(batch_id, key);
+	}
+	
+	
+}
+ function test(){
+	 /*
+     //PDF作成処理
+     var docDef = {
+       content:[
+         {qr: 'これはテストです'}
+       ],
+     };
+     pdfMake.createPdf(docDef).download("QR_CODE_TEST.pdf");
+     */
+     if($('#batch_id').val()=='B001') $('#cmPrecultureKitting').show();
+     if($('#batch_id').val()=='B002') $('#arPrecultureKitting').show();
+     if($('#batch_id').val()=='B003') $('#exPrecultureKitting').show();
+     
+     // ヘッダメニュー変更
+     $('#hamberger_menu_list').children().remove();
+     $('#hamberger_menu_list').append('<li><a href="#">TEST1</a></li>');
+     $('#hamberger_menu_list').append('<li><a href="#">TEST2</a></li>');
+     $('#hamberger_menu_list').append('<li><a href="#">あああああああああ</a></li>');
+     
+     // 印刷禁止でPDF表示
+     window.open("/pdfjs/web/viewer.html?file=/preview");
+ }
+</script>
+<!-- コンテンツ -->
+<input type="hidden" id="batch_id">
+<input type="hidden" id="status_list" th:value="${STATUS_LIST}">
+<div class="disopaypanel">
+
+ 	<div class="headername"><h4>Instructions</h4></div>
+    <!-- 指図一覧 -->
+    <div class="tablepanel">
+		<table id="tbl1" class="tableArea">
+			<thead>
+				<tr>
+					<th class="th_sticky" style="min-width:150px">Batch ID</th>
+					<th class="th_sticky" style="min-width:150px">Protocol</th>
+					<th class="th_sticky" style="min-width:150px">Starting Time</th>
+					<th class="th_sticky" style="min-width:150px">Finish Time</th>
+					<th class="th_sticky" style="min-width:80px">Status</th>
+				</tr>
+	        </thead>
+		</table>
+	</div>
+    <div class="buttonpanel">
+	    <input type="button" id="closebtn" value="Close" class="btn custombtn">
+	    <input type="button" id="okbtn" value="OK" class="btn custombtn" onclick="test()">
+    </div>​
+    
+	<div id="process_flow" class="pflowpanel">
+	<!-- 工程フロー図 -->
+	<table>
+		<tr>
+			<td>
+				<div class="square">
+					<img id="cmPrecultureKitting" alt="" class="aicon square_endaicon" src="/images/check_mark.png">
+					<img id="arPrecultureKitting" alt="" class="aicon square_endaicon" src="/images/arrow.png">
+					<label id="lblPrecultureKitting" class="square_label"></label>
+					<img id="exPrecultureKitting" alt="" class="aicon square_divaicon" src="/images/exclamation_mark.png">
+					<div id="PrecultureKitting" class="click_div"></div>
+				</div>
+			</td>
+			<td style="width:10px;"><div class="arrow arrow1"></div></td>
+			<td>
+				<div class="square">
+					<img id="cmPreculture" alt="" class="aicon square_endaicon" src="/images/check_mark.png">
+					<img id="arPreculture" alt="" class="aicon square_endaicon" src="/images/arrow.png">
+					<label id="lblPreculture" class="square_label"></label>
+					<img id="exPreculture" alt="" class="aicon square_divaicon" src="/images/exclamation_mark.png">
+					<div id="Preculture" class="click_div"></div>
+				</div>
+			</td>
+			<td style="width:10px;"><div class="arrow arrow1"></div></td>
+			<td>
+				<div class="rhombus" style="left:20px;">
+					<img id="cmQC1" alt="" class="aicon rhombus_endaicon" src="/images/check_mark.png">
+					<img id="arQC1" alt="" class="aicon rhombus_endaicon" src="/images/arrow.png">
+					<label id="lblQC1" class="rhombus_label"></label>
+					<img id="exQC1" alt="" class="aicon rhombus_divaicon" src="/images/exclamation_mark.png">
+					<div id="QC1" class="click_div"></div>
+				</div>
+			</td>
+			<td style="width:10px;"><div class="arrow arrow1" style="left:38px;"></div></td>
+			<td>
+				<div class="square" style="left:40px;">
+					<img id="cmExpansionKitting" alt="" class="aicon square_endaicon" src="/images/check_mark.png">
+					<img id="arExpansionKitting" alt="" class="aicon square_endaicon" src="/images/arrow.png">
+					<label id="lblExpansionKitting" class="square_label"></label>
+					<img id="exExpansionKitting" alt="" class="aicon square_divaicon" src="/images/exclamation_mark.png">
+					<div id="ExpansionKitting" class="click_div"></div>
+				</div>
+			</td>
+			<td style="width:10px;"><div class="arrow arrow1" style="left:38px;"></div></td>
+			<td>
+				<div class="square" style="left:40px;">
+					<img alt="" class="aicon square_arrow2" src="/images/arrow2.png">
+					<img id="cmExpansion" alt="" class="aicon square_endaicon" src="/images/check_mark.png">
+					<img id="arExpansion" alt="" class="aicon square_endaicon" src="/images/arrow.png">
+					<label id="lblExpansion" class="square_label"></label>
+					<img id="exExpansion" alt="" class="aicon square_divaicon" src="/images/exclamation_mark.png">
+					<div id="Expansion" class="click_div"></div>
+				</div>
+			</td>
+			<td style="width:10px;"><div class="arrow arrow1" style="left:38px;"></div></td>
+			<td>
+				<div class="square" style="left:40px;">
+					<img alt="" class="aicon square_arrow3" src="/images/arrow3.png">
+					<img id="cmBufferExchange" alt="" class="aicon square_endaicon" src="/images/check_mark.png">
+					<img id="arBufferExchange" alt="" class="aicon square_endaicon" src="/images/arrow.png">
+					<label id="lblBufferExchange" class="square_label"></label>
+					<img id="exBufferExchange" alt="" class="aicon square_divaicon" src="/images/exclamation_mark.png">
+					<div id="BufferExchange" class="click_div"></div>
+				</div>
+			</td>
+			<td style="width:10px;"><div class="arrow arrow1" style="left:38px;"></div></td>
+			<td>
+				<div class="square" style="left:40px;">
+					<img id="cmFreezing" alt="" class="aicon square_endaicon" src="/images/check_mark.png">
+					<img id="arFreezing" alt="" class="aicon square_endaicon" src="/images/arrow.png">
+					<label id="lblFreezing" class="square_label"></label>
+					<img id="exFreezing" alt="" class="aicon square_divaicon" src="/images/exclamation_mark.png">
+					<div id="Freezing" class="click_div"></div>
+				</div>
+			</td>
+			<td style="width:10px;"><div class="arrow arrow1" style="left:43px;"></div></td>
+			<td>
+				<table>
+					<tr><td style="padding:5px;">
+						<div class="rhombus" style="left:60px;">
+							<img alt="" class="aicon rhombus_arrow4" src="/images/arrow4.png">
+							<img id="cmQC2" alt="" class="aicon rhombus_endaicon" src="/images/check_mark.png">
+							<img id="arQC2" alt="" class="aicon rhombus_endaicon" src="/images/arrow.png">
+							<label id="lblQC2" class="rhombus_label"></label>
+							<img id="exQC2" alt="" class="aicon rhombus_divaicon" src="/images/exclamation_mark.png">
+							<div id="QC2" class="click_div"></div>
+						</div>
+					</td></tr>
+					<tr><td style="padding:5px;">
+						<div class="rhombus" style="left:60px;">
+							<img id="cmQC4" alt="" class="aicon rhombus_endaicon" src="/images/check_mark.png">
+							<img id="arQC4" alt="" class="aicon rhombus_endaicon" src="/images/arrow.png">
+							<label id="lblQC4" class="rhombus_label"></label>
+							<img id="exQC4" alt="" class="aicon rhombus_divaicon" src="/images/exclamation_mark.png">
+							<div id="QC4" class="click_div"></div>
+						</div>
+					</td></tr>
+					<tr><td style="padding:5px;">
+						<div class="rhombus" style="left:60px;">
+							<img alt="" class="aicon rhombus_arrow5" src="/images/arrow5.png">
+							<img id="cmQC3" alt="" class="aicon rhombus_endaicon" src="/images/check_mark.png">
+							<img id="arQC3" alt="" class="aicon rhombus_endaicon" src="/images/arrow.png">
+							<label id="lblQC3" class="rhombus_label"></label>
+							<img id="exQC3" alt="" class="aicon rhombus_divaicon" src="/images/exclamation_mark.png">
+							<div id="QC3" class="click_div"></div>
+						</div>
+					</td></tr>
+				</table>
+			</td>
+			<td><div class="arrow arrow1" style="left:75px;"></div></td>
+			<td>
+				<div class="square" style="left:80px;">
+					<img id="cmBatchRelease" alt="" class="aicon square_endaicon" src="/images/check_mark.png">
+					<img id="arBatchRelease" alt="" class="aicon square_endaicon" src="/images/arrow.png">
+					<label id="lblBatchRelease" class="square_label"></label>
+					<img id="exBatchRelease" alt="" class="aicon square_divaicon" src="/images/exclamation_mark.png">
+					<div id="BatchRelease" class="click_div"></div>
+				</div>
+			</td>
+		</tr>
+	</table>
+  </div>
+</div>
