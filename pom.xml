@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>cpc</groupId>
-	<artifactId>CPC-DS</artifactId>
+	<artifactId>CPC</artifactId>
 	<version>0.0.1</version>
-	<name>CPC-DS</name>
+	<name>CPC</name>
 	<description>project for Spring Boot</description>
 	<properties>
 		<java.version>11</java.version>
