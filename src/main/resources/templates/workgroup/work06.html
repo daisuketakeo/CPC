@@ -1,10 +1,10 @@
-<div th:fragment="paramset(wgrp,batch_id,process_id)" th:remove="tag">
+<div th:fragment="paramset(wgrp)" th:remove="tag">
 <script th:inline="javascript">
 $(function() {
 	
 	var wgrp = /*[[${wgrp}]]*/ '';
-	var batch_id = /*[[${batch_id}]]*/ '';
-	var process_id = /*[[${process_id}]]*/ '';
+	var batch_id = $('#BATCH_ID').val();
+	var process_id = $('#PROCESS_ID').val();
 	
 	// 作業グループ名セット
 	getWorkGroupName(wgrp, wgrp, "work_group_name");

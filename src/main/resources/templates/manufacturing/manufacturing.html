@@ -99,7 +99,7 @@ function search(){
 	    <table style="width:100%;">
 		    <tr><td id="work_list">
 	    		<div th:each="map : ${WORK_GROUP_MAP}">
-	    			<div th:insert="/workgroup/work__${map.getValue().DISPLAY_TYPE}__::paramset('__${map.getValue().WORK_GROUP}__','__${BATCH_ID}__','__${PROCESS_ID}__')"></div>
+	    			<div th:insert="/workgroup/work__${map.getValue().DISPLAY_TYPE}__::paramset('__${map.getValue().WORK_GROUP}__')"></div>
 				</div>
 		    <td></tr>
 		    <tr style="text-align: right;"><td>
