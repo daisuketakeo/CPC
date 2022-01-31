@@ -67,7 +67,9 @@ function initnewWRT(){
 	XHR.onreadystatechange = function() {
 	  if( XHR.readyState === 4 && XHR.status === 200 ) {
 		// 正常終了時に処理
-		updaterow();
+		if (typeof updaterow == 'function') {
+		  updaterow();
+		}
 	  }else{
 		if(XHR.responseText==''){
 		}else{
