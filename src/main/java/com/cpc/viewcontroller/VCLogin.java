@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cpc.model.USER_MASTER;
 
@@ -24,7 +25,7 @@ public class VCLogin extends VCCommon{
     public String root(Model model) {
     	sessionClear();
     	model.addAttribute(attr_err_flg, null);
-    	model.addAttribute("USER_MASTER", new USER_MASTER());
+    	model.addAttribute(seeeson_user, new USER_MASTER());
         setHeaderAttr(model);
         return disp_login;
     }
@@ -40,7 +41,7 @@ public class VCLogin extends VCCommon{
     	}catch(Exception e) {
     	}
     	
-    	model.addAttribute("USER_MASTER", new USER_MASTER());
+    	model.addAttribute(seeeson_user, new USER_MASTER());
     	model.addAttribute(attr_err_flg, err);
     	setHeaderAttr(model);
         return disp_login;
@@ -50,7 +51,7 @@ public class VCLogin extends VCCommon{
     public String logout(Model model) {
     	sessionClear();
     	model.addAttribute(attr_err_flg, null);
-    	model.addAttribute("USER_MASTER", new USER_MASTER());
+    	model.addAttribute(seeeson_user, new USER_MASTER());
         setHeaderAttr(model);
         return disp_login;
     }
@@ -64,9 +65,12 @@ public class VCLogin extends VCCommon{
     }
     
     @RequestMapping(value = "/main", method = RequestMethod.POST)
-    public String main(@Validated @ModelAttribute USER_MASTER data, Model model) {
+    public String main(
+    		@RequestParam(name="USERID") String USERID,
+    		@RequestParam(name="PASSWORD") String PASSWORD,
+    		Model model) {
 
-    	String trn = super.userCheck(data);
+    	String trn = super.userCheck(USERID, PASSWORD);
     	if(trn.isEmpty()) {
     		// ログイン成功
     		setHeaderAttr(model);

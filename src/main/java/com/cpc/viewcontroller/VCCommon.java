@@ -171,15 +171,15 @@ public class VCCommon {
 	/*
 	 * ログイン認証
 	 */
-    public String userCheck(USER_MASTER data) {
+    public String userCheck(String USERID, String PASSOWRD) {
     	
         try{
             List<USER_MASTER> list = 
-            		getRest(rest_usermst+"select?USERID="+data.getUSERID(), USER_MASTER.class);
+            		getRest(rest_usermst+"select?USERID="+USERID, USER_MASTER.class);
             if(list.size()>0) {
             	USER_MASTER user = list.get(0);
             	// ユーザ存在するので、パスワードチェック
-            	if(user.getPASSWORD().equals(data.getPASSWORD())) {
+            	if(user.getPASSWORD().equals(PASSOWRD)) {
             		// ログインOK
             		// セッションにユーザ情報セット
             		session.setAttribute(seeeson_user, user);
@@ -202,7 +202,13 @@ public class VCCommon {
      * ユーザ情報取得
      */
     public USER_MASTER getUserInfo() {
-    	return (USER_MASTER)session.getAttribute(seeeson_user);
+    	USER_MASTER user;
+    	try {
+    		user = (USER_MASTER)session.getAttribute(seeeson_user);
+    		return user;
+    	}catch(Exception e) {
+    		return null;
+    	}
     }
     
     /*
