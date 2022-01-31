@@ -1,0 +1,229 @@
+<div th:fragment="paramset(wgrp)" th:remove="tag">
+<script th:inline="javascript">
+$(function() {
+	
+	var wgrp = /*[[${wgrp}]]*/ '';
+	
+	// 作業グループ名セット
+	getWorkGroupName(wgrp, wgrp, "work_group_name");
+	
+	// 要素名
+	var setbtn = '#setbtn'+wgrp;
+	var okbtn = '#okbtn'+wgrp;
+	
+	var tdcheck = '#tdcheck'+wgrp;
+	var tdcoa = '#tdcoa'+wgrp;
+	var td = '#td'+wgrp;
+	
+	var work_id = '#work_id'+wgrp;
+	
+	var checkpass = '#checkpass'+wgrp;
+	var checkfail = '#checkfail'+wgrp;
+	
+	var btnCamera = '#btnCamera'+wgrp;
+	var pass = '#pass'+wgrp;
+	var fail = '#fail'+wgrp;
+	
+	// 作業手順取得
+	var args = "?WORK_GROUP="+wgrp;
+	$.ajax({
+	    type: "GET", 
+	    url: '/rest/workmst/select'+args,
+	}).done(function(data, dataType) {
+	    var usage_arr = JSON.parse(data);
+	    if(usage_arr.list.length>0){
+ 	    	WORK_MASTER = usage_arr.list[0];
+ 		    $(td).text(WORK_MASTER.work);
+ 		    $(work_id).val(WORK_MASTER.work_ID);
+ 	    }
+	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+	});
+	
+	setDisabled(checkpass,true);
+	setDisabled(checkfail,true);
+	
+	// チェックボックスの設定
+	$(checkpass).on("click", function(){
+        $(checkfail).prop('checked', false);
+        $(this).prop('checked', true);
+	});
+	$(checkfail).on("click", function(){
+        $(checkpass).prop('checked', false);
+        $(this).prop('checked', true);
+	});
+ 	
+	// 一覧行クリック時の処理
+	$(setbtn).click(function(event, id) {
+		// ステータスチェック
+		var args = 
+			"?WORK_GROUP="+wgrp+
+			"&WORK_ID="+$("#work_id"+wgrp).val()+
+			"&ID="+id;
+
+		$.ajax({
+		type: "GET", 
+		url: '/ajax/check_status'+args,
+		}).done(function(data, dataType) {
+			if(data==false){
+				setDisabled(okbtn,true);
+				setDisabled(checkpass, true);
+				setDisabled(checkfail, true);
+				setDisabled(btnCamera, true);
+			}else{
+				open_work(wgrp, true);	// 作業手順表示
+				setDisabled(okbtn,false);
+				setDisabled(checkpass, false);
+				setDisabled(checkfail, false);
+				setDisabled(btnCamera, false);
+			}
+		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+		  // エラーメッセージの表示
+		  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+		});
+	})
+ 	
+	// OKボタンクリック時の処理
+	$(okbtn).click(function() {
+		
+		// チェックボックスの状態によってデータをセット
+		var CHECK_RESULT = '';
+		if($(checkpass).prop('checked')) CHECK_RESULT='1';
+		if($(checkfail).prop('checked')) CHECK_RESULT='0';
+		
+		// 入力チェック
+		// Visually check
+		if(CHECK_RESULT==''){
+			alertdialog('Please check PASS or FAIL.(Visually check)');
+			return;
+		}
+		
+		$('#confirmdialog').dialog({
+			dialogClass:'confirm_dialog',
+			modal:true, //モーダル表示
+			title:"confirm", //タイトル
+			buttons: { //ボタン
+			"OK": function() {
+				$(this).dialog("close");
+				try{
+					/* 014 Microscopy処理
+					// 受入情報更新＋作業実績登録
+					update_ac_wr(
+							wgrp,$(work_id).val(),
+							null, null,null,CHECK_RESULT,
+						 	null,
+						 	null,
+						 	null,
+						 	null
+						 	);
+					*/
+				}catch(e){
+					console.log(e);
+				}
+				
+				},
+			"Cancel": function() {
+				$(this).dialog("close");
+				}
+			}
+		});
+	})
+	
+});
+
+</script>
+<!-- コンテンツ -->
+<input type="hidden" th:id="'work_id'+${wgrp}" >
+<input type="button" th:id="'setbtn'+${wgrp}" style="display:none;">
+<table style="width:100%;">
+<tr th:id="'tr_header'+${wgrp}"><td>
+<input type="checkbox" th:id="'header_check'+${wgrp}" checked="checked" style="display:none;">
+
+<!-- 作業手順ヘッダ START -->
+<table th:id="'header'+${wgrp}"class="wgrpheader" th:onclick="|header_click('__${wgrp}__')|">
+	<tr>
+		<td class="workheader_wgrp">
+			<labeL th:id="'work_group_name'+${wgrp}"></labeL>
+		<td>
+		<td class="workheader_allow">
+			<labeL th:id="'allow'+${wgrp}">▲</labeL>
+		<td>
+	</tr>
+</table>
+<!-- 作業手順ヘッダ END -->
+
+<table th:id="'proc_table'+${wgrp}" class="wgrpwork">
+<tr><td>
+
+<!-- 作業手順 START -->
+<table style="width:100%">
+	<tr>
+		<td>
+		<table style="width:100%">
+			<tr style="text-align: left;"><td colspan="4">
+				<!-- 作業手順 -->
+				<table class="worktable">
+					<tr>
+						<td th:id="'td'+${wgrp}"></td>
+					</tr>
+				</table>
+			<td></tr>
+			<tr>
+			<td style="width:200px;">
+				<table>
+				<tr>
+				<td>
+				<label>Data</label>
+				</td>
+				</tr>
+				<tr>
+				<td>
+				<a href="#" th:id="'btnCamera'+${wgrp}"><i class="icon icon-photo"></i>カメラアイコン</a>
+				</td>
+				</tr>
+				</table>
+			</td>
+			<td>
+				<img class="" alt="Microscopy"
+					src="">
+			</td>
+			<td style="width:100px;">
+				<label>Decision</label>
+			</td>
+			<td style="width:300px;">
+				<table>
+				<tr class="checklistcheckbox">
+					<td>
+						<label class="checklistcheckbox">
+							<input type="checkbox" th:id="'checkpass'+${wgrp}">
+							PASS
+						</label>
+					</td>
+				</tr>
+				<tr class="checklistcheckbox">
+					<td>
+						<label class="checklistcheckbox">
+							<input type="checkbox" th:id="'checkfail'+${wgrp}">
+							FAIL
+						</label>
+					</td>
+				</tr>
+				</table>
+			</td>
+			</tr>
+		</table>
+		</td>
+	</tr>
+	<tr style="text-align: right;"><td>
+		<!-- 処理 -->
+		<input type="button" th:id="'okbtn'+${wgrp}" value="OK" 
+			class="btn custombtn" style="width:100px;" disabled="disabled">
+	<td></tr>
+</table>
+<!-- 作業手順 END -->
+
+</td></tr>
+</table>
+<td>
+</tr>
+</table>
