@@ -1,3 +1,10 @@
+
+var errmsg = 'Cannot be operated.';		// 操作不可工程クリック時エラーメッセージ
+var deviation = 'Deviation';			// 逸脱
+var wgrp_diviation_status = 'W99';		// 作業グループの逸脱ステータス
+var end_status = ['P05','T05','B03'];	// 工程の完了ステータス
+var current_status = ['P02','P03','P04','T02','T03','T04','B02'];	// 工程の仕掛ステータス
+
 // 作業実績情報
 var new_WORK_RESULT_TABLE = 
 {
@@ -140,6 +147,40 @@ function row_click(trID){
 	trID.mouseout(function(){
 		$(this).css("background-color","#fcf2d1") .css("cursor","normal")
 	});
+}
+/***********************************
+作業手順のヘッダクリック
+***********************************/
+function header_click(disp_flg){
+	
+	if ($("#header_check"+disp_flg).prop("checked") == true) {
+		$("#header_check"+disp_flg).prop("checked", false);
+		$("#proc_table"+disp_flg).hide();
+		$("#allow"+disp_flg).text("▼");
+   } else {
+   	$("#header_check"+disp_flg).prop("checked", true);
+   	$("#proc_table"+disp_flg).show();
+   	$("#allow"+disp_flg).text("▲");
+   }
+}
+
+/***********************************
+作業グループの枠操作
+***********************************/
+function open_work(no, open){
+	/*
+	if(open){
+		// 作業グループの枠を開ける
+		$("#header_check"+no).prop("checked", false);header_click(no);
+	}else{
+		// 作業グループの枠を閉じる
+		$("#header_check"+no).prop("checked", true);header_click(no);		
+	}
+	*/
+	if(open){
+		// 仕掛位置まで移動
+		$("html,body").animate({scrollTop:$("#tr_header"+no).offset().top});
+	}
 }
  /*
   * 要素ごとに有効無効 設定

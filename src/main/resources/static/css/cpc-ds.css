@@ -249,35 +249,36 @@
 	color: white;
 	width:100%;
 }
-/*作業グループ 作業手順*/
-.wgrpwork{
-	border: 1px solid black;
-    width:100%;
-}
-
 /*作業手順ヘッダ(作業グループ名)の設定*/
 .workheader_wgrp{
 	position: relative;
-	width:300px;
+	width:100%;
 	text-align: left;
 	left: 20px;
 }
 /*作業手順ヘッダ(矢印)の設定*/
 .workheader_arrow{
 	position: relative;
+	width:100%;
 	text-align: right;
 	right: 0px;
 }
 
+/*作業グループ 作業手順*/
+.wgrpwork{
+	border: 1px solid black;
+    width:100%;
+}
+
 /*作業手順明細の設定*/
 .worktable{
-    width:900px;
+    width:95%;
     border: 1px solid black;
     background    : #e1f4ff;
 }
 /*作業手順明細の設定*/
 .checklist{
-    width:900px;
+    width:95%;
     border: 1px solid black;
 }
 /*チェックリスト：ヘッダ*/
@@ -290,7 +291,7 @@
 }
 /*チェックリスト明細の設定*/
 .checklistcontens{
-    width:850px;
+    width:90%;
     border: 1px solid black;
     background    : #d7ffaf;
     position: relative;
