@@ -11,15 +11,15 @@ $(function() {
 	
 	// 要素名
 	var okbtn = '#okbtn'+wgrp;
-	
+	var printbtn = '#printbtn'+wgrp;
+	var kitlabel = '#kitlabel'+wgrp;
 	var tdcheck = '#tdcheck'+wgrp;
 	var tdcoa = '#tdcoa'+wgrp;
 	var td = '#td'+wgrp;
-	
 	var work_id = '#work_id'+wgrp;
+	var eximg = '#eximg'+wgrp;
 	
 	// 逸脱アイコン非表示
-	var eximg = '#eximg'+wgrp;
 	$(eximg).hide();
 	
 	// 作業手順取得
@@ -29,10 +29,11 @@ $(function() {
 	    url: '/rest/workmst/select'+args,
 	}).done(function(data, dataType) {
 	    var usage_arr = JSON.parse(data);
-	    if(usage_arr.list.length>0){
- 	    	WORK_MASTER = usage_arr.list[0];
- 		    $(td).text(WORK_MASTER.work);
- 		    $(work_id).val(WORK_MASTER.work_ID);
+	    //データをテーブル形式にする
+	    var count = 1;
+	    $.each(usage_arr.list,function(i,WORK_MASTER){
+	    	
+ 		    $(td+count).text(WORK_MASTER.work);
  		    
  			// ステータスチェック
  			var args = 
@@ -44,22 +45,23 @@ $(function() {
  			url: '/ajax/check_status'+args,
  			}).done(function(data, dataType) {
  				if(data==false){
- 					setDisabled(okbtn,true);
+ 					setDisabled(okbtn+count,true);
  				}else{
  					open_work(wgrp, true);	// 作業手順表示
- 					setDisabled(okbtn,false);
+ 					setDisabled(okbtn+count,false);
  				}
  			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
  				console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
  			});
  			
- 	    }
+ 			count++;
+ 			
+	    });
+	    
 	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 	});
  	
-
-	
 	// 逸脱チェック
 	args = 
 		"?BATCH_ID="+batch_id+
@@ -69,7 +71,6 @@ $(function() {
 	type: "GET", 
 	url: '/rest/workgroupstatus/select'+args,
 	}).done(function(data, dataType) {
-		console.log(data);
 		var usage_arr = JSON.parse(data);
 	    if(usage_arr.list.length>0){
 	    	WORK_GROUP_STATUS_TABLE = usage_arr.list[0];
@@ -86,6 +87,35 @@ $(function() {
 	// OKボタンクリック時の処理
 	$(okbtn).click(function() {
 		confirm_accept(wgrp,$(work_id).val());
+	})
+	
+	// Printボタンクリック時の処理
+	$(printbtn).click(function() {
+		if($(kitlabel).val()==''){
+			$.ajax({
+				type: "GET", 
+				url: '/ajax/make_kit_label',
+				}).done(function(data, dataType) {
+			    	$(kitlabel).val(data);
+			    	//PDF作成処理
+			        var docDef = {
+			          content:[
+			            {qr: data}
+			          ],
+			        };
+			        pdfMake.createPdf(docDef).download("Kitlabel.pdf");
+				}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+					console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+				});
+		}else{
+			//PDF作成処理
+	        var docDef = {
+	          content:[
+	            {qr: $(kitlabel).val()}
+	          ],
+	        };
+	        pdfMake.createPdf(docDef).download("Kitlabel.pdf");
+		}
 	})
 
 });
@@ -107,8 +137,8 @@ $(function() {
 		<td class="workheader_allow">
 			<table>
 				<tr>
-					<td><labeL th:id="'allow'+${wgrp}">▲</labeL></td>
 					<td><img th:id="'eximg'+${wgrp}" alt="" class="aicon" src="/images/exclamation_mark.png"></td>
+					<td><labeL th:id="'allow'+${wgrp}">▲</labeL></td>
 				</tr>
 			</table>
 		<td>
@@ -121,20 +151,87 @@ $(function() {
 
 <!-- 作業手順 START -->
 <table style="width:100%">
+	<!-- 手順1 -->
 	<tr>
 		<td>
 		<table style="width:100%">
 			<tr style="text-align: left;"><td>
-				<!-- 作業手順 -->
 				<table class="worktable">
 					<tr>
-						<td th:id="'td'+${wgrp}"></td>
+						<td colspan="2" th:id="'td'+${wgrp}+'1'"></td>
+					</tr>
+					<tr class="checklistreaoson">
+						<td>
+							<input type="text" th:id="'kitlabel'+${wgrp}" readonly>
+							<input type="button" th:id="'printbtn'+${wgrp}" value="Print" 
+								class="btn custombtn" style="width:100px;">
+						</td>
 					</tr>
 				</table>
 			<td></tr>
 			<tr style="text-align: right;"><td>
 				<!-- 処理 -->
-				<input type="button" th:id="'okbtn'+${wgrp}" value="OK" 
+				<input type="button" th:id="'okbtn'+${wgrp}+'1'" value="OK" 
+					class="btn custombtn" style="width:100px;" disabled="disabled">
+			<td></tr>
+		</table>
+		</td>
+	</tr>
+	<!-- 手順2 -->
+	<tr>
+		<td>
+		<table style="width:100%">
+			<tr style="text-align: left;"><td>
+				
+				<table class="worktable">
+					<tr>
+						<td th:id="'td'+${wgrp}+'2'"></td>
+					</tr>
+				</table>
+			<td></tr>
+			<tr style="text-align: right;"><td>
+				<!-- 処理 -->
+				<input type="button" th:id="'okbtn'+${wgrp}+'2'" value="OK" 
+					class="btn custombtn" style="width:100px;" disabled="disabled">
+			<td></tr>
+		</table>
+		</td>
+	</tr>
+	<!-- 手順3 -->
+	<tr>
+		<td>
+		<table style="width:100%">
+			<tr style="text-align: left;"><td>
+				
+				<table class="worktable">
+					<tr>
+						<td th:id="'td'+${wgrp}+'3'"></td>
+					</tr>
+				</table>
+			<td></tr>
+			<tr style="text-align: right;"><td>
+				<!-- 処理 -->
+				<input type="button" th:id="'okbtn'+${wgrp}+'3'" value="OK" 
+					class="btn custombtn" style="width:100px;" disabled="disabled">
+			<td></tr>
+		</table>
+		</td>
+	</tr>
+	<!-- 手順4 -->
+	<tr>
+		<td>
+		<table style="width:100%">
+			<tr style="text-align: left;"><td>
+				
+				<table class="worktable">
+					<tr>
+						<td th:id="'td'+${wgrp}+'4'"></td>
+					</tr>
+				</table>
+			<td></tr>
+			<tr style="text-align: right;"><td>
+				<!-- 処理 -->
+				<input type="button" th:id="'okbtn'+${wgrp}+'4'" value="OK" 
 					class="btn custombtn" style="width:100px;" disabled="disabled">
 			<td></tr>
 		</table>

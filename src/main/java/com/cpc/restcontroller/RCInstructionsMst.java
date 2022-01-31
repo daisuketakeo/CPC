@@ -58,11 +58,13 @@ public class RCInstructionsMst {
     public String select(
          @RequestParam(name="IM_ID", required = false) String IM_ID
          ,@RequestParam(name="NAME", required = false) String NAME
+         ,@RequestParam(name="MATERIAL_GORUP_ID", required = false) String MATERIAL_GORUP_ID
          ) {
      
         INSTRUCTIONS_MASTER data = new INSTRUCTIONS_MASTER();
         data.setIM_ID(IM_ID);
         data.setNAME(NAME);
+        data.setMATERIAL_GORUP_ID(MATERIAL_GORUP_ID);
         
         String json = "";
         try {

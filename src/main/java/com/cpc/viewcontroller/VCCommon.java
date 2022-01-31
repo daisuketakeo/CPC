@@ -567,5 +567,17 @@ public class VCCommon {
         
         return new ArrayList<String>();
     }
+    
+    /*
+     * Kit Label 生成
+     */
+    public String makeKitLabel() {
+        Calendar cl = Calendar.getInstance();
+        SimpleDateFormat yyyy = new SimpleDateFormat("yyyy");
+        SimpleDateFormat mmdd = new SimpleDateFormat("MMdd");
+        
+    	return property.getKIT_LABEL_FIX_STRING() + 
+    			yyyy.format(cl.getTime()) +"0" + mmdd.format(cl.getTime());
+    }
 
 }

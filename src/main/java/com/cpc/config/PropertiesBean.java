@@ -24,6 +24,8 @@ public class PropertiesBean {
 	private String MONITORING_DATA_FILE;
 	
 	private String CHECKLIST_MSG1;
-	private String CHECKLIST_MSG2;		
+	private String CHECKLIST_MSG2;
+	
+	private String KIT_LABEL_FIX_STRING;
 	
 }

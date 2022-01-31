@@ -46,6 +46,7 @@ public interface RInstructionsMst{
             + ", ICP3_MATERIAL_NAME "
             + ", ICP3_VOLUME "
             + ", ICP3_INCUBATION_TIME "
+            + ", MATERIAL_GORUP_ID "
             + ", PROTOCOL "
          +") VALUES ( "
             + "  #{IM_ID} "
@@ -76,6 +77,7 @@ public interface RInstructionsMst{
             + ", #{ICP3_MATERIAL_NAME} "
             + ", #{ICP3_VOLUME} "
             + ", #{ICP3_INCUBATION_TIME} "
+            + ", #{MATERIAL_GORUP_ID} "
             + ", #{PROTOCOL} "
          +")"
          )
@@ -112,6 +114,7 @@ public interface RInstructionsMst{
         "    <if test='ICP3_MATERIAL_NAME != null'> , ICP3_MATERIAL_NAME = #{ICP3_MATERIAL_NAME} </if>",
         "    <if test='ICP3_VOLUME != null'> , ICP3_VOLUME = #{ICP3_VOLUME} </if>",
         "    <if test='ICP3_INCUBATION_TIME != null'> , ICP3_INCUBATION_TIME = #{ICP3_INCUBATION_TIME} </if>",
+        "    <if test='MATERIAL_GORUP_ID != null'> , MATERIAL_GORUP_ID = #{MATERIAL_GORUP_ID} </if>",
         "    <if test='PROTOCOL != null'> , PROTOCOL = #{PROTOCOL} </if>",
         "  </set>",
         "  WHERE ",
@@ -135,6 +138,9 @@ public interface RInstructionsMst{
         "    </if>",
         "    <if test='NAME != &quot;&quot; and NAME != null'>",
         "      AND NAME = #{NAME}",
+        "    </if>",
+        "    <if test='MATERIAL_GORUP_ID != &quot;&quot; and MATERIAL_GORUP_ID != null'>",
+        "      AND MATERIAL_GORUP_ID = #{MATERIAL_GORUP_ID}",
         "    </if>",
         "  </where>",
         "</script>",

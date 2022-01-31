@@ -353,6 +353,19 @@ public class VCAjax extends VCCommon{
         
     }
     
+    /*
+     * Kit Label 発行
+     */
+    @GetMapping("/ajax/make_kit_label")
+    public String make_kit_label() {
+    	return makeKitLabel();
+    }
+    
+    
+    
+    
+    // 以下デバッグ用
+    
     @GetMapping("/preview")
     public void preview(HttpServletRequest request, HttpServletResponse response) {
     	

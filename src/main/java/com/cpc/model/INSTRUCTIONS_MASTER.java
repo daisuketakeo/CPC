@@ -35,5 +35,6 @@ public class INSTRUCTIONS_MASTER  implements Serializable{
 	private String ICP3_MATERIAL_NAME;
 	private String ICP3_VOLUME;
 	private String ICP3_INCUBATION_TIME;
+	private String MATERIAL_GORUP_ID;
 	private String PROTOCOL;
 }
