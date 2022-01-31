@@ -1,3 +1,82 @@
+// 作業実績情報
+var new_WORK_RESULT_TABLE = 
+{
+    work_RESULT_NO    :null,
+    process_ID        :null,
+    work_GROUP        :null,
+    work_ID           :null,
+    id                :null,
+    check_RESULT      :null,
+    check_REASON      :null,
+    check_COA         :null,
+    check_COA_REASON  :null,
+    check_FILE_NAME   :null,
+    check_FILE_BASE64 :null,
+    label             :null,
+    count_RESULT      :null,
+    work_USERID       :null,
+    work_USERNAME     :null,
+    work_DATE         :null
+};
+
+/*
+ * 作業実績情報初期化
+ */
+function initnewWRT(){
+    new_WORK_RESULT_TABLE.process_ID        =null;
+    new_WORK_RESULT_TABLE.work_GROUP        =null;
+    new_WORK_RESULT_TABLE.work_ID           =null;
+    new_WORK_RESULT_TABLE.id                =null;
+    new_WORK_RESULT_TABLE.check_RESULT      =null;
+    new_WORK_RESULT_TABLE.check_REASON      =null;
+    new_WORK_RESULT_TABLE.check_COA         =null;
+    new_WORK_RESULT_TABLE.check_COA_REASON  =null;
+    new_WORK_RESULT_TABLE.check_FILE_NAME   =null;
+    new_WORK_RESULT_TABLE.check_FILE_BASE64 =null;
+    new_WORK_RESULT_TABLE.work_USERID       =null;
+    new_WORK_RESULT_TABLE.work_USERNAME     =null;
+    new_WORK_RESULT_TABLE.work_DATE         =null;
+}
+
+/***********************************
+作業実績登録
+***********************************/
+ function endwork(
+ 	PROCESS_ID, ID, WORK_GROUP, WORK_ID,
+ 	CHECK_RESULT,CHECK_REASON,CHECK_COA,CHECK_COA_REASON
+ 	){
+ 	
+     // 作業実績生成
+     initnewWRT();
+     new_WORK_RESULT_TABLE.process_ID        = PROCESS_ID;
+     new_WORK_RESULT_TABLE.work_GROUP        = WORK_GROUP;
+     new_WORK_RESULT_TABLE.work_ID           = WORK_ID;
+     new_WORK_RESULT_TABLE.id                = ID;
+     new_WORK_RESULT_TABLE.check_RESULT      = CHECK_RESULT;
+     new_WORK_RESULT_TABLE.check_REASON      = CHECK_REASON;
+     new_WORK_RESULT_TABLE.check_COA         = CHECK_COA;
+     new_WORK_RESULT_TABLE.check_COA_REASON  = CHECK_COA_REASON;
+     new_WORK_RESULT_TABLE.check_FILE_NAME   = null;　//　新規登録 or 更新しないのでNULL
+     new_WORK_RESULT_TABLE.check_FILE_BASE64 = null;　//　新規登録 or 更新しないのでNULL
+    
+ 	//データを送信
+ 	var XHR = new XMLHttpRequest();
+ 	XHR.open( "POST", "/ajax/workend" );
+ 	XHR.setRequestHeader('Content-Type', 'application/json');
+ 	XHR.send(JSON.stringify(new_WORK_RESULT_TABLE));
+	XHR.onreadystatechange = function() {
+	  if( XHR.readyState === 4 && XHR.status === 200 ) {
+		// 正常終了時に処理
+		updaterow();
+	  }else{
+		if(XHR.responseText==''){
+		}else{
+			error(XHR.responseText); //エラーダイアログ表示
+		}
+	  }
+	}
+ }
+
 /*
  * ヘッダスタイル変更
  */
