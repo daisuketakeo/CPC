@@ -20,8 +20,9 @@ $(function() {
 	var checkpass = '#checkpass'+wgrp;
 	var checkfail = '#checkfail'+wgrp;
 	
-	var btnCamera = '#btnCamera'+wgrp;
-	var imgCapture1 = '#imgCapture1'+wgrp;
+	var btnDataget = '#btnDataget'+wgrp;
+	var csvfile1 = '#csvfile1'+wgrp;
+	var csvfile2 = '#csvfile2'+wgrp;
 	var pass = '#pass'+wgrp;
 	var fail = '#fail'+wgrp;
 	
@@ -84,9 +85,9 @@ $(function() {
 		});
 	})
  	
-	// カメラアイコンクリック時の処理
-	$(btnCamera).click(function() {
-		// 画像ファイルを取得
+	// データ取り込みクリック時の処理
+	$(btnDataget).click(function() {
+		// CSVファイル名を取得
 		var args = 
 			"?WORK_GROUP="+wgrp+
 			"&WORK_ID="+$("#work_id"+wgrp).val()+
@@ -100,7 +101,9 @@ $(function() {
 		    var usage_arr = JSON.parse(data);
 		    if(usage_arr.list.length>0){
 	 	    	WORK_MASTER = usage_arr.list[0];
-	 		    $(imgCapture1).src(CAMERA_VISION_PATH+WORK_MASTER.CAPTURE1);
+	 	    	var csvfile_arr = JSON.parse(CAMERA_VISION_PATH+WORK_MASTER.CSV1);
+	 		    $(csvfile1).text(csvfile_arr.list[0]);
+	 		    $(csvfile2).text(csvfile_arr.list[1]);
 	 	    }
 		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 		  // エラーメッセージの表示
@@ -198,26 +201,24 @@ $(function() {
 		<table>
 			<tr style="vertical-align: top;">
 			<td style="width:100px;">
-				<table>
-				<tr>
-				<td>
-				<label>Data</label>
-				</td>
-				</tr>
-				<tr>
-				<td>
-				<!-- カメラアイコン -->
+				<!-- データ取り込みアイコン -->
 				<!-- spectre-icons.min.css だといまいちいいのがない -->
-				<!-- <a href="#" th:id="'btnCamera'+${wgrp}"><i class="icon icon-2x icon-photo" style="color:black;"></i></a> -->
+				<!-- <a href="#" th:id="'btnDataGet'+${wgrp}"><i class="icon icon-2x icon-photo" style="color:black;"></i></a> -->
 				<!-- https://icooon-mono.com/ -->
-				<a href="#" th:id="'btnCamera'+${wgrp}"><img src="/images/camera.png" alt="カメラアイコン"></a>
-				</td>
-				</tr>
-				</table>
+				<a href="#" th:id="'btnDataGet'+${wgrp}"><img src="/images/dataget.png" alt="データ取り込みアイコン"></i></a>
 			</td>
 			<td style="width:600px;">
-				<img th:id="'imgCapture1'+${wgrp}" class="" width="400px" height="400px" alt="Capture1"
-					src="">
+				<table class="table_ebr" style="border:1px;">
+				<tr><th colspan="2" class="th_ebr">Date</th></tr>
+				<tr><td style="border:1px solid;">Cell density</td><td style="border:1px solid;"><input type="text" th:id="'csvfile1'+${wgrp}" readonly>　cells/cm</td></tr>
+				<tr><td style="border:1px solid;">Initial seeding density</td><td style="border:1px solid;">1.3×10⁴ cells/cm</td></tr>
+				<tr><td style="border:1px solid;">Doubling</td><td style="border:1px solid;"><input type="text" th:id="'csvfile2'+${wgrp}" readonly>　hour</td></tr>
+				<!-- 
+				<tr><td style="border:1px solid;">Cell density</td><td><input type="text" th:id="'csvfile1'+${wgrp}" readonly>　cells/cm</td></tr>
+				<tr><td>Initial seeding density</td><td>1.3×10⁴ cells/cm</td></tr>
+				<tr><td>Doubling</td><td><input type="text" th:id="'csvfile2'+${wgrp}" readonly>　hour</td></tr>
+				 -->
+				</table>
 			</td>
 			<td style="width:100px;">
 				<label>Decision</label>
