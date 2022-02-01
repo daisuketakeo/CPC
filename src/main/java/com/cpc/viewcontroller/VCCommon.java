@@ -65,7 +65,9 @@ public class VCCommon {
 	public static final String param_id            = "ID";				// ID(MATERIAL_NO or BACTH_ID)
 	public static final String param_work_id       = "WORK_ID";			// WORK_ID
 	public static final String param_material_no   = "MATERIAL_NO";		// MATERIAL_NO
+	public static final String param_material_group_id   = "MATERIAL_GROUP_ID";		// MATERIAL_GROUP_ID
 	public static final String param_batch_id      = "BATCH_ID";		// BATCH_ID
+	public static final String param_im_id         = "IM_ID";			// IM_ID
 	public static final String param_work_group_json  = "WORK_GROUP_JSON";	// 画面へ渡す作業グループ情報(Json)
 	public static final String param_work_group_map   = "WORK_GROUP_MAP";	// 画面へ渡す作業グループ情報(MAP)
 	public static final String param_status_list      = "STATUS_LIST";		// 画面へ渡すステータスリスト
@@ -80,6 +82,10 @@ public class VCCommon {
 	public static final String rest_workresult = "/rest/workresult/";	// 作業実績
 	public static final String rest_workgroupmst = "/rest/workgroupmst/";	// 作業グループマスタ
 	public static final String rest_statusmst = "/rest/statusmst/";	// ステータスマスタ
+	public static final String rest_instructions = "/rest/instructions/";	// 製造指図テーブル
+	public static final String rest_instructionsmst = "/rest/instructionsmst/";	// 製造指図マスタ
+	public static final String rest_airelation = "/rest/airelation/";	// 受入指図連携テーブル
+	public static final String rest_materialgroup = "/rest/materialgroup/";	// マテリアルグループテーブル
 		
 	/*
 	 * ユーザ権限
@@ -376,6 +382,18 @@ public class VCCommon {
     }
     
     /*
+     * MapをJson形式に変換
+     */
+    public String getJson(Map<String ,Object> map) {
+    	String json = "";
+    	try{
+    		json = new ObjectMapper().writeValueAsString(map);
+    	}catch(Exception e) {
+    	}
+    	return json;
+    }
+    
+    /*
      * 画面パラメータ取得(Json)
      */
     public static String getParamJson(Map<String ,DisplayParameter> map) {
@@ -578,6 +596,13 @@ public class VCCommon {
         
     	return property.getKIT_LABEL_FIX_STRING() + 
     			yyyy.format(cl.getTime()) +"0" + mmdd.format(cl.getTime());
+    }
+    
+    /*
+     * EBR試験の画像ファイル／CSVファイル格納フォルダ取得
+     */
+    public String get_ebrtestdir() {
+    	return property.getEBR_TEST_PATH();
     }
 
 }

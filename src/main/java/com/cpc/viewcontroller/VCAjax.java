@@ -5,7 +5,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +23,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cpc.model.ACCEPT_TABLE;
+import com.cpc.model.AI_RELATION_TABLE;
+import com.cpc.model.INSTRUCTIONS_MASTER;
+import com.cpc.model.INSTRUCTIONS_TABLE;
+import com.cpc.model.MATERIAL_GROUP_TABLE;
+import com.cpc.model.STATUS_MASTER;
 import com.cpc.model.USER_MASTER;
 import com.cpc.model.WORK_GROUP_MASTER;
 import com.cpc.model.WORK_MASTER;
@@ -54,6 +62,14 @@ public class VCAjax extends VCCommon{
      */
     @GetMapping("/ajax/fixed_work")
     public String fixed_work() {
+    	return getFixedWork();
+    }
+    
+    /*
+     * EBR試験の画像ファイル／CSVファイル格納フォルダ取得
+     */
+    @GetMapping("/ajax/get_ebrtestdir")
+    public String get_ebrtestdir() {
     	return getFixedWork();
     }
     
@@ -305,6 +321,10 @@ public class VCAjax extends VCCommon{
 
         	}
 
+        }else {
+        	
+        	// 指図の場合
+        	
         }
 		
 		return result ? "OK" : "NG";
@@ -352,9 +372,103 @@ public class VCAjax extends VCCommon{
     }
     
     /*
-     * 作業実績登録
-     * 引数：Json形式
+     * Kit Label 発行
      */
+    @GetMapping("/ajax/make_kit_label")
+    public String make_kit_label() {
+    	return makeKitLabel();
+    }
+    
+    /*
+     * マテリアル一覧取得
+     */
+    @GetMapping("/ajax/get_material_list")
+    public String get_material_list(
+    		@RequestParam(param_batch_id) String batch_id,
+    		@RequestParam(param_process_id) String process_id,
+    		@RequestParam(param_work_group) String work_group) {
+    	
+    	String json = "";
+    	
+    	// 製造指図テーブル取得
+    	String url= rest_instructions+"select"+
+				"?"+ param_batch_id+"="+batch_id;
+	 	List<INSTRUCTIONS_TABLE> list1 = getRest(url, INSTRUCTIONS_TABLE.class);
+	 	
+	 	if(list1.size()>0) {
+	 		String im_id = list1.get(0).getIM_ID();
+	 		// 受入指図連携テーブル取得
+	 		url= rest_airelation+"select"+
+					"?"+ param_im_id+"="+im_id+
+					"&"+ param_process_id+"="+process_id;
+		 	List<AI_RELATION_TABLE> list2 = getRest(url, AI_RELATION_TABLE.class);
+		 	if(list2.size()>0) {
+
+		 		Map<String ,Object> map = new HashMap<String ,Object>();
+		 		for(AI_RELATION_TABLE art : list2) {
+			 		String material_no = art.getMATERIAL_NO();
+			 		// 受入テーブル取得
+			 		url= rest_accept+"select"+
+							"?"+ param_material_no+"="+material_no;
+			 		List<ACCEPT_TABLE> list3 = getRest(url, ACCEPT_TABLE.class);
+			 		if(list3.size()>0) {
+			 			ACCEPT_TABLE ac = list3.get(0);
+			 			if(!map.containsKey(ac.getMATERIAL_NO())) {
+			 				map.put(ac.getMATERIAL_NO(), ac);
+			 			}
+			 		}
+		 		}
+		 		
+		 		json = getJson(map);
+		 	}
+	 	}
+	 	
+        return json;
+    }
+    
+    /*
+     * 実施対象マテリアル一覧取得
+     */
+    @GetMapping("/ajax/get_exec_material_list")
+    public List<String> get_exec_material_list(
+    		@RequestParam(param_batch_id) String batch_id) {
+    	
+    	List<String> rtn = new ArrayList<String>();
+    	
+    	// 製造指図テーブル取得
+    	String url= rest_instructions+"select"+
+				"?"+ param_batch_id+"="+batch_id;
+	 	List<INSTRUCTIONS_TABLE> list1 = getRest(url, INSTRUCTIONS_TABLE.class);
+	 	
+	 	if(list1.size()>0) {
+	 		String im_id = list1.get(0).getIM_ID();
+	 		// 指図指図マスタ取得
+	 		url= rest_instructionsmst+"select"+
+					"?"+ param_im_id+"="+im_id;
+		 	List<INSTRUCTIONS_MASTER> list2 = getRest(url, INSTRUCTIONS_MASTER.class);
+		 	if(list2.size()>0) {
+
+		 		String mg_id = list2.get(0).getMATERIAL_GORUP_ID();
+		 		// 指図指図マスタ取得
+		 		url= rest_materialgroup+"select"+
+						"?"+ param_material_group_id+"="+mg_id;
+			 	List<MATERIAL_GROUP_TABLE> list3 = getRest(url, MATERIAL_GROUP_TABLE.class);
+			 	if(list3.size()>0) {
+			 		for(MATERIAL_GROUP_TABLE mgt : list3) {
+			 			rtn.add(mgt.getMATERIAL_NO());
+			 		}
+			 	}
+		 	}
+	 	}
+	 	
+        return rtn;
+    }
+    
+    
+    
+    // 以下デバッグ用
+    
+    
     @GetMapping("/ajax/pdf_test")
     public void pdf_test() {
 
@@ -379,19 +493,6 @@ public class VCAjax extends VCCommon{
     	  }   
         
     }
-    
-    /*
-     * Kit Label 発行
-     */
-    @GetMapping("/ajax/make_kit_label")
-    public String make_kit_label() {
-    	return makeKitLabel();
-    }
-    
-    
-    
-    
-    // 以下デバッグ用
     
     @GetMapping("/preview")
     public void preview(HttpServletRequest request, HttpServletResponse response) {

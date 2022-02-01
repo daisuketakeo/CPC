@@ -40,6 +40,8 @@ function initnewWRT(){
     new_WORK_RESULT_TABLE.check_COA_REASON  =null;
     new_WORK_RESULT_TABLE.check_FILE_NAME   =null;
     new_WORK_RESULT_TABLE.check_FILE_BASE64 =null;
+    new_WORK_RESULT_TABLE.label             =null;
+    new_WORK_RESULT_TABLE.count_RESULT      =null;
     new_WORK_RESULT_TABLE.work_USERID       =null;
     new_WORK_RESULT_TABLE.work_USERNAME     =null;
     new_WORK_RESULT_TABLE.work_DATE         =null;
@@ -50,7 +52,8 @@ function initnewWRT(){
 ***********************************/
  function endwork(
  	PROCESS_ID, ID, WORK_GROUP, WORK_ID,
- 	CHECK_RESULT,CHECK_REASON,CHECK_COA,CHECK_COA_REASON
+ 	CHECK_RESULT,CHECK_REASON,CHECK_COA,CHECK_COA_REASON,
+ 	LABEL,COUNT_RESULT
  	){
  	
      // 作業実績生成
@@ -65,6 +68,8 @@ function initnewWRT(){
      new_WORK_RESULT_TABLE.check_COA_REASON  = CHECK_COA_REASON;
      new_WORK_RESULT_TABLE.check_FILE_NAME   = null;　//　新規登録 or 更新しないのでNULL
      new_WORK_RESULT_TABLE.check_FILE_BASE64 = null;　//　新規登録 or 更新しないのでNULL
+     new_WORK_RESULT_TABLE.label             = LABEL;
+     new_WORK_RESULT_TABLE.count_RESULT      = COUNT_RESULT;
     
  	//データを送信
  	var XHR = new XMLHttpRequest();

@@ -10,84 +10,268 @@ $(function() {
 	getWorkGroupName(wgrp, wgrp, "work_group_name");
 	
 	// 要素名
-	var okbtn = '#okbtn'+wgrp;
-	var printbtn = '#printbtn'+wgrp;
-	var kitlabel = '#kitlabel'+wgrp;
-	var tdcheck = '#tdcheck'+wgrp;
-	var tdcoa = '#tdcoa'+wgrp;
-	var td = '#td'+wgrp;
-	var work_id = '#work_id'+wgrp;
+	var setbtn = '#setbtn'+wgrp;
 	var eximg = '#eximg'+wgrp;
+	var td = '#td'+wgrp;
+	var okbtn = '#okbtn'+wgrp;
+	var kitlabel = '#kitlabel'+wgrp;
+	var kitlabelprintbtn = '#kitlabelprintbtn'+wgrp;
+	var startbtn = '#startbtn'+wgrp;
+	var expdlabel = '#expdlabel'+wgrp;
+	var expdlabelprintbtn = '#expdlabelprintbtn'+wgrp;
+	var mtbl = '#mtbl'+wgrp;
+	var tdcheck = 'tdcheck'+wgrp;
+	var tdperformed_Time = 'tdperformed_Time'+wgrp;
 	
-	// 逸脱アイコン非表示
-	$(eximg).hide();
-	
-	// 作業手順取得
-	var args = "?WORK_GROUP="+wgrp;
-	$.ajax({
-	    type: "GET", 
-	    url: '/rest/workmst/select'+args,
-	}).done(function(data, dataType) {
-	    var usage_arr = JSON.parse(data);
-	    //データをテーブル形式にする
-	    $.each(usage_arr.list,function(i,WORK_MASTER){
-	    	
- 		    $(td+WORK_MASTER.work_ID).text(WORK_MASTER.work);
- 		    
- 			// ステータスチェック
- 			var args = 
- 				"?WORK_GROUP="+wgrp+
- 				"&WORK_ID="+WORK_MASTER.work_ID+
- 				"&ID="+batch_id;
- 			$.ajax({
- 			type: "GET", 
- 			url: '/ajax/check_status'+args,
- 			}).done(function(data, dataType) {
- 				if(data==false){
- 					setDisabled(okbtn+WORK_MASTER.work_ID,true);
- 				}else{
- 					open_work(wgrp, true);	// 作業手順表示
- 					setDisabled(okbtn+WORK_MASTER.work_ID,false);
- 				}
- 			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
- 				console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
- 			});
- 			
-	    });
+ 	// 初期表示処理
+	$(setbtn).click(function() {
+		
+		// 逸脱アイコン非表示
+		$(eximg).hide();
+		
+		// 作業手順取得
+		var args = "?WORK_GROUP="+wgrp;
+		$.ajax({
+		    type: "GET", 
+		    url: '/rest/workmst/select'+args,
+		}).done(function(data, dataType) {
+		    var usage_arr = JSON.parse(data);
+		    $.each(usage_arr.list,function(i,WORK_MASTER){
+		    	
+	 		    $(td+WORK_MASTER.work_ID).text(WORK_MASTER.work);
+	 		    
+	 			// ステータスチェック
+	 			var args = 
+	 				"?WORK_GROUP="+wgrp+
+	 				"&WORK_ID="+WORK_MASTER.work_ID+
+	 				"&ID="+batch_id;
+	 			$.ajax({
+	 			type: "GET", 
+	 			url: '/ajax/check_status'+args,
+	 			}).done(function(data, dataType) {
+	 				if(data==false){
+	 					setDisabled(okbtn+WORK_MASTER.work_ID,true);
+	 					if(WORK_MASTER.work_ID=='002'){
+							setDisabled(startbtn,true);
+	 					}
+	 				}else{
+	 					open_work(wgrp, true);	// 作業手順表示
+	 					setDisabled(okbtn+WORK_MASTER.work_ID,false);
+						if(WORK_MASTER.work_ID=='002'){
+							setDisabled(startbtn,false);
+	 					}
+	 				}
+	 			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+	 				console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+	 			});
+	 			
+		    });
+		    
+		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+		  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+		});
+	 	
+		// 逸脱チェック
+		args = 
+			"?BATCH_ID="+batch_id+
+			"&PROCESS_ID="+process_id+
+			"&WORK_GROUP="+wgrp;
+		$.ajax({
+		type: "GET", 
+		url: '/rest/workgroupstatus/select'+args,
+		}).done(function(data, dataType) {
+			var usage_arr = JSON.parse(data);
+		    if(usage_arr.list.length>0){
+		    	WORK_GROUP_STATUS_TABLE = usage_arr.list[0];
+	 		    if(WORK_GROUP_STATUS_TABLE.status==wgrp_diviation_status){
+	 		    	$(eximg).show();
+	 		    }else{
+	 		    	$(eximg).hide();
+	 		    }
+	 	    }
+		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+			console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+		});
+		
+		// マテリアル一覧取得
+		var tbodys = $(mtbl+" tbody");//全行を取得
+		
+		if(tbodys.length>0){
+			
+			// マテリアル一覧表示済みの場合
+			// マテリアルの作業実績取得
+			args = 
+				"?WORK_GROUP="+wgrp+
+				"&WORK_ID=002";
+			$.ajax({
+			type: "GET", 
+			url: '/rest/workresult/select'+args,
+			}).done(function(data, dataType) {
+				var usage_arr = JSON.parse(data);
+				$.each(usage_arr.list,function(i,WORK_RESULT_TABLE){
+					if(WORK_RESULT_TABLE.work_DATE=='' ||
+							WORK_RESULT_TABLE.work_DATE == null){
+						// 作業実施日が空白の場合
+			 	    	// 処理なし
+					}else{
+						//　作業実施日がある場合
+						for( var i=0,l=tbodys.length;i<l;i++ ){
+							// 選択行のMATERIAL_NO取得
+							var childtr = tbodys.eq(i).children();
+							var childtd = $(childtr).children();
+							var material_no = $(childtd.eq(0)).text();
+							if(material_no==WORK_RESULT_TABLE.id){
+								// 該当マテリアルのperformed_Time,Checkをセット
+								$('#'+tdperformed_Time+material_no).text(WORK_RESULT_TABLE.work_DATE);
+								$('#'+tdcheck+material_no).prop('checked', true);
+							}
+						}	
+					}
+				});
+			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+				console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+			});
+			
+		}else{
+			
+			// マテリアル一覧初期表示の場合
+			$.ajax({
+				type: "GET", 
+				url: '/ajax/get_material_list'+args,
+				}).done(function(data, dataType) {
+					var usage_arr = JSON.parse(data);
+					$.each(usage_arr,function(i,json){
+						
+						var tbody = $('<tbody />');
+						var tr1 = $('<tr/>');
+						tr1.append($('<td/>').text(json.material_NO));
+						tr1.append($('<td/>').text(json.material_NAME));
+						tr1.append($('<td/>').text(json.required_AMOUNT));
+						tr1.append($('<td/>').text(json.prepared_AMOUNT));
+						tr1.append($('<td/>').text(json.user_LOT_NO));
+						tr1.append($('<td/>').text(json.exp_DATE));
+						
+						var performed_Time = $('<td id="'+tdperformed_Time+json.material_NO+'"/>');
+						var mcheck = $('<td/>');
+						
+						// マテリアルの作業実績取得
+						args = 
+							"?WORK_GROUP="+wgrp+
+							"&WORK_ID=002"+
+							"&ID="+json.material_NO;
+						$.ajax({
+						type: "GET", 
+						url: '/rest/workresult/select'+args,
+						}).done(function(workresult, dataType) {
+							var workresult_arr = JSON.parse(workresult);
+							if(workresult_arr.list.length>0){
+								WORK_RESULT_TABLE = workresult_arr.list[0];
+								if(WORK_RESULT_TABLE.work_DATE=='' ||
+										WORK_RESULT_TABLE.work_DATE == null){
+									// 作業実施日が空白の場合
+									performed_Time.text("");
+						 	    	mcheck.append($("<input>", {
+							        	  type: "checkbox",
+							        	  id: tdcheck+json.material_NO,
+							        	  checked: false,
+							        	}));
+								}else{
+									//　作業実施日がある場合
+									performed_Time.text(WORK_RESULT_TABLE.work_DATE);
+									mcheck.append($("<input>", {
+							        	  type: "checkbox",
+							        	  id: tdcheck+json.material_NO,
+							        	  checked: true,
+							        	}));
+								}
+					 	    }else{
+					 	    	// 作業実績がない場合
+					 	    	performed_Time.text("");
+					 	    	mcheck.append($("<input>", {
+						        	  type: "checkbox",
+						        	  id: tdcheck+json.material_NO,
+						        	  checked: false,
+						        	}));
+					 	    }
+							tr1.append(performed_Time);
+							tr1.append(mcheck);
+							
+							tbody.append(tr1);
+							$(mtbl).append(tbody);
+							
+						}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+							console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+						});
+				    	
+					});
+				}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+					console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+				});
+		}
+		
+		// 作業実績取得
+	 	args = 
+			"?WORK_GROUP="+wgrp+
+			"&ID="+batch_id;
 	    
-	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
-	});
- 	
-	// 逸脱チェック
-	args = 
-		"?BATCH_ID="+batch_id+
-		"&PROCESS_ID="+process_id+
-		"&WORK_GROUP="+wgrp;
-	$.ajax({
-	type: "GET", 
-	url: '/rest/workgroupstatus/select'+args,
-	}).done(function(data, dataType) {
-		var usage_arr = JSON.parse(data);
-	    if(usage_arr.list.length>0){
-	    	WORK_GROUP_STATUS_TABLE = usage_arr.list[0];
- 		    if(WORK_GROUP_STATUS_TABLE.status==wgrp_diviation_status){
- 		    	$(eximg).show();
- 		    }else{
- 		    	$(eximg).hide();
- 		    }
- 	    }
-	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-		console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
-	});
-	
-	// OKボタンクリック時の処理
-	$(okbtn).click(function() {
-		confirm_accept(wgrp,$(work_id).val());
+		$.ajax({
+		type: "GET", 
+		url: '/rest/workresult/select'+args,
+		}).done(function(data, dataType) {
+			
+			var usage_arr = JSON.parse(data);
+		    $.each(usage_arr.list,function(i,WORK_RESULT_TABLE){
+		    	
+		    	if(WORK_RESULT_TABLE.work_ID=='001'){
+		    		$(kitlabel).val(WORK_RESULT_TABLE.label);
+		    	}
+		    	if(WORK_RESULT_TABLE.work_ID=='003'){
+		    		$(expdlabel).val(WORK_RESULT_TABLE.label);
+		    	}
+			});
+	 	    
+		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+			console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+		});
+		
 	})
 	
-	// Printボタンクリック時の処理
-	$(printbtn).click(function() {
+	// OKボタンクリック時の処理
+	$(okbtn+'001').click(function() {
+		// キットラベル出力チェック
+		if($(kitlabel).val()==''){
+			alertdialog('Please output Kit label.');
+			return;
+		}
+		confirm_manufacturing(wgrp,'001',$(kitlabel).val(),null);
+	})
+	$(okbtn+'002').click(function() {
+		
+		const exec_list = [];
+        var tbodys = $(mtbl+" tbody");//全行を取得
+		for( var i=0,l=tbodys.length;i<l;i++ ){
+			// 選択行のMATERIAL_NO取得
+			var childtr = tbodys.eq(i).children();
+			var childtd = $(childtr).children();
+			var material_no = $(childtd.eq(0)).text();
+			if($('#'+tdcheck+material_no).prop('checked') == true){
+				exec_list.push(material_no);
+			}
+		}
+        
+		confirm_manufacturing(wgrp,'002',null,null,exec_list.join());
+	})
+	$(okbtn+'003').click(function() {
+		// 有効期限ラベル出力チェック
+		if($(expdlabel).val()==''){
+			alertdialog('Please output Exp.date label.');
+			return;
+		}
+		confirm_manufacturing(wgrp,'003',$(expdlabel).val(),null);
+	})
+	
+	// キットラベルPrintボタンクリック時の処理
+	$(kitlabelprintbtn).click(function() {
 		if($(kitlabel).val()==''){
 			$.ajax({
 				type: "GET", 
@@ -114,6 +298,54 @@ $(function() {
 	        pdfMake.createPdf(docDef).download("Kitlabel.pdf");
 		}
 	})
+	
+	// Startbtnボタンクリック時の処理
+	$(startbtn).click(function() {
+		// 実施対象のマテリアル取得
+		var args = 
+			"?BATCH_ID="+batch_id;
+		$.ajax({
+		type: "GET", 
+		url: '/ajax/get_exec_material_list'+args,
+		}).done(function(arry, dataType) {
+			$.each(arry,function(i,data){
+				if($('#'+tdcheck+data).length){
+					$('#'+tdcheck+data).prop('checked', true);
+				}
+			});
+		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+			console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+		});
+	})
+	
+	// 有効期限ラベルPrintボタンクリック時の処理
+	$(expdlabelprintbtn).click(function() {
+		if($(expdlabel).val()==''){
+			$.ajax({
+				type: "GET", 
+				url: '/ajax/make_kit_label',
+				}).done(function(data, dataType) {
+			    	$(expdlabel).val(data);
+			    	//PDF作成処理
+			        var docDef = {
+			          content:[
+			            {qr: data}
+			          ],
+			        };
+			        pdfMake.createPdf(docDef).download("Expdatelabel.pdf");
+				}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+					console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+				});
+		}else{
+			//PDF作成処理
+	        var docDef = {
+	          content:[
+	            {qr: $(expdlabel).val()}
+	          ],
+	        };
+	        pdfMake.createPdf(docDef).download("Expdatelabel.pdf");
+		}
+	})
 
 });
 
@@ -121,6 +353,7 @@ $(function() {
 
 <!-- コンテンツ -->
 <input type="hidden" th:id="'work_id'+${wgrp}" >
+<input type="button" th:id="'setbtn'+${wgrp}" style="display:none;">
 <table style="width:100%;">
 <tr th:id="'tr_header'+${wgrp}"><td>
 <input type="checkbox" th:id="'header_check'+${wgrp}" checked="checked" style="display:none;">
@@ -157,14 +390,12 @@ $(function() {
 					<tr>
 						<td colspan="2" th:id="'td'+${wgrp}+'001'"></td>
 					</tr>
-					<tr class="checklistreaoson">
-						<td>
-							<input type="text" th:id="'kitlabel'+${wgrp}" readonly>
-							<input type="button" th:id="'printbtn'+${wgrp}" value="Print" 
-								class="btn custombtn" style="width:100px;">
-						</td>
-					</tr>
 				</table>
+			<td></tr>
+			<tr style="text-align: left;"><td>
+				<input type="text" th:id="'kitlabel'+${wgrp}" readonly style="width:300px;">
+				<input type="button" th:id="'kitlabelprintbtn'+${wgrp}" value="Print" 
+					class="btn custombtn" style="width:100px;">
 			<td></tr>
 			<tr style="text-align: right;"><td>
 				<!-- 処理 -->
@@ -179,11 +410,31 @@ $(function() {
 		<td>
 		<table style="width:100%">
 			<tr style="text-align: left;"><td>
-				
 				<table class="worktable">
 					<tr>
 						<td th:id="'td'+${wgrp}+'002'"></td>
 					</tr>
+				</table>
+			<td></tr>
+			<tr style="text-align: right;"><td>
+				<!-- 処理 -->
+				<input type="button" th:id="'startbtn'+${wgrp}" value="Start" 
+					class="btn custombtn" style="width:100px;" disabled="disabled">
+			<td></tr>
+			<tr style="text-align: left;"><td>
+				<table th:id="'mtbl'+${wgrp}" class="mtableArea">
+					<thead>
+						<tr>
+							<th class="th_sticky" >Material #</th>
+							<th class="th_sticky" >Material Name</th>
+							<th class="th_sticky" >Required<br>amount</th>
+							<th class="th_sticky" >Prepared<br>amount</th>
+							<th class="th_sticky" >User lot #</th>
+							<th class="th_sticky" >Exp. Date</th>
+							<th class="th_sticky" >Performed Time</th>
+							<th class="th_sticky" >Check</th>
+						</tr>
+			        </thead>
 				</table>
 			<td></tr>
 			<tr style="text-align: right;"><td>
@@ -199,36 +450,20 @@ $(function() {
 		<td>
 		<table style="width:100%">
 			<tr style="text-align: left;"><td>
-				
 				<table class="worktable">
 					<tr>
 						<td th:id="'td'+${wgrp}+'003'"></td>
 					</tr>
 				</table>
 			<td></tr>
+			<tr style="text-align: left;"><td>
+				<input type="text" th:id="'expdlabel'+${wgrp}" readonly style="width:300px;">
+				<input type="button" th:id="'expdlabelprintbtn'+${wgrp}" value="Print" 
+					class="btn custombtn" style="width:100px;">
+			<td></tr>
 			<tr style="text-align: right;"><td>
 				<!-- 処理 -->
 				<input type="button" th:id="'okbtn'+${wgrp}+'003'" value="OK" 
-					class="btn custombtn" style="width:100px;" disabled="disabled">
-			<td></tr>
-		</table>
-		</td>
-	</tr>
-	<!-- 手順4 -->
-	<tr>
-		<td>
-		<table style="width:100%">
-			<tr style="text-align: left;"><td>
-				
-				<table class="worktable">
-					<tr>
-						<td th:id="'td'+${wgrp}+'004'"></td>
-					</tr>
-				</table>
-			<td></tr>
-			<tr style="text-align: right;"><td>
-				<!-- 処理 -->
-				<input type="button" th:id="'okbtn'+${wgrp}+'004'" value="OK" 
 					class="btn custombtn" style="width:100px;" disabled="disabled">
 			<td></tr>
 		</table>

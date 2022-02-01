@@ -359,6 +359,7 @@
 }
 
 
+
 /*********************************
   工程フロー図
 *********************************/
@@ -567,4 +568,21 @@
     border        : 1px #666666 solid; /* 罫線      */
     background    : #99b9d7;           /* 背景色    */
     color         : white;           /* フォントの色 */
+}
+
+/* マテリアル一覧テーブル全体 */
+.mtableArea {
+  border-collapse: collapse;         /* 境界線結合 */
+  border-spacing : 0;                /* 罫線間余白 */
+  font-size      : 9pt;              /* 文字サイズ */ 
+  display        : block;
+  overflow-y     : scroll;
+  height         : 150px;
+  border         : 1px solid;
+}
+/* マテリアル一覧テーブル 明細 */
+.mtableArea td {
+  padding       : 5px;                 /* 余白      */
+  border        : 1px #666666 solid; /* 罫線      */
+  text-align    : left;
 }

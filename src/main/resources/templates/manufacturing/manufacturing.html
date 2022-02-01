@@ -66,12 +66,63 @@ function search(){
 	        
 	        $('#tbl1').append(tbody);
 	        
+	     	// 作業手順再表示			
+			refrech_work();
+	        
 	    });
 
 	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 	});
 	
+}
+
+/***********************************
+作業手順グループ再表示
+***********************************/
+function refrech_work(){
+	const work_group_json = JSON.parse($("#WORK_GROUP_JSON").val());
+	Object.keys(work_group_json).forEach(function (key) {
+		WORK_GROUP = work_group_json[key];
+		var setwork = 'setwork'+WORK_GROUP.work_GROUP;
+		// 各作業グループのセットボタン押下
+		$('#setbtn'+WORK_GROUP.work_GROUP).trigger('click');
+	});
+}
+
+/***********************************
+確認ダイアログ表示
+***********************************/
+function confirm_manufacturing(wgp, wid, label, count_result, matetial_nos){
+	$('#confirmdialog').dialog({
+		dialogClass:'confirm_dialog',
+		modal:true, //モーダル表示
+		title:"Confirm", //タイトル
+		buttons: { //ボタン
+		"OK": function() {
+			$(this).dialog("close");
+			if(matetial_nos!=null){
+				const matetial_no_list = matetial_nos.split(',');
+				for( var i=0,l=matetial_no_list.length;i<l;i++ ){
+					console.log(matetial_no_list[i]);
+					endwork($("#PROCESS_ID").val(),matetial_no_list[i],wgp, wid,
+							null,null,null,null,
+							label,count_result
+				 	);
+				}				
+			}
+			endwork($("#PROCESS_ID").val(),$("#BATCH_ID").val(),wgp, wid,
+					null,null,null,null,
+					label,count_result
+		 	);
+			// 作業手順再表示			
+			refrech_work();
+		},
+		"Cancel": function() {
+			$(this).dialog("close");
+			}
+		}
+	});
 }
 
 </script>
