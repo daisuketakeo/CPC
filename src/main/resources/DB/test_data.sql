@@ -46,10 +46,10 @@ insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values
 insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP2','EP201','018','１８） After counting the cells, adjust the cell density 1.5x104 cells/mL and fill 140 mL into a bag.','CP01');
 insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP2','EP202','001','','CP02,CP03');
 insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP2','EP203','001','','CP03');
-insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('ET1','ET101','001','１） Confirm that there are no significant abnormalities in the shape of the cells or colonies by microscopy.','QC01,QC40');
-insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('ET1','ET102','001','１）Count the cell number using a one-cell counter. ２） Compare with the number of cells at the time of seeding, determine the doubling time through culture, and confirm that it is within 27 hours. 。','QC01,QC41');
-insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('ET1','ET103','001','','QC01,QC42');
-insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('ET1','ET104','001','','QC01,QC43');
+insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('ET1','ET101','001','１） Confirm that there are no significant abnormalities in the shape of the cells or colonies by microscopy.','QC01,QC02');
+insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('ET1','ET102','001','１）Count the cell number using a one-cell counter. ２） Compare with the number of cells at the time of seeding, determine the doubling time through culture, and confirm that it is within 27 hours. 。','QC01,QC02');
+insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('ET1','ET103','001','','QC01,QC02');
+insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('ET1','ET104','001','','QA01');
 insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP3','EP301','001','１） Print out the kit label and attach it to the kit product basket.','KO01');
 insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP3','EP301','002','２） Place the items listed in the table below in the kit basket and scan the RFID.','KO01');
 insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP3','EP301','003','３）After completing the transfer of all materials to the kit basket, print a label with the expiration date of the kit item. Finish by affixing the label with the expiration date alongside the kit label.','KO01');
@@ -108,7 +108,6 @@ insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values
 insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('ET4','ET407','001','','QC01,QC02');
 insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('ET4','ET408','001','','QA01');
 insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('BR','BR01','001','','QA01');
-
 
 delete from PROCESS_MASTER;
 insert into PROCESS_MASTER (PROCESS_ID,PROCESS_NAME) values('EP1','Kitting for the preculture');

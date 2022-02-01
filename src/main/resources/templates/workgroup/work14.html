@@ -3,6 +3,8 @@
 $(function() {
 	
 	var wgrp = /*[[${wgrp}]]*/ '';
+	var batch_id = $('#BATCH_ID').val();
+	var process_id = $('#PROCESS_ID').val();
 	
 	// 作業グループ名セット
 	getWorkGroupName(wgrp, wgrp, "work_group_name");
@@ -29,14 +31,15 @@ $(function() {
 	var args = "?WORK_GROUP="+wgrp;
 	$.ajax({
 	    type: "GET", 
-	    url: '/rest/workmst/select'+args,
+	    url: '/ajax/get_ebrtest'+args,
 	}).done(function(data, dataType) {
-	    var usage_arr = JSON.parse(data);
-	    if(usage_arr.list.length>0){
- 	    	WORK_MASTER = usage_arr.list[0];
+	    if(data.length>0){
+ 	    	WORK_MASTER = data[0];
  		    $(td).text(WORK_MASTER.work);
  		    $(work_id).val(WORK_MASTER.work_ID);
+ 		    $(imgCapture1).attr("src", "data:image/;base64,"+WORK_MASTER.capture1);
  	    }
+	    
 	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 	});
@@ -55,12 +58,12 @@ $(function() {
 	});
  	
 	// 一覧行クリック時の処理
-	$(setbtn).click(function(event, id) {
+	$(setbtn).click(function() {
 		// ステータスチェック
 		var args = 
 			"?WORK_GROUP="+wgrp+
-			"&WORK_ID="+$("#work_id"+wgrp).val()+
-			"&ID="+id;
+			"&WORK_ID="+
+			"&ID="+batch_id;
 
 		$.ajax({
 		type: "GET", 
@@ -86,27 +89,7 @@ $(function() {
  	
 	// カメラアイコンクリック時の処理
 	$(btnCamera).click(function() {
-		// 画像ファイルを取得
-		var args = 
-			"?WORK_GROUP="+wgrp+
-			"&WORK_ID="+$("#work_id"+wgrp).val()+
-			"&ID="+id;
-
-		/*
-		$.ajax({
-		type: "GET", 
-		url: '/ajax/xxxxxxxx'+args,
-		}).done(function(data, dataType) {
-		    var usage_arr = JSON.parse(data);
-		    if(usage_arr.list.length>0){
-	 	    	WORK_MASTER = usage_arr.list[0];
-	 		    $(imgCapture1).src(CAMERA_VISION_PATH+WORK_MASTER.CAPTURE1);
-	 	    }
-		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-		  // エラーメッセージの表示
-		  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
-		});
-		*/
+		$(imgCapture1).show();
 	})
 	
 	// OKボタンクリック時の処理
@@ -208,7 +191,7 @@ $(function() {
 				<td>
 				<!-- カメラアイコン -->
 				<!-- spectre-icons.min.css だといまいちいいのがない -->
-				<!-- <a href="#" th:id="'btnCamera'+${wgrp}"><i class="icon icon-2x icon-photo" style="color:black;"></i></a> -->
+				<!-- <a href="#"><i class="icon icon-2x icon-photo" style="color:black;"></i></a> -->
 				<!-- https://icooon-mono.com/ -->
 				<a href="#" th:id="'btnCamera'+${wgrp}"><img src="/images/camera.png" alt="カメラアイコン"></a>
 				</td>
@@ -216,8 +199,8 @@ $(function() {
 				</table>
 			</td>
 			<td style="width:600px;">
-				<img th:id="'imgCapture1'+${wgrp}" class="" width="400px" height="400px" alt="Capture1"
-					src="">
+				<img th:id="'imgCapture1'+${wgrp}" class="" 
+					width="400px" height="400px" alt="Capture1" style="display:none;">
 			</td>
 			<td style="width:100px;">
 				<label>Decision</label>

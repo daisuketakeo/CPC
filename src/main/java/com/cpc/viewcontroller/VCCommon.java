@@ -1,5 +1,6 @@
 package com.cpc.viewcontroller;
 
+import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -8,6 +9,7 @@ import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +18,8 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpSession;
+
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -599,10 +603,38 @@ public class VCCommon {
     }
     
     /*
-     * EBR試験の画像ファイル／CSVファイル格納フォルダ取得
+     * EBR試験の画像ファイルをBase64形式に変換して取得
      */
-    public String get_ebrtestdir() {
-    	return property.getEBR_TEST_PATH();
+    public String get_base64(String filename) {
+    	String dir = property.getEBR_TEST_PATH();
+    	try {
+            // ファイルがあれば
+        	if (Files.exists(Paths.get(dir, filename))) {
+        		byte[]fileContent = 
+        				FileUtils.readFileToByteArray(new File(Paths.get(dir, filename).toString()));
+        		return Base64.getEncoder().encodeToString(fileContent);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    	return "";
+    }
+    
+    /*
+     * EBR試験のCSVファイルを取得
+     */
+    public String get_csv(String filename) {
+    	String dir = property.getEBR_TEST_PATH();
+    	try {
+            // ファイルがあれば
+        	if (Files.exists(Paths.get(dir, filename))) {
+                // ファイル読み込み
+            	return Files.readString(Paths.get(dir, filename));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    	return "";
     }
 
 }

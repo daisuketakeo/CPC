@@ -61,16 +61,66 @@ public class VCAjax extends VCCommon{
      * 作業手順固定文字列取得
      */
     @GetMapping("/ajax/fixed_work")
-    public String fixed_work() {
+    public String fixed_work() {       
     	return getFixedWork();
     }
     
     /*
      * EBR試験の画像ファイル／CSVファイル格納フォルダ取得
      */
-    @GetMapping("/ajax/get_ebrtestdir")
-    public String get_ebrtestdir() {
-    	return getFixedWork();
+    @GetMapping("/ajax/get_ebrtest")
+    public List<WORK_MASTER> get_ebrtestdir(
+    		@RequestParam(param_work_group) String work_group) {
+    	
+    	// 作業手順マスタ取得
+        List<WORK_MASTER> list = getWorkMaster(work_group);
+        for(WORK_MASTER wm : list) {
+        	// 画像ファイルをBase64に変換して取得
+        	if(wm.getCAPTURE1()!=null && !wm.getCAPTURE1().isEmpty()) {
+        		String base64 = get_base64(wm.getCAPTURE1());
+        		wm.setCAPTURE1(base64);
+        	}
+        	if(wm.getCAPTURE2()!=null && !wm.getCAPTURE2().isBlank()) {
+        		String base64 = get_base64(wm.getCAPTURE2());
+        		wm.setCAPTURE2(base64);
+        	}
+        	if(wm.getCAPTURE3()!=null && !wm.getCAPTURE3().isEmpty()) {
+        		String base64 = get_base64(wm.getCAPTURE3());
+        		wm.setCAPTURE3(base64);
+        	}
+        	if(wm.getCAPTURE4()!=null && !wm.getCAPTURE4().isEmpty()) {
+        		String base64 = get_base64(wm.getCAPTURE4());
+        		wm.setCAPTURE4(base64);
+        	}
+        	if(wm.getCAPTURE5()!=null && !wm.getCAPTURE5().isEmpty()) {
+        		String base64 = get_base64(wm.getCAPTURE5());
+        		wm.setCAPTURE5(base64);
+        	}
+        	
+        	// CSVファイルをリスト形式に変換して取得
+        	if(wm.getCSV1()!=null && !wm.getCSV1().isEmpty()) {
+        		String csv = get_csv(wm.getCSV1());
+        		wm.setCSV1(csv);
+        	}
+        	if(wm.getCSV2()!=null && !wm.getCSV2().isEmpty()) {
+        		String csv = get_csv(wm.getCSV2());
+        		wm.setCSV2(csv);
+        	}
+        	if(wm.getCSV3()!=null && !wm.getCSV3().isEmpty()) {
+        		String csv = get_csv(wm.getCSV3());
+        		wm.setCSV3(csv);
+        	}
+        	if(wm.getCSV4()!=null && !wm.getCSV4().isEmpty()) {
+        		String csv = get_csv(wm.getCSV4());
+        		wm.setCSV4(csv);
+        	}
+        	if(wm.getCSV5()!=null && !wm.getCSV5().isEmpty()) {
+        		String csv = get_csv(wm.getCSV5());
+        		wm.setCSV5(csv);
+        	}
+        }
+        
+    	return list;
     }
     
     /*
