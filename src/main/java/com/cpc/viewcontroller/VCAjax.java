@@ -67,6 +67,29 @@ public class VCAjax extends VCCommon{
     		@RequestParam(param_id) String id) {
     	
     	/**********************************
+    	 *       操作権限チェック
+    	 **********************************/
+        // 作業手順マスタ取得
+        List<WORK_MASTER> target_workmst = 
+        		getWorkMaster(work_group);
+        if(target_workmst.size()>0) {
+        	WORK_MASTER wm = target_workmst.get(0);
+        	String[] auth_arry = wm.getAUTHORITY().split(",");
+        	boolean exec = false;
+        	USER_MASTER user = super.getUserInfo();
+        	for(String auth : auth_arry) {
+        		if(user.getAUTHORITY().equals(auth)) {
+        			exec = true;
+        		}
+        	}
+        	if(!exec) {
+        		// 操作権限なしならボタン無効
+//        		System.out.println("["+work_group+"]["+work_id+"]["+id+"]:操作権限なし");
+            	return false;
+        	}
+        }
+    	
+    	/**********************************
     	 *       対象作業の完了チェック
     	 **********************************/
 		// 作業実績取得
@@ -77,6 +100,7 @@ public class VCAjax extends VCCommon{
         	WORK_RESULT_TABLE wrt = target_workresult.get(0);
         	if(wrt.getWORK_USERID() != null && !wrt.getWORK_USERID().isEmpty()) {
             	// 作業完了ならボタン無効
+//        		System.out.println("["+work_group+"]["+work_id+"]["+id+"]:作業完了");
             	return false;
             }
         }
@@ -98,20 +122,24 @@ public class VCAjax extends VCCommon{
                 		getWorkResult(work_group, before_work_id, id);
                 if(before_workresult.size()==0) {
                 	// 前作業未完了ならボタン無効
+//                	System.out.println("["+work_group+"]["+work_id+"]["+id+"]:前作業未完了");
                 	return false;
                 }else {
                 	WORK_RESULT_TABLE wrt = before_workresult.get(0);
                 	// 前作業未完了(実施ユーザ=NULL)ならボタン無効
                 	if(wrt.getWORK_USERID() == null) {
+//                		System.out.println("["+work_group+"]["+work_id+"]["+id+"]:前作業未完了(実施ユーザ=NULL)");
                     	return false;
                     }
                 	if(wrt.getWORK_USERID().isEmpty()) {
+//                		System.out.println("["+work_group+"]["+work_id+"]["+id+"]:前作業未完了(実施ユーザ=NULL)");
                     	return false;
                     }
                 }
         	}
     	}catch(Exception e) {
     		// 例外発生 ボタン無効
+//    		System.out.println("["+work_group+"]["+work_id+"]["+id+"]:例外発生");
     		return false;
     	}
         
@@ -146,6 +174,7 @@ public class VCAjax extends VCCommon{
         	
         	// 前作業グループの作業実完了数 < 前作業グループの作業数 ： 前作業グループ未完了 
         	if(before_process_work_end_count < before_workmst.size()) {
+//        		System.out.println("["+work_group+"]["+work_id+"]["+id+"]:前作業グループ未完了");
         		return false;
         	}
         }
@@ -153,9 +182,6 @@ public class VCAjax extends VCCommon{
         /**********************************
     	 *       対象作業グループの完了チェック
     	 **********************************/
-        // 作業手順マスタ取得
-        List<WORK_MASTER> target_workmst = 
-        		getWorkMaster(work_group);
         
         // 作業実績取得
         target_workresult = 
@@ -177,6 +203,7 @@ public class VCAjax extends VCCommon{
         
     	// 対象作業グループの作業実完了数 >= 対象作業グループの作業数 ： 対象工程完了
     	if(current_process_work_end_count >= target_workmst.size()) {
+//    		System.out.println("["+work_group+"]["+work_id+"]["+id+"]:対象工程完了");
     		return false;
     	}
         

@@ -11,6 +11,7 @@ public class WORK_MASTER  implements Serializable{
 	private String WORK_GROUP;
 	private String WORK_ID;
 	private String WORK;
+	private String AUTHORITY;
 	private String CAPTURE1;
 	private String CAPTURE2;
 	private String CAPTURE3;

@@ -22,6 +22,7 @@ public interface RWorkMst{
             + ", WORK_GROUP "
             + ", WORK_ID "
             + ", WORK "
+            + ", AUTHORITY "
             + ", CAPTURE1 "
             + ", CAPTURE2 "
             + ", CAPTURE3 "
@@ -37,6 +38,7 @@ public interface RWorkMst{
             + ", #{WORK_GROUP} "
             + ", #{WORK_ID} "
             + ", #{WORK} "
+            + ", #{AUTHORITY} "
             + ", #{CAPTURE1} "
             + ", #{CAPTURE2} "
             + ", #{CAPTURE3} "
@@ -56,6 +58,7 @@ public interface RWorkMst{
         "UPDATE WORK_MASTER ",
         "  <set>",
         "    <if test='WORK != null'> , WORK = #{WORK} </if>",
+        "    <if test='AUTHORITY != null'> , AUTHORITY = #{AUTHORITY} </if>",
         "    <if test='CAPTURE1 != null'> , CAPTURE1 = #{CAPTURE1} </if>",
         "    <if test='CAPTURE2 != null'> , CAPTURE2 = #{CAPTURE2} </if>",
         "    <if test='CAPTURE3 != null'> , CAPTURE3 = #{CAPTURE3} </if>",
