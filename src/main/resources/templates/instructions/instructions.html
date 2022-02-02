@@ -31,9 +31,17 @@ $(function(){
 	search();
 	
 	// キャンセルボタンクリック
-	$("#closebtn").click(function(){
+	$("#createbtn").click(function(){
 		location.href="/home";
 	});
+	
+	// 指図詳細Closeボタンクリック
+	$("#closetab").click(function(){
+		$("#detail").hide();
+	});
+	
+	$("#detail").tabs();
+	$("#detail").hide();
 	
 	// 工程フロー図非表示
 	$("#process_flow").hide();
@@ -84,10 +92,19 @@ function search(){
 	        var tr1 = $('<tr id="tr'+INSTRUCTIONS_TABLE.batch_ID+'"/>');
 	        
 	        var tdbatchid = $('<td/>');
-	        tdbatchid.append($("<a></a>", {
-	        	  href: "/home",	// 指図詳細画面のリンク
+	        var abatchid = $("<a></a>", {
+	        	  href: "#",
+	        	  class: "blank",
 	        	  text: INSTRUCTIONS_TABLE.batch_ID,
-	        	}));
+	        	});
+	        
+	        $(abatchid).on('click',function(){
+	        	$("#detail").show();
+	        	$('#setbtnInsructionsDetail').trigger('click', [INSTRUCTIONS_TABLE.batch_ID]);
+	        	$('#setbtnProcInsructions').trigger('click', [INSTRUCTIONS_TABLE.batch_ID]);
+        	});
+	        
+	        tdbatchid.append(abatchid);
 	        tr1.append(tdbatchid);
 	        tr1.append($('<td/>').text(INSTRUCTIONS_TABLE.protocol));
 	        tr1.append($('<td/>').text(INSTRUCTIONS_TABLE.starting_TIME));
@@ -315,8 +332,8 @@ function select_row(obj){
 		</table>
 	</div>
     <div class="buttonpanel">
-	    <input type="button" id="closebtn" value="Close" class="btn custombtn">
-	    <input type="button" id="okbtn" value="OK" class="btn custombtn" onclick="test()">
+	    <input type="button" id="createbtn" value="Create" class="btn custombtn">
+	    <input type="button" id="releasebtn" value="Release" class="btn custombtn"">
     </div>​
     
 	<div id="process_flow" class="pflowpanel">
@@ -441,4 +458,12 @@ function select_row(obj){
 		</tr>
 	</table>
   </div>
+</div>
+
+<div id="detail" style="z-index:999;height:700px;position: relative;">
+	<ul>
+		<li><a href="/instructions_detail">製造指図</a></li>
+		<li><a href="/proc_instructions">工程別製造指図</a></li>
+		<li style="position: absolute;right: 20px;top: 5px;"><input type="button" id="closetab" class="btn custombtn" value="Close"></li>
+	</ul>
 </div>

@@ -133,21 +133,15 @@ function confirm_manufacturing(
 	});
 }
 
-//jQueryでSleepする方法
+//jQueryでSleep
 function wait(sec) {
-
-    // jQueryのDeferredを作成します。
+    // jQueryのDeferredを作成。
     var objDef = new $.Deferred;
-
     setTimeout(function () {
-
-        // sec秒後に、resolve()を実行して、Promiseを完了します。
+        // sec秒後に、resolve()を実行して、Promiseを完了
         objDef.resolve(sec);
-
     }, sec*1000);
-
     return objDef.promise();
-
 };
 
 </script>

@@ -34,6 +34,19 @@ public class VCInstructions extends VCCommon{
 		return disp_main;
     }
     
+    @RequestMapping(value = "/instructions_detail", method = RequestMethod.GET)
+    public String instructions_detail(Model model) {
+        if(!super.loginCheck()) return disp_login;
+        setHeaderAttr(model);
+		return "/instructions/instructions_detail";
+    }
+    @RequestMapping(value = "/proc_instructions", method = RequestMethod.GET)
+    public String proc_instructions(Model model) {
+        if(!super.loginCheck()) return disp_login;
+        setHeaderAttr(model);
+		return "/instructions/proc_instructions";
+    }
+    
     @RequestMapping(value = "/manufacturing", method = RequestMethod.POST)
     public String manufacturing(
     		@RequestParam(name=param_batch_id) String BATCH_ID,
