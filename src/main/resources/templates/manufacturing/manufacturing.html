@@ -93,7 +93,9 @@ function refrech_work(){
 /***********************************
 確認ダイアログ表示
 ***********************************/
-function confirm_manufacturing(wgp, wid, label, count_result, matetial_nos){
+function confirm_manufacturing(
+		wgp, wid, label, count_result, matetial_nos,
+		CHECK_RESULT, CHECK_REASON){
 	$('#confirmdialog').dialog({
 		dialogClass:'confirm_dialog',
 		modal:true, //モーダル表示
@@ -105,13 +107,13 @@ function confirm_manufacturing(wgp, wid, label, count_result, matetial_nos){
 				const matetial_no_list = matetial_nos.split(',');
 				for( var i=0,l=matetial_no_list.length;i<l;i++ ){
 					endwork($("#PROCESS_ID").val(),matetial_no_list[i],wgp, wid,
-							null,null,null,null,
+							CHECK_RESULT, CHECK_REASON,null,null,
 							label,count_result
 				 	);
 				}				
 			}
 			endwork($("#PROCESS_ID").val(),$("#BATCH_ID").val(),wgp, wid,
-					null,null,null,null,
+					CHECK_RESULT, CHECK_REASON,null,null,
 					label,count_result
 		 	);
 			if(matetial_nos!=null){

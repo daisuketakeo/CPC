@@ -1,0 +1,239 @@
+<div th:fragment="paramset(wgrp)" th:remove="tag">
+<script th:inline="javascript">
+$(function() {
+	
+	var wgrp = /*[[${wgrp}]]*/ '';
+	var batch_id = $('#BATCH_ID').val();
+	var process_id = $('#PROCESS_ID').val();
+	
+	// 作業グループ名セット
+	getWorkGroupName(wgrp, wgrp, "work_group_name");
+	
+	// 要素名
+	var apppanel = '#apppanel'+wgrp;
+	var setbtn = '#setbtn'+wgrp;
+	var okbtn = '#okbtn'+wgrp;
+	var continue_check = '#continue_check'+wgrp;
+	var suspension_check = '#suspension_check'+wgrp;
+	var comment = '#comment'+wgrp;
+	var PerformedName = '#PerformedName'+wgrp;
+	var PerformedDate = '#PerformedDate'+wgrp;
+	var ConfirmedName = '#ConfirmedName'+wgrp;
+	var ConfirmedDate = '#ConfirmedDate'+wgrp;
+	var ApprovedName = '#ApprovedName'+wgrp;
+	var ApprovedDate = '#ApprovedDate'+wgrp;
+	
+	$(apppanel).hide();
+	
+	// チェックボックスの設定
+	$(continue_check).on("click", function(){
+        $(suspension_check).prop('checked', false);
+        $(this).prop('checked', true);
+	});
+	$(suspension_check).on("click", function(){
+        $(continue_check).prop('checked', false);
+        $(this).prop('checked', true);
+	});
+ 	
+ 	// 一覧行クリック時の処理
+	$(setbtn).click(function() {
+		// 作業手順取得
+		var args = "?WORK_GROUP="+wgrp;
+		$.ajax({
+		    type: "GET", 
+		    url: '/rest/workmst/select'+args,
+		}).done(function(data, dataType) {
+		    var usage_arr = JSON.parse(data);
+		    $.each(usage_arr.list,function(i,WORK_MASTER){
+	 			// ステータスチェック
+	 			var args = 
+	 				"?WORK_GROUP="+wgrp+
+	 				"&WORK_ID="+WORK_MASTER.work_ID+
+	 				"&ID="+batch_id;
+	 			$.ajax({
+	 			type: "GET", 
+	 			url: '/ajax/check_status'+args,
+	 			}).done(function(data, dataType) {
+	 				if(data==false){
+	 					setDisabled(okbtn,true);
+	 					setDisabled(continue_check,true);
+	 					setDisabled(suspension_check,true);
+	 					setDisabled(comment,true);
+	 				}else{
+	 					open_work(wgrp, true);	// 作業手順表示
+	 					setDisabled(okbtn,false);
+	 					setDisabled(continue_check,false);
+	 					setDisabled(suspension_check,false);
+	 					setDisabled(comment,false);
+	 				}
+	 			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+	 				console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+	 			});
+	 			
+	 			// 作業実績取得
+	 		 	var args = 
+	 				"?WORK_GROUP="+wgrp+
+	 				"&BATCH_ID="+batch_id;
+	 			$.ajax({
+	 			type: "GET", 
+	 			url: '/ajax/get_applist'+args,
+	 			}).done(function(data, dataType) {
+	 				if(data.length>=1){
+	 					WORK_RESULT_TABLE = data[0];
+	 		 		    $(PerformedName).text(WORK_RESULT_TABLE.work_USERNAME);
+	 		 		    $(PerformedDate).text(WORK_RESULT_TABLE.work_DATE);
+	 		 	    }
+	 				if(data.length>=2){
+	 					WORK_RESULT_TABLE = data[1];
+	 		 		    $(ConfirmedName).text(WORK_RESULT_TABLE.work_USERNAME);
+	 		 		    $(ConfirmedDate).text(WORK_RESULT_TABLE.work_DATE);
+	 		 	    }
+	 		 	    if(data.length>=3){
+	 					WORK_RESULT_TABLE = data[2];
+	 		 		    $(ApprovedName).text(WORK_RESULT_TABLE.work_USERNAME);
+	 		 		    $(ApprovedDate).text(WORK_RESULT_TABLE.work_DATE);
+	 		 	    }
+	 			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+	 				console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+	 			});
+	 			
+		    });
+		    
+		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+		  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+		});
+		
+		// 承認者か？
+		$.ajax({
+		type: "GET", 
+		url: '/ajax/isapp',
+		}).done(function(data, dataType) {
+			if(data){
+				$(apppanel).show();
+	 	    }
+		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+			console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+		});
+	
+	})
+	
+	// OKボタンクリック時の処理
+	$(okbtn).click(function() {
+		
+		// チェックボックスの状態によってデータをセット
+		var result = '';
+		if($(continue_check).prop('checked')) result='1';
+		if($(suspension_check).prop('checked')) result='0';
+		
+		if(result==''){
+			alertdialog('Please check Continue or Suspension.');
+			return;
+		}
+		if(result=='0' && $(comment).val()==''){
+			alertdialog('Please input comment.');
+			return;
+		}
+		confirm_manufacturing(
+				wgrp,'001',null,null,null,
+				result,$(comment).val());
+	})
+
+});
+
+</script>
+
+<!-- コンテンツ -->
+<input type="hidden" th:id="'work_id'+${wgrp}" >
+<input type="button" th:id="'setbtn'+${wgrp}" style="display:none;">
+<table th:id="'apppanel'+${wgrp}" style="width:100%;">
+<tr th:id="'tr_header'+${wgrp}"><td>
+<input type="checkbox" th:id="'header_check'+${wgrp}" checked="checked" style="display:none;">
+
+<!-- 作業手順ヘッダ START -->
+<table th:id="'header'+${wgrp}"class="wgrpheader" th:onclick="|header_click('__${wgrp}__')|">
+	<tr>
+		<td class="workheader_wgrp">
+			<labeL th:id="'work_group_name'+${wgrp}"></labeL>
+		<td>
+		<td class="workheader_allow">
+			<labeL th:id="'allow'+${wgrp}">▲</labeL>
+		<td>
+	</tr>
+</table>
+<!-- 作業手順ヘッダ END -->
+
+<table th:id="'proc_table'+${wgrp}" class="wgrpwork">
+<tr><td>
+
+<!-- 作業手順 START -->
+<table style="width:100%">
+	<tr>
+		<td>
+		<table style="width:100%">
+			<tr class="checklistcheckbox">
+				<td>
+					<label>
+						<input type="checkbox" th:id="'continue_check'+${wgrp}">
+						Continue
+					</label>
+					<label class="checklistcheckbox">
+						<input type="checkbox" th:id="'suspension_check'+${wgrp}">
+						Suspension
+					</label>
+				</td>
+			</tr>
+			<tr class="checklistreaoson">
+				<td>
+					<label>
+						Comment：
+						<input type="text" th:id="'comment'+${wgrp}" >
+					</label>
+				</td>
+			</tr>
+			<tr>
+			<td>
+				<table class="approvallist">
+					<thead>
+						<tr>
+							<th>Status</th>
+							<th>Name</th>
+							<th>Date</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Performed</td>
+							<td th:id="'PerformedName'+${wgrp}"></td>
+							<td th:id="'PerformedDate'+${wgrp}"></td>
+						</tr>
+						<tr>
+							<td>Confirmed</td>
+							<td th:id="'ConfirmedName'+${wgrp}"></td>
+							<td th:id="'ConfirmedDate'+${wgrp}"></td>
+						</tr>
+						<tr>
+							<td>Approved</td>
+							<td th:id="'ApprovedName'+${wgrp}"></td>
+							<td th:id="'ApprovedDate'+${wgrp}"></td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
+		</tr>
+			<tr style="text-align: right;"><td>
+				<!-- 処理 -->
+				<input type="button" th:id="'okbtn'+${wgrp}" value="OK" 
+					class="btn custombtn" style="width:100px;" disabled="disabled">
+			<td></tr>
+		</table>
+		</td>
+	</tr>
+</table>
+<!-- 作業手順 END -->
+
+</td></tr>
+</table>
+<td>
+</tr>
+</table>
+

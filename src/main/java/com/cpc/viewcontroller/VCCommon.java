@@ -90,6 +90,7 @@ public class VCCommon {
 	public static final String rest_instructionsmst = "/rest/instructionsmst/";	// 製造指図マスタ
 	public static final String rest_airelation = "/rest/airelation/";	// 受入指図連携テーブル
 	public static final String rest_materialgroup = "/rest/materialgroup/";	// マテリアルグループテーブル
+	public static final String rest_processstatus = "/rest/processstatus/";	// 工程別ステータステーブル
 		
 	/*
 	 * ユーザ権限
@@ -111,7 +112,7 @@ public class VCCommon {
 	 */
 	public static final String qc = "QC"; // 受入(QC用)
 	public static final String qa = "QA"; // 受入(QA用) 
-//	public static final String is = "IS"; // 指図
+	public static final String is = "IS"; // 指図
 //	public static final String ep = "EP"; // EBR製造
 //	public static final String et = "ET"; // EBR試験
 //	public static final String br = "BR"; // バッチレコードレビュー
@@ -173,8 +174,8 @@ public class VCCommon {
 	public boolean isAdmin() {
     	USER_MASTER user = (USER_MASTER)session.getAttribute(seeeson_user);
     	if(user==null) return false;
-    	if(user.getAUTHORITY().indexOf("02") > 0) return true;
-    	if(user.getAUTHORITY().indexOf("03") > 0) return true;
+    	if(user.getAUTHORITY().equals("CP03")) return true;
+    	if(user.getAUTHORITY().equals("QA01")) return true;
         return false;
     }
 		

@@ -27,6 +27,7 @@ import com.cpc.model.AI_RELATION_TABLE;
 import com.cpc.model.INSTRUCTIONS_MASTER;
 import com.cpc.model.INSTRUCTIONS_TABLE;
 import com.cpc.model.MATERIAL_GROUP_TABLE;
+import com.cpc.model.PROCESS_STATUS_TABLE;
 import com.cpc.model.STATUS_MASTER;
 import com.cpc.model.USER_MASTER;
 import com.cpc.model.WORK_GROUP_MASTER;
@@ -63,6 +64,14 @@ public class VCAjax extends VCCommon{
     @GetMapping("/ajax/fixed_work")
     public String fixed_work() {       
     	return getFixedWork();
+    }
+    
+    /*
+     * 承認者か？
+     */
+    @GetMapping("/ajax/isapp")
+    public boolean isapp() { 
+    	return super.isAdmin();
     }
     
     /*
@@ -308,35 +317,36 @@ public class VCAjax extends VCCommon{
         /**
          * ステータス更新
          */
-        if(req.getPROCESS_ID().equals(qc) || req.getPROCESS_ID().equals(qa)) {
-        	
-        	// 受入の場合
-        	if(result) {
+    	if(result) {
+    		
+    		String status_code = getStatus(req.getWORK_GROUP());
+    		
+            // 作業手順マスタ取得
+            List<WORK_MASTER> target_workmst = 
+            		getWorkMaster(req.getWORK_GROUP());
+            
+            // 作業実績取得
+            List<WORK_RESULT_TABLE> target_workresult = 
+            		getWorkResult(req.getWORK_GROUP(), "", req.getID());
+            
+            // 対象作業グループの全作業完了チェック
+            int process_work_end_count = 0;
+            for(WORK_MASTER wm : target_workmst) {
+            	for(WORK_RESULT_TABLE wrt : target_workresult) {
+            		// 実施済みならボタン無効
+            		if(wm.getWORK_ID().equals(wrt.getWORK_ID())) {
+            			process_work_end_count++;
+            		}
+            	}
+            };
+            
+        	// 対象作業グループの作業実完了数 >= 対象作業グループの作業数 ： 対象作業グループ完了
+        	if(process_work_end_count >= target_workmst.size()) {
         		
-                // 作業手順マスタ取得
-                List<WORK_MASTER> target_workmst = 
-                		getWorkMaster(req.getWORK_GROUP());
-                
-                // 作業実績取得
-                List<WORK_RESULT_TABLE> target_workresult = 
-                		getWorkResult(req.getWORK_GROUP(), "", req.getID());
-                
-                // 対象作業グループの全作業完了チェック
-                int process_work_end_count = 0;
-                for(WORK_MASTER wm : target_workmst) {
-                	for(WORK_RESULT_TABLE wrt : target_workresult) {
-                		// 実施済みならボタン無効
-                		if(wm.getWORK_ID().equals(wrt.getWORK_ID())) {
-                			process_work_end_count++;
-                		}
-                	}
-                };
-                
-            	// 対象作業グループの作業実完了数 >= 対象作業グループの作業数 ： 対象作業グループ完了
-            	if(process_work_end_count >= target_workmst.size()) {
-            		
+        		// 受入の場合
+        		if(req.getPROCESS_ID().equals(qc) || req.getPROCESS_ID().equals(qa)) {
+            			
             		// 作業実績登録OK & 対象作業グループ完了 なら受入のステータス更新
-            		String status_code = getStatus(req.getWORK_GROUP());
                 	ACCEPT_TABLE accept = new ACCEPT_TABLE();
                 	accept.setMATERIAL_NO(req.getID());
                 	accept.setSTATUS(status_code);
@@ -367,10 +377,39 @@ public class VCAjax extends VCCommon{
                         url = rest_workresult+"delete";           
                         postRest(url, data);
                     }
+            	}else if(req.getPROCESS_ID().equals(is)){
+            		// 指図の場合
+            		
+            	}else {
+            		// 工程の場合
+            		
+                    // 工程別ステータス取得
+                	url= rest_processstatus+"select"+
+            				"?"+ param_batch_id+"="+req.getID()+
+            				"&"+ param_process_id+"="+req.getPROCESS_ID();
+            	 	List<PROCESS_STATUS_TABLE> list = 
+            	 			getRest(url, PROCESS_STATUS_TABLE.class);
+            	 	
+                    if(list.size()>0) {
+                    	
+                    	// 工程別ステータス更新
+                    	PROCESS_STATUS_TABLE oldpst = list.get(0);
+                    	oldpst.setSTATUS(status_code);
+                    	url = rest_processstatus+"update";
+                    	postRest(url, oldpst);
+                    	
+                    }else {
+                    	
+                    	// 工程別ステータス登録
+                    	PROCESS_STATUS_TABLE newpst = new PROCESS_STATUS_TABLE();
+                    	newpst.setBATCH_ID(req.getID());
+                    	newpst.setPROCESS_ID(req.getPROCESS_ID());
+                    	newpst.setSTATUS(status_code);
+                        url = rest_processstatus+"insert";
+                        postRest(url, newpst);
+                    }
             	}
-
         	}
-
         }else {
         	
         	// 指図の場合
@@ -514,6 +553,57 @@ public class VCAjax extends VCCommon{
         return rtn;
     }
     
+    /*
+     * 承認一覧取得
+     */
+    @GetMapping("/ajax/get_applist")
+    public List<WORK_RESULT_TABLE> get_applist(
+    		@RequestParam(param_work_group) String work_group,
+    		@RequestParam(param_batch_id) String batch_id) {
+    	
+    	List<WORK_RESULT_TABLE> list = new ArrayList<WORK_RESULT_TABLE>();
+    	
+        // 作業グループ取得
+    	WORK_GROUP_MASTER wg1 = getWorkGroup(work_group);
+    	
+    	// 作業実績取得
+        List<WORK_RESULT_TABLE> list1 = 
+        		getWorkResult(work_group, "", batch_id);
+        
+        // 前作業グループ取得(Confirm)
+        if(wg1.getBEFORE_WORK_GROUP() != null &&
+        		!wg1.getBEFORE_WORK_GROUP().isEmpty()) {
+        	
+        	// 前作業グループの作業実績取得
+            List<WORK_RESULT_TABLE> list2 = 
+            		getWorkResult(wg1.getBEFORE_WORK_GROUP(), "", batch_id);
+            
+        	WORK_GROUP_MASTER wg2 = getWorkGroup(wg1.getBEFORE_WORK_GROUP());
+        	
+        	// 前前作業グループ取得(工程最後の作業グループ)
+        	if(wg2.getBEFORE_WORK_GROUP() != null &&
+            		!wg2.getBEFORE_WORK_GROUP().isEmpty()) {
+        		
+            	// 前前作業グループの作業実績取得
+                List<WORK_RESULT_TABLE> list3 = 
+                		getWorkResult(wg2.getBEFORE_WORK_GROUP(), "", batch_id);
+                
+                if(list3.size()>0) {
+                	list.add(list3.get(list3.size()-1));
+                }
+        	}
+        	
+        	if(list2.size()>0) {
+            	list.add(list2.get(0));
+            }
+        }
+        
+        if(list1.size()>0) {
+        	list.add(list1.get(0));
+        }
+        
+    	return list;
+    }
     
     
     // 以下デバッグ用
