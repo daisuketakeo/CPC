@@ -86,6 +86,7 @@ public class VCCommon {
 	public static final String rest_workresult = "/rest/workresult/";	// 作業実績
 	public static final String rest_workgroupmst = "/rest/workgroupmst/";	// 作業グループマスタ
 	public static final String rest_statusmst = "/rest/statusmst/";	// ステータスマスタ
+	public static final String rest_processmst = "/rest/processmst/";	// 工程スマスタ
 	public static final String rest_instructions = "/rest/instructions/";	// 製造指図テーブル
 	public static final String rest_instructionsmst = "/rest/instructionsmst/";	// 製造指図マスタ
 	public static final String rest_airelation = "/rest/airelation/";	// 受入指図連携テーブル
@@ -399,6 +400,17 @@ public class VCCommon {
     }
     
     /*
+     * Json形式をMapに変換
+     */
+    public Map<String ,Object> getMap(String json) {
+    	try{
+    		return new ObjectMapper().readValue(json, HashMap.class);
+    	}catch(Exception e) {
+    	}
+    	return new HashMap<String,Object>();
+    }
+    
+    /*
      * 画面パラメータ取得(Json)
      */
     public static String getParamJson(Map<String ,DisplayParameter> map) {
@@ -636,6 +648,13 @@ public class VCCommon {
             e.printStackTrace();
         }
     	return "";
+    }
+    
+    /*
+     * Batch ID 採番
+     */
+    public String getBatchID() {
+    	return "BATCH"+getTimeStamp();
     }
 
 }

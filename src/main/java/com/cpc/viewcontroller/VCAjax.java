@@ -27,6 +27,7 @@ import com.cpc.model.AI_RELATION_TABLE;
 import com.cpc.model.INSTRUCTIONS_MASTER;
 import com.cpc.model.INSTRUCTIONS_TABLE;
 import com.cpc.model.MATERIAL_GROUP_TABLE;
+import com.cpc.model.PROCESS_MASTER;
 import com.cpc.model.PROCESS_STATUS_TABLE;
 import com.cpc.model.STATUS_MASTER;
 import com.cpc.model.USER_MASTER;
@@ -477,7 +478,7 @@ public class VCAjax extends VCCommon{
     		@RequestParam(param_process_id) String process_id,
     		@RequestParam(param_work_group) String work_group) {
     	
-    	String json = "";
+    	String json = "{}";
     	
     	// 製造指図テーブル取得
     	String url= rest_instructions+"select"+
@@ -603,6 +604,138 @@ public class VCAjax extends VCCommon{
         }
         
     	return list;
+    }
+    
+    /*
+     * 指図作成
+     * 引数：Json形式
+     */
+    @RequestMapping(value = "/ajax/create_instructions", 
+    		consumes = "application/json",
+    		method = RequestMethod.POST)
+    @ResponseBody
+    public String create_instructions(@RequestBody String req) {
+    	
+        String url = "";
+        Map<String ,Object> map = getMap(req.toString());
+        String im_id = map.get("IM_ID").toString();
+        
+ 		// 指図指図マスタ取得
+ 		url= rest_instructionsmst+"select"+
+				"?"+ param_im_id+"="+im_id;
+	 	List<INSTRUCTIONS_MASTER> list = getRest(url, INSTRUCTIONS_MASTER.class);
+	 	if(list.size()>0) {
+	 		INSTRUCTIONS_MASTER mst = list.get(0);
+	 		// 指図作成
+	 		INSTRUCTIONS_TABLE data = new INSTRUCTIONS_TABLE();
+	 		String batch_id = getBatchID();
+	 		data.setBATCH_ID(batch_id);
+	 		data.setIM_ID(im_id);
+	 		data.setNAME(mst.getNAME());
+	 		data.setPROTOCOL(mst.getPROTOCOL());
+	 		data.setSTATUS("I01");
+	 		url= rest_instructions+"insert";
+	 		if(!postRest(url, data)) {
+	 			return "NG";
+	 		}else {
+	 			// 工程別ステータス登録
+	 			url= rest_processmst+"select";
+	 		 	List<PROCESS_MASTER> list2 = getRest(url, PROCESS_MASTER.class);
+	 		 	for(PROCESS_MASTER pm : list2) {
+	 		 		String init_status = "";
+	 		 		if(pm.getPROCESS_ID().indexOf("EP")>=0) {
+	 		 			init_status = "P01";
+	 		 		}
+	 		 		if(pm.getPROCESS_ID().indexOf("ET")>=0) {
+	 		 			init_status = "T01";
+	 		 		}
+	 		 		if(pm.getPROCESS_ID().indexOf("BR")>=0) {
+	 		 			init_status = "B01";
+	 		 		}
+	 		 		
+	 		 		PROCESS_STATUS_TABLE pst = new PROCESS_STATUS_TABLE();
+	 		 		pst.setBATCH_ID(batch_id);
+	 		 		pst.setPROCESS_ID(pm.getPROCESS_ID());
+	 		 		pst.setSTATUS(init_status);
+	 		 		
+	 		 		url= rest_processstatus+"insert";
+	 		 		if(!postRest(url, pst)) {
+	 		 			return "NG";
+	 		 		}
+	 		 	}
+	 		 	
+	 	        // ユーザ情報取得
+	 	        USER_MASTER user = super.getUserInfo();
+	 	        
+	 	        // 作業実績登録
+	 	        WORK_RESULT_TABLE wrt = new WORK_RESULT_TABLE();
+	 	        wrt.setPROCESS_ID("IS");
+	 	        wrt.setWORK_GROUP("IS01");
+	 	        wrt.setWORK_ID("001");
+	 	        wrt.setID(batch_id);
+	 	        wrt.setWORK_USERID(user.getUSERID());
+	 	        wrt.setWORK_USERNAME(user.getUSERNAME());
+	 	        wrt.setWORK_DATE(getWorkDate());
+	 	        
+	 	        String rst = workresult_regist(wrt);
+	 	        if(!rst.equals("OK")) {
+	 	        	return "NG";
+	 	        }
+	 		}
+	 	}
+        
+        return "OK";
+        
+    }
+    
+    /*
+     * 指図リリース
+     * 引数：Json形式
+     */
+    @RequestMapping(value = "/ajax/release_instructions", 
+    		consumes = "application/json",
+    		method = RequestMethod.POST)
+    @ResponseBody
+    public String release_instructions(@RequestBody String req) {
+    	
+        String url = "";
+        Map<String ,Object> map = getMap(req.toString());
+        String batch_id = map.get("BATCH_ID").toString();
+        
+ 		// 指図指図マスタ取得
+ 		url= rest_instructions+"select"+
+				"?"+ param_batch_id+"="+batch_id;
+	 	List<INSTRUCTIONS_TABLE> list = getRest(url, INSTRUCTIONS_TABLE.class);
+	 	if(list.size()>0) {
+	 		
+	 		INSTRUCTIONS_TABLE data = list.get(0);
+	 		data.setSTATUS("I02");
+	 		url= rest_instructions+"update";
+	 		if(!postRest(url, data)) {
+	 			return "NG";
+	 		}else {
+	 		// ユーザ情報取得
+	 	        USER_MASTER user = super.getUserInfo();
+	 	        
+	 	        // 作業実績登録
+	 	        WORK_RESULT_TABLE wrt = new WORK_RESULT_TABLE();
+	 	        wrt.setPROCESS_ID("IS");
+	 	        wrt.setWORK_GROUP("IS02");
+	 	        wrt.setWORK_ID("001");
+	 	        wrt.setID(batch_id);
+	 	        wrt.setWORK_USERID(user.getUSERID());
+	 	        wrt.setWORK_USERNAME(user.getUSERNAME());
+	 	        wrt.setWORK_DATE(getWorkDate());
+	 	        
+	 	        String rst = workresult_regist(wrt);
+	 	        if(!rst.equals("OK")) {
+	 	        	return "NG";
+	 	        }
+	 		}
+	 	}
+        
+        return "OK";
+        
     }
     
     
