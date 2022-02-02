@@ -68,12 +68,28 @@ function search(){
 	        
 	        $('#tbl1').append(tbody);
 	        
+	     	// 作業手順再表示			
+			refrech_work();
+	     	
 	    });
 
 	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 	});
 	
+}
+
+/***********************************
+作業手順グループ再表示
+***********************************/
+function refrech_work(){
+	const work_group_json = JSON.parse($("#WORK_GROUP_JSON").val());
+	Object.keys(work_group_json).forEach(function (key) {
+		WORK_GROUP = work_group_json[key];
+		var setwork = 'setwork'+WORK_GROUP.work_GROUP;
+		// 各作業グループのセットボタン押下
+		$('#setbtn'+WORK_GROUP.work_GROUP).trigger('click');
+	});
 }
 
 </script>
