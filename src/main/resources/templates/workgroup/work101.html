@@ -74,6 +74,12 @@ $(function() {
 	 				var usage_arr = JSON.parse(data);
 	 			    $.each(usage_arr.list,function(i,WORK_RESULT_TABLE){
 	 			    	$(comment).val(WORK_RESULT_TABLE.check_REASON);
+	 			    	if(WORK_RESULT_TABLE.check_RESULT=='1'){
+	 			    		$(pass).prop('checked', true);
+	 			    	}
+	 			    	if(WORK_RESULT_TABLE.check_RESULT=='0'){
+	 			    		$(fail).prop('checked', true);
+	 			    	}
 	 				});
 	 		 	    
 	 			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
