@@ -1,33 +1,181 @@
-<div fragment="instructions_detail" remove="tag">
+<div fragment="instructions_detail">
 <script>
 $(function(){
-
+	
+	if($("#batch_id").val()!=''){
+		init($("#batch_id").val());
+	}
+	
 	// BatchIDクリック時の処理
 	$("#setbtnInsructionsDetail").click(function(event, id) {
-		console.log(id);
+		init(id);
 	})
 	
 });
+
+function init(batch_id){
+	
+	//console.log(id);
+	$("#detail_data28").text(batch_id);
+	
+	// 作業グループステータス取得
+	$.ajax({
+	    type: "GET", 
+	    url: '/rest/instructions/select?BATCH_ID='+batch_id,
+	}).done(function(data1, dataType) {
+		//console.log(data1);
+	    var usage_arr1 = JSON.parse(data1);
+	    var diviation_flg = false;
+	    $.each(usage_arr1.list,function(i,INSTRUCTIONS_TABLE){
+	    	
+	    	$.ajax({
+	    	    type: "GET", 
+	    	    url: '/rest/instructionsmst/select?IM_ID='+INSTRUCTIONS_TABLE.im_ID,
+	    	}).done(function(data2, dataType) {
+	    		//console.log(data2);
+	    	    var usage_arr2 = JSON.parse(data2);
+	    	    var diviation_flg = false;
+	    	    $.each(usage_arr2.list,function(j,INSTRUCTIONS_MASTER){
+	    	    	
+	    	    	$("#detail_data1").text(INSTRUCTIONS_MASTER.name);
+	    	    	$("#detail_data2").text(INSTRUCTIONS_MASTER.comment);
+	    	    	$("#detail_data3").text(INSTRUCTIONS_MASTER.cell_TYPE);
+	    	    	$("#detail_data4").text(INSTRUCTIONS_MASTER.input_AMOUNT);
+	    	    	$("#detail_data5").text(INSTRUCTIONS_MASTER.target_AMOUNT_CELLS);
+	    	    	$("#detail_data6").text(INSTRUCTIONS_MASTER.target_AMOUNT_BAGS);
+	    	    	$("#detail_data7").text(INSTRUCTIONS_MASTER.total_PASSAGE_TIMES);
+	    	    	$("#detail_data8").text(INSTRUCTIONS_MASTER.duration_EST);
+	    	    	$("#detail_data9").text(INSTRUCTIONS_MASTER.medium);
+	    	    	$("#detail_data10").text(INSTRUCTIONS_MASTER.ecm_COATING);
+	    	    	$("#detail_data11").text(INSTRUCTIONS_MASTER.dissociation_REAGENT);
+	    	    	$("#detail_data12").text(INSTRUCTIONS_MASTER.pre_CULTURE_VESSEL);
+	    	    	$("#detail_data13").text(INSTRUCTIONS_MASTER.pre_CULTURE_MATERIAL_NAME);
+	    	    	$("#detail_data14").text(INSTRUCTIONS_MASTER.pre_CULTURE_VOLUME);
+	    	    	$("#detail_data15").text(INSTRUCTIONS_MASTER.pre_CULTURE_INCUBATION_TIME);
+	    	    	$("#detail_data16").text(INSTRUCTIONS_MASTER.icp1_VESSEL);
+	    	    	$("#detail_data17").text(INSTRUCTIONS_MASTER.icp1_MATERIAL_NAME);
+	    	    	$("#detail_data18").text(INSTRUCTIONS_MASTER.icp1_VOLUME);
+	    	    	$("#detail_data19").text(INSTRUCTIONS_MASTER.icp1_INCUBATION_TIME);
+	    	    	$("#detail_data20").text(INSTRUCTIONS_MASTER.icp2_VESSEL);
+	    	    	$("#detail_data21").text(INSTRUCTIONS_MASTER.icp2_MATERIAL_NAME);
+	    	    	$("#detail_data22").text(INSTRUCTIONS_MASTER.icp2_VOLUME);
+	    	    	$("#detail_data23").text(INSTRUCTIONS_MASTER.icp2_INCUBATION_TIME);
+	    	    	$("#detail_data24").text(INSTRUCTIONS_MASTER.icp3_VESSEL);
+	    	    	$("#detail_data25").text(INSTRUCTIONS_MASTER.icp3_MATERIAL_NAME);
+	    	    	$("#detail_data26").text(INSTRUCTIONS_MASTER.icp3_VOLUME);
+	    	    	$("#detail_data27").text(INSTRUCTIONS_MASTER.icp3_INCUBATION_TIME);
+	    	    	
+	    	    });
+	    	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+	    	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+	    	});
+	    	
+	    });
+	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+	});
+}
 </script>
 <input type="button" id="setbtnInsructionsDetail" style="display:none;">
-<table class="home">
+<div class="disopaypanel">
+<table class="insdetailArea">
 	<tr>
-		<td>
-			aaaaa
-		</td>
-		<td>
-			bbbbbbbbbb
-		</td>
+		<td>Name</td>
+		<td id="detail_data1"></td>
 	</tr>
 	<tr>
-		<td>
-			cccccccccc
-		</td>
-		<td>
-			dddddddddd
-		</td>
+		<td>Comment</td>
+		<td id="detail_data2"></td>
+	</tr>
+	<tr>
+		<td>Cell type</td>
+		<td id="detail_data3"></td>
+	</tr>
+	<tr>
+		<td>Input Amount</td>
+		<td id="detail_data4"></td>
+	</tr>
+	<tr>
+		<td rowspan="2">Target Amount</td>
+		<td id="detail_data5"></td>
+	</tr>
+	<tr>
+		<td id="detail_data6"></td>
+	</tr>
+	<tr>
+		<td>Total passage times</td>
+		<td id="detail_data7"></td>
+	</tr>
+	<tr>
+		<td>Duration (Est)</td>
+		<td id="detail_data8"></td>
+	</tr>
+	<tr>
+		<td>Medium</td>
+		<td id="detail_data9"></td>
+	</tr>
+	<tr>
+		<td>ECM coating </td>
+		<td id="detail_data10"></td>
+	</tr>
+	<tr>
+		<td>Dissociation reagent</td>
+		<td id="detail_data11"></td>
+	</tr>
+	<tr>
+		<td rowspan="4">Pre-culture</td>
+		<td id="detail_data12"></td>
+	</tr>
+	<tr>
+		<td id="detail_data13"></td>
+	</tr>
+	<tr>
+		<td id="detail_data14"></td>
+	</tr>
+	<tr>
+		<td id="detail_data15"></td>
+	</tr>
+	<tr>
+		<td rowspan="12">CellQualia</td>
+		<td id="detail_data16"></td>
+	</tr>
+	<tr>
+		<td id="detail_data17"></td>
+	</tr>
+	<tr>
+		<td id="detail_data18"></td>
+	</tr>
+	<tr>
+		<td id="detail_data19"></td>
+	</tr>
+	<tr>
+		<td id="detail_data20"></td>
+	</tr>
+	<tr>
+		<td id="detail_data21"></td>
+	</tr>
+	<tr>
+		<td id="detail_data22"></td>
+	</tr>
+	<tr>
+		<td id="detail_data23"></td>
+	</tr>
+	<tr>
+		<td id="detail_data24"></td>
+	</tr>
+	<tr>
+		<td id="detail_data25"></td>
+	</tr>
+	<tr>
+		<td id="detail_data26"></td>
+	</tr>
+	<tr>
+		<td id="detail_data27"></td>
+	</tr>
+	<tr>
+		<td>Batch ID</td>
+		<td id="detail_data28"></td>
 	</tr>
 </table>
-
-	
+</div>
 </div>

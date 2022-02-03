@@ -616,4 +616,34 @@
 .txt_csvtbl {
   text-align    : right;             /* 文字位置  */
   border-style  : none;              /* 罫線      */
-}	
+}
+
+/* 指図詳細テーブル全体 */
+.insdetailArea {
+  border-collapse: collapse;         /* 境界線結合 */
+  border-spacing : 0;                /* 罫線間余白 */
+  font-size      : 9pt;              /* 文字サイズ */ 
+  display        : block;
+  overflow-y     : scroll;
+  height         : 500px;
+  border         : 1px solid;
+  position       : absolute;
+  top            : 0px;
+  width          : 100%;
+  display        : flex;
+  justify-content: center;
+}
+/* 指図詳細テーブル 明細 */
+.insdetailArea td:nth-of-type(1) {
+  padding       : 5px;               /* 余白      */
+  border        : 1px #666666 solid; /* 罫線      */
+  text-align    : left;
+  width         : 200px;
+}
+.insdetailArea td:nth-of-type(2) {
+  padding       : 5px;               /* 余白      */
+  border        : 1px #666666 solid; /* 罫線      */
+  text-align    : left;
+  width         : 500px;
+}
+	
