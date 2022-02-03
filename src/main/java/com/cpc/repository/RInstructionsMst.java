@@ -48,6 +48,41 @@ public interface RInstructionsMst{
             + ", ICP3_INCUBATION_TIME "
             + ", MATERIAL_GORUP_ID "
             + ", PROTOCOL "
+            + ", BP_ALERM "
+            + ", BP_WARNING "
+            + ", BP_HEADER "
+            + ", BP_PH_OVER_TIME "
+            + ", BP_GLUCOSE_OVER_TIME "
+            + ", BP_LACTATE_OVER_TIME "
+            + ", BP_GROWTH_RATE_OVER_TIME "
+            + ", BP_CAMERA_VISION "
+            + ", BP_ORVER_VIEW "
+            + ", BP_IDENTIFICATION "
+            + ", BP_CULTURE_CONDITION "
+            + ", BP_DETAIL "
+            + ", BP_YOBI1 "
+            + ", BP_YOBI2 "
+            + ", BP_YOBI3 "
+            + ", POB_ICP "
+            + ", POB_ICP_SUMMARY "
+            + ", POB_ICP_MICROBIOLOGICAL_STERILITY "
+            + ", POB_ICP_KARYOTYPE_RESULTS "
+            + ", POB_ICP_PTENCY "
+            + ", POB_ICP_MATERIAL_OVERVIEW "
+            + ", POB_ICP_MATERIAL_IDENTIFICATION "
+            + ", POB_ELECTRONIC_BATCH_RECORD "
+            + ", POB_CELL_GROWTH_VIDEO "
+            + ", POB_ICP_CULTURE_CONDITION "
+            + ", POB_YOBI1 "
+            + ", POB_YOBI2 "
+            + ", POB_YOBI3 "
+            + ", PRB_ICP_MATERIAL_OVERVIEW "
+            + ", PRB_ICP_MATERIAL_IDENTIFICATION "
+            + ", PRB_ICP_CULTURE_CONDITION "
+            + ", PRB_ICP_ALERM_WARNINGS "
+            + ", PRB_YOBI1 "
+            + ", PRB_YOBI2 "
+            + ", PRB_YOBI3 "
          +") VALUES ( "
             + "  #{IM_ID} "
             + ", #{NAME} "
@@ -79,6 +114,41 @@ public interface RInstructionsMst{
             + ", #{ICP3_INCUBATION_TIME} "
             + ", #{MATERIAL_GORUP_ID} "
             + ", #{PROTOCOL} "
+            + ", #{BP_ALERM} "
+            + ", #{BP_WARNING} "
+            + ", #{BP_HEADER} "
+            + ", #{BP_PH_OVER_TIME} "
+            + ", #{BP_GLUCOSE_OVER_TIME} "
+            + ", #{BP_LACTATE_OVER_TIME} "
+            + ", #{BP_GROWTH_RATE_OVER_TIME} "
+            + ", #{BP_CAMERA_VISION} "
+            + ", #{BP_ORVER_VIEW} "
+            + ", #{BP_IDENTIFICATION} "
+            + ", #{BP_CULTURE_CONDITION} "
+            + ", #{BP_DETAIL} "
+            + ", #{BP_YOBI1} "
+            + ", #{BP_YOBI2} "
+            + ", #{BP_YOBI3} "
+            + ", #{POB_ICP} "
+            + ", #{POB_ICP_SUMMARY} "
+            + ", #{POB_ICP_MICROBIOLOGICAL_STERILITY} "
+            + ", #{POB_ICP_KARYOTYPE_RESULTS} "
+            + ", #{POB_ICP_PTENCY} "
+            + ", #{POB_ICP_MATERIAL_OVERVIEW} "
+            + ", #{POB_ICP_MATERIAL_IDENTIFICATION} "
+            + ", #{POB_ELECTRONIC_BATCH_RECORD} "
+            + ", #{POB_CELL_GROWTH_VIDEO} "
+            + ", #{POB_ICP_CULTURE_CONDITION} "
+            + ", #{POB_YOBI1} "
+            + ", #{POB_YOBI2} "
+            + ", #{POB_YOBI3} "
+            + ", #{PRB_ICP_MATERIAL_OVERVIEW} "
+            + ", #{PRB_ICP_MATERIAL_IDENTIFICATION} "
+            + ", #{PRB_ICP_CULTURE_CONDITION} "
+            + ", #{PRB_ICP_ALERM_WARNINGS} "
+            + ", #{PRB_YOBI1} "
+            + ", #{PRB_YOBI2} "
+            + ", #{PRB_YOBI3} "
          +")"
          )
     int insert(INSTRUCTIONS_MASTER model);
@@ -116,6 +186,41 @@ public interface RInstructionsMst{
         "    <if test='ICP3_INCUBATION_TIME != null'> , ICP3_INCUBATION_TIME = #{ICP3_INCUBATION_TIME} </if>",
         "    <if test='MATERIAL_GORUP_ID != null'> , MATERIAL_GORUP_ID = #{MATERIAL_GORUP_ID} </if>",
         "    <if test='PROTOCOL != null'> , PROTOCOL = #{PROTOCOL} </if>",
+        "    <if test='BP_ALERM != null'> , BP_ALERM = #{BP_ALERM} </if>",
+        "    <if test='BP_WARNING != null'> , BP_WARNING = #{BP_WARNING} </if>",
+        "    <if test='BP_HEADER != null'> , BP_HEADER = #{BP_HEADER} </if>",
+        "    <if test='BP_PH_OVER_TIME != null'> , BP_PH_OVER_TIME = #{BP_PH_OVER_TIME} </if>",
+        "    <if test='BP_GLUCOSE_OVER_TIME != null'> , BP_GLUCOSE_OVER_TIME = #{BP_GLUCOSE_OVER_TIME} </if>",
+        "    <if test='BP_LACTATE_OVER_TIME != null'> , BP_LACTATE_OVER_TIME = #{BP_LACTATE_OVER_TIME} </if>",
+        "    <if test='BP_GROWTH_RATE_OVER_TIME != null'> , BP_GROWTH_RATE_OVER_TIME = #{BP_GROWTH_RATE_OVER_TIME} </if>",
+        "    <if test='BP_CAMERA_VISION != null'> , BP_CAMERA_VISION = #{BP_CAMERA_VISION} </if>",
+        "    <if test='BP_ORVER_VIEW != null'> , BP_ORVER_VIEW = #{BP_ORVER_VIEW} </if>",
+        "    <if test='BP_IDENTIFICATION != null'> , BP_IDENTIFICATION = #{BP_IDENTIFICATION} </if>",
+        "    <if test='BP_CULTURE_CONDITION != null'> , BP_CULTURE_CONDITION = #{BP_CULTURE_CONDITION} </if>",
+        "    <if test='BP_DETAIL != null'> , BP_DETAIL = #{BP_DETAIL} </if>",
+        "    <if test='BP_YOBI1 != null'> , BP_YOBI1 = #{BP_YOBI1} </if>",
+        "    <if test='BP_YOBI2 != null'> , BP_YOBI2 = #{BP_YOBI2} </if>",
+        "    <if test='BP_YOBI3 != null'> , BP_YOBI3 = #{BP_YOBI3} </if>",
+        "    <if test='POB_ICP != null'> , POB_ICP = #{POB_ICP} </if>",
+        "    <if test='POB_ICP_SUMMARY != null'> , POB_ICP_SUMMARY = #{POB_ICP_SUMMARY} </if>",
+        "    <if test='POB_ICP_MICROBIOLOGICAL_STERILITY != null'> , POB_ICP_MICROBIOLOGICAL_STERILITY = #{POB_ICP_MICROBIOLOGICAL_STERILITY} </if>",
+        "    <if test='POB_ICP_KARYOTYPE_RESULTS != null'> , POB_ICP_KARYOTYPE_RESULTS = #{POB_ICP_KARYOTYPE_RESULTS} </if>",
+        "    <if test='POB_ICP_PTENCY != null'> , POB_ICP_PTENCY = #{POB_ICP_PTENCY} </if>",
+        "    <if test='POB_ICP_MATERIAL_OVERVIEW != null'> , POB_ICP_MATERIAL_OVERVIEW = #{POB_ICP_MATERIAL_OVERVIEW} </if>",
+        "    <if test='POB_ICP_MATERIAL_IDENTIFICATION != null'> , POB_ICP_MATERIAL_IDENTIFICATION = #{POB_ICP_MATERIAL_IDENTIFICATION} </if>",
+        "    <if test='POB_ELECTRONIC_BATCH_RECORD != null'> , POB_ELECTRONIC_BATCH_RECORD = #{POB_ELECTRONIC_BATCH_RECORD} </if>",
+        "    <if test='POB_CELL_GROWTH_VIDEO != null'> , POB_CELL_GROWTH_VIDEO = #{POB_CELL_GROWTH_VIDEO} </if>",
+        "    <if test='POB_ICP_CULTURE_CONDITION != null'> , POB_ICP_CULTURE_CONDITION = #{POB_ICP_CULTURE_CONDITION} </if>",
+        "    <if test='POB_YOBI1 != null'> , POB_YOBI1 = #{POB_YOBI1} </if>",
+        "    <if test='POB_YOBI2 != null'> , POB_YOBI2 = #{POB_YOBI2} </if>",
+        "    <if test='POB_YOBI3 != null'> , POB_YOBI3 = #{POB_YOBI3} </if>",
+        "    <if test='PRB_ICP_MATERIAL_OVERVIEW != null'> , PRB_ICP_MATERIAL_OVERVIEW = #{PRB_ICP_MATERIAL_OVERVIEW} </if>",
+        "    <if test='PRB_ICP_MATERIAL_IDENTIFICATION != null'> , PRB_ICP_MATERIAL_IDENTIFICATION = #{PRB_ICP_MATERIAL_IDENTIFICATION} </if>",
+        "    <if test='PRB_ICP_CULTURE_CONDITION != null'> , PRB_ICP_CULTURE_CONDITION = #{PRB_ICP_CULTURE_CONDITION} </if>",
+        "    <if test='PRB_ICP_ALERM_WARNINGS != null'> , PRB_ICP_ALERM_WARNINGS = #{PRB_ICP_ALERM_WARNINGS} </if>",
+        "    <if test='PRB_YOBI1 != null'> , PRB_YOBI1 = #{PRB_YOBI1} </if>",
+        "    <if test='PRB_YOBI2 != null'> , PRB_YOBI2 = #{PRB_YOBI2} </if>",
+        "    <if test='PRB_YOBI3 != null'> , PRB_YOBI3 = #{PRB_YOBI3} </if>",
         "  </set>",
         "  WHERE ",
         "       IM_ID = #{IM_ID}",

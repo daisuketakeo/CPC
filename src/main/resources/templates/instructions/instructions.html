@@ -18,6 +18,7 @@ var PROCESS = new Map([
 ])
 
 var disp_flg = sessionStorage.getItem(['DISP_FLG']);
+var release_status = /*[[${RELEASE_STATUS}]]*/ '';
 
 /***********************************
 画面初期処理
@@ -56,9 +57,28 @@ $(function(){
 	  if($("#batch_id").val()==''){
 		  alertdialog("Please select Batch ID.");
 	  }else{
-		  $('#release_confirmdialog_label').text(
-	    		  "Release instructions?\nBatch ID["+$("#batch_id").val()+"]");
-  	  	  $("#release_confirmdialog").dialog("open");
+		  
+		  var tbodys = $("#tbl1 tbody");//全行を取得
+		  
+		  var released = false;
+			for( var i=0,l=tbodys.length;i<l;i++ ){
+				// 選択行のMATERIAL_NO取得
+				var childtr = tbodys.eq(i).children();
+				var childtd = $(childtr).children();
+				var batch_id = $(childtd.eq(0)).text();
+				var status = $(childtd.eq(4)).text();
+				if(batch_id==$("#batch_id").val() && status==release_status){
+					released = true;
+				}
+			}	
+			
+		  if(released){
+			  alertdialog("This batch ["+$("#batch_id").val()+"] is released.");
+		  }else{
+			  $('#release_confirmdialog_label').text(
+		    		  "Release instructions?\nBatch ID["+$("#batch_id").val()+"]");
+	  	  	  $("#release_confirmdialog").dialog("open");
+		  }
 	  }
 	});
 	
@@ -198,12 +218,31 @@ $(function(){
 		});
 	}
 	
+	// 操作権限チェック
+	$.ajax({
+	    type: "GET", 
+	    url: '/ajax/check_operation_authority?WORK_GROUP=IS01',
+	}).done(function(data, dataType) {
+	    if(!data){
+	    	$("#createbtn").prop("disabled",true);
+	    	$("#releasebtn").prop("disabled",true);
+	    }
+	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+	});
+	
 });
 
 /***********************************
 受入一覧表示
 ***********************************/
 function search(){
+	
+	// 保持データクリア
+	$("#batch_id").val("");
+	
+	// 工程フロー図非表示
+	$("#process_flow").hide();
 	
 	// tbodyをクリア
 	$("#tbl1 > tbody").html("");
@@ -422,29 +461,7 @@ function select_row(obj){
 	
 	
 }
- function test(){
-	 /*
-     //PDF作成処理
-     var docDef = {
-       content:[
-         {qr: 'これはテストです'}
-       ],
-     };
-     pdfMake.createPdf(docDef).download("QR_CODE_TEST.pdf");
-     */
-     if($('#batch_id').val()=='B001') $('#cmPrecultureKitting').show();
-     if($('#batch_id').val()=='B002') $('#arPrecultureKitting').show();
-     if($('#batch_id').val()=='B003') $('#exPrecultureKitting').show();
-     
-     // ヘッダメニュー変更
-     $('#hamberger_menu_list').children().remove();
-     $('#hamberger_menu_list').append('<li><a href="#">TEST1</a></li>');
-     $('#hamberger_menu_list').append('<li><a href="#">TEST2</a></li>');
-     $('#hamberger_menu_list').append('<li><a href="#">あああああああああ</a></li>');
-     
-     // 印刷禁止でPDF表示
-     window.open("/pdfjs/web/viewer.html?file=/preview");
- }
+
 </script>
 <!-- コンテンツ -->
 <input type="hidden" id="batch_id">
@@ -467,8 +484,18 @@ function select_row(obj){
 		</table>
 	</div>
     <div class="buttonpanel">
-	    <input type="button" id="createbtn" value="Create" class="btn custombtn">
-	    <input type="button" id="releasebtn" value="Release" class="btn custombtn">
+    	<table>
+    		<tr>
+    			<td style="width:80%;">
+    			</td>
+    			<td style="width:10%;">
+    				<input type="button" id="createbtn" value="Create" class="btn custombtn">
+    			</td>
+    			<td style="width:10%;">
+    				<input type="button" id="releasebtn" value="Release" class="btn custombtn">
+    			</td>
+    		</tr>
+    	</table>
     </div>​
     
 	<div id="process_flow" class="pflowpanel">

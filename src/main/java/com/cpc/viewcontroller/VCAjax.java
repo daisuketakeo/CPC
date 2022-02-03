@@ -26,6 +26,7 @@ import com.cpc.model.ACCEPT_TABLE;
 import com.cpc.model.AI_RELATION_TABLE;
 import com.cpc.model.INSTRUCTIONS_MASTER;
 import com.cpc.model.INSTRUCTIONS_TABLE;
+import com.cpc.model.MATERIAL_CHECK_TABLE;
 import com.cpc.model.MATERIAL_GROUP_TABLE;
 import com.cpc.model.PROCESS_MASTER;
 import com.cpc.model.PROCESS_STATUS_TABLE;
@@ -134,17 +135,12 @@ public class VCAjax extends VCCommon{
     }
     
     /*
-     * ステータスチェック（ボタンの有効／無効セット）
+     * 操作権限チェック
      */
-    @GetMapping("/ajax/check_status")
-    public boolean check_status(
-    		@RequestParam(param_work_group) String work_group,
-    		@RequestParam(param_work_id) String work_id,
-    		@RequestParam(param_id) String id) {
+    @GetMapping("/ajax/check_operation_authority")
+    public boolean check_operation_authority(
+    		@RequestParam(param_work_group) String work_group) {
     	
-    	/**********************************
-    	 *       操作権限チェック
-    	 **********************************/
         // 作業手順マスタ取得
         List<WORK_MASTER> target_workmst = 
         		getWorkMaster(work_group);
@@ -159,10 +155,28 @@ public class VCAjax extends VCCommon{
         		}
         	}
         	if(!exec) {
-        		// 操作権限なしならボタン無効
-//        		System.out.println("["+work_group+"]["+work_id+"]["+id+"]:操作権限なし");
+        		// 操作権限なし
             	return false;
         	}
+        }
+        
+        return true;
+    }
+    /*
+     * ステータスチェック（ボタンの有効／無効セット）
+     */
+    @GetMapping("/ajax/check_status")
+    public boolean check_status(
+    		@RequestParam(param_work_group) String work_group,
+    		@RequestParam(param_work_id) String work_id,
+    		@RequestParam(param_id) String id) {
+    	
+    	/**********************************
+    	 *       操作権限チェック
+    	 **********************************/
+        // 作業手順マスタ取得
+        if(!check_operation_authority(work_group)) {
+        	return false;
         }
     	
     	/**********************************
@@ -258,6 +272,10 @@ public class VCAjax extends VCCommon{
         /**********************************
     	 *       対象作業グループの完了チェック
     	 **********************************/
+        
+        // 作業手順マスタ取得
+        List<WORK_MASTER> target_workmst = 
+        		getWorkMaster(work_group);
         
         // 作業実績取得
         target_workresult = 
@@ -409,6 +427,46 @@ public class VCAjax extends VCCommon{
                         url = rest_processstatus+"insert";
                         postRest(url, newpst);
                     }
+            	}
+        	}else {
+        		
+        		if(req.getPROCESS_ID().equals(qc) || req.getPROCESS_ID().equals(qa)) {
+        			// 受入の場合
+            	}else if(req.getPROCESS_ID().equals(is)){
+            		// 指図の場合
+            	}else {
+            		// 工程の場合
+            		
+            		// 工程の先頭作業の場合
+            		if(data.getWORK_GROUP().substring(3, 5).equals("01")
+            				&& data.getWORK_ID().equals("001")) {
+            			
+                        // 工程別ステータス取得
+                    	url= rest_processstatus+"select"+
+                				"?"+ param_batch_id+"="+req.getID()+
+                				"&"+ param_process_id+"="+req.getPROCESS_ID();
+                	 	List<PROCESS_STATUS_TABLE> list = 
+                	 			getRest(url, PROCESS_STATUS_TABLE.class);
+                	 	
+                        if(list.size()>0) {
+                        	
+                        	// 工程別ステータス更新
+                        	PROCESS_STATUS_TABLE oldpst = list.get(0);
+                        	oldpst.setSTATUS(status_code);
+                        	url = rest_processstatus+"update";
+                        	postRest(url, oldpst);
+                        	
+                        }else {
+                        	
+                        	// 工程別ステータス登録
+                        	PROCESS_STATUS_TABLE newpst = new PROCESS_STATUS_TABLE();
+                        	newpst.setBATCH_ID(req.getID());
+                        	newpst.setPROCESS_ID(req.getPROCESS_ID());
+                        	newpst.setSTATUS(status_code);
+                            url = rest_processstatus+"insert";
+                            postRest(url, newpst);
+                        }
+            		}
             	}
         	}
         }else {
@@ -738,7 +796,37 @@ public class VCAjax extends VCCommon{
         
     }
     
+    /*
+     * マテリアルチェック登録
+     * 引数：Json形式
+     */
+    @RequestMapping(value = "/ajax/material_check", 
+    		consumes = "application/json",
+    		method = RequestMethod.POST)
+    @ResponseBody
+    public String material_check(@RequestBody List<MATERIAL_CHECK_TABLE> req) {
+    	
+        String url = rest_materialcheck+"insert";
+        USER_MASTER user = super.getUserInfo();
+        String timestamp = getWorkDate();
+        
+        for(MATERIAL_CHECK_TABLE data : req) {
+        	
+        	data.setCHECK_USERID(user.getUSERID());
+        	data.setCHECK_USERNAME(user.getUSERNAME());
+        	data.setCHECK_DATE(timestamp);
+        	
+        	url= rest_materialcheck+"insert";
+	 		if(!postRest(url, data)) {
+	 			return "NG";
+	 		}
+        }
+        
+        return "OK";
+        
+    }
     
+   
     // 以下デバッグ用
     
     

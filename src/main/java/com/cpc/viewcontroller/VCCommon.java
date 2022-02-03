@@ -92,6 +92,7 @@ public class VCCommon {
 	public static final String rest_airelation = "/rest/airelation/";	// 受入指図連携テーブル
 	public static final String rest_materialgroup = "/rest/materialgroup/";	// マテリアルグループテーブル
 	public static final String rest_processstatus = "/rest/processstatus/";	// 工程別ステータステーブル
+	public static final String rest_materialcheck = "/rest/materialcheck/";	// マテリアルチェックテーブル
 		
 	/*
 	 * ユーザ権限
@@ -385,6 +386,18 @@ public class VCCommon {
     	}catch(Exception e) {
     	}
     	return json;
+    }
+    
+    /*
+     * ステータスリスト取得(Json)
+     */
+    public String getStatusName(String status_code) {
+    	String url= rest_statusmst+"select?STATUS_CODE="+status_code;
+    	List<STATUS_MASTER> list = getRest(url, STATUS_MASTER.class);
+    	if(list.size()>0) {
+    		return list.get(0).getSTATUS_NAME();
+    	}
+    	return "";
     }
     
     /*

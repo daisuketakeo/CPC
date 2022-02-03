@@ -31,6 +31,9 @@ public class VCInstructions extends VCCommon{
     	// ステータスリスト
     	model.addAttribute(param_status_list, getStatusJson());
     	
+    	// 指図リリース済み：ステータス名称
+    	model.addAttribute("RELEASE_STATUS", getStatusName("I02"));
+    	
 		return disp_main;
     }
     

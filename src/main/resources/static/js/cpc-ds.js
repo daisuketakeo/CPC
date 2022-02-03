@@ -82,6 +82,41 @@ function initnewWRT(){
 		if (typeof updaterow == 'function') {
 		  updaterow();
 		}
+		if (typeof refrech_work == 'function') {
+		  refrech_work();
+		}
+	  }else{
+		if(XHR.responseText==''){
+		}else{
+			error(XHR.responseText); //エラーダイアログ表示
+		}
+	  }
+	}
+ }
+ 
+ /***********************************
+作業実績登録
+***********************************/
+ function endwork_registMCT(
+ 	PROCESS_ID, ID, WORK_GROUP, WORK_ID, mct_list
+ 	){
+ 	
+     // 作業実績生成
+     initnewWRT();
+     new_WORK_RESULT_TABLE.process_ID        = PROCESS_ID;
+     new_WORK_RESULT_TABLE.work_GROUP        = WORK_GROUP;
+     new_WORK_RESULT_TABLE.work_ID           = WORK_ID;
+     new_WORK_RESULT_TABLE.id                = ID;
+    
+ 	//データを送信
+ 	var XHR = new XMLHttpRequest();
+ 	XHR.open( "POST", "/ajax/workend" );
+ 	XHR.setRequestHeader('Content-Type', 'application/json');
+ 	XHR.send(JSON.stringify(new_WORK_RESULT_TABLE));
+	XHR.onreadystatechange = function() {
+	  if( XHR.readyState === 4 && XHR.status === 200 ) {
+		// 正常終了時に処理
+		registMCT(mct_list);
 	  }else{
 		if(XHR.responseText==''){
 		}else{
@@ -91,6 +126,39 @@ function initnewWRT(){
 	}
  }
 
+/***********************************
+マテリアルチェック登録
+***********************************/
+ function registMCT(mct_list){
+ 	//データを送信
+ 	var XHR = new XMLHttpRequest();
+ 	XHR.open( "POST", "/ajax/material_check" );
+ 	XHR.setRequestHeader('Content-Type', 'application/json');
+ 	XHR.send(JSON.stringify(mct_list));
+	XHR.onreadystatechange = function() {
+	  if( XHR.readyState === 4 && XHR.status === 200 ) {
+		// 正常終了時に処理
+		if (typeof refrech_work == 'function') {
+		  refrech_work();
+		}
+	  }else{
+		if(XHR.responseText==''){
+		}else{
+			error(XHR.responseText); //エラーダイアログ表示
+		}
+	  }
+	}
+ }
+ //jQueryでSleep
+function wait(sec) {
+    // jQueryのDeferredを作成。
+    var objDef = new $.Deferred;
+    setTimeout(function () {
+        // sec秒後に、resolve()を実行して、Promiseを完了
+        objDef.resolve(sec);
+    }, sec*1000);
+    return objDef.promise();
+};
 /*
  * ヘッダスタイル変更
  */

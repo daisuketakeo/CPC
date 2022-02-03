@@ -94,7 +94,7 @@ function refrech_work(){
 確認ダイアログ表示
 ***********************************/
 function confirm_manufacturing(
-		wgp, wid, label, count_result, matetial_nos,
+		wgp, wid, label, count_result, material_check_list,
 		CHECK_RESULT, CHECK_REASON){
 	$('#confirmdialog').dialog({
 		dialogClass:'confirm_dialog',
@@ -102,29 +102,21 @@ function confirm_manufacturing(
 		title:"Confirm", //タイトル
 		buttons: { //ボタン
 		"OK": function() {
-			$(this).dialog("close");
-			if(matetial_nos!=null){
-				const matetial_no_list = matetial_nos.split(',');
-				for( var i=0,l=matetial_no_list.length;i<l;i++ ){
-					endwork($("#PROCESS_ID").val(),matetial_no_list[i],wgp, wid,
-							CHECK_RESULT, CHECK_REASON,null,null,
-							label,count_result
-				 	);
-				}				
-			}
-			endwork($("#PROCESS_ID").val(),$("#BATCH_ID").val(),wgp, wid,
-					CHECK_RESULT, CHECK_REASON,null,null,
-					label,count_result
-		 	);
-			if(matetial_nos!=null){
-				wait(1).done(function () {
-					// 作業手順再表示			
-					refrech_work();
-		        });				
+			if(material_check_list!=null){
+				// マテリアルチェックリストがNULLでない場合
+				// マテリアルチェック登録処理実行
+				endwork_registMCT(
+						$("#PROCESS_ID").val(),$("#BATCH_ID").val(),wgp, wid,
+						material_check_list
+			 	);
 			}else{
-				// 作業手順再表示			
-				refrech_work();
+				// 作業完了処理実行
+				endwork($("#PROCESS_ID").val(),$("#BATCH_ID").val(),wgp, wid,
+						CHECK_RESULT, CHECK_REASON,null,null,
+						label,count_result
+			 	);
 			}
+			$(this).dialog("close");
 		},
 		"Cancel": function() {
 			$(this).dialog("close");
@@ -132,17 +124,6 @@ function confirm_manufacturing(
 		}
 	});
 }
-
-//jQueryでSleep
-function wait(sec) {
-    // jQueryのDeferredを作成。
-    var objDef = new $.Deferred;
-    setTimeout(function () {
-        // sec秒後に、resolve()を実行して、Promiseを完了
-        objDef.resolve(sec);
-    }, sec*1000);
-    return objDef.promise();
-};
 
 </script>
 <!-- コンテンツ -->

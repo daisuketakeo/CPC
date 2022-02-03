@@ -124,16 +124,18 @@ $(function() {
 			// マテリアル一覧表示済みの場合
 			// マテリアルの作業実績取得
 			var args = 
-				"?WORK_GROUP="+wgrp+
+				"?BATCH_ID="+batch_id+
+				"&WORK_GROUP="+wgrp+
 				"&WORK_ID=002";
+			
 			$.ajax({
 			type: "GET", 
-			url: '/rest/workresult/select'+args,
-			}).done(function(data, dataType) {
-				var usage_arr = JSON.parse(data);
-				$.each(usage_arr.list,function(i,WORK_RESULT_TABLE){
-					if(WORK_RESULT_TABLE.work_DATE=='' ||
-							WORK_RESULT_TABLE.work_DATE == null){
+			url: '/rest/materialcheck/select'+args,
+			}).done(function(materialcheck, dataType) {
+				var materialcheck_arr = JSON.parse(materialcheck);
+				$.each(materialcheck_arr.list,function(i,MATERIAL_CHECK_TABLE){
+					if(MATERIAL_CHECK_TABLE.check_DATE=='' ||
+							MATERIAL_CHECK_TABLE.check_DATE == null){
 						// 作業実施日が空白の場合
 			 	    	// 処理なし
 					}else{
@@ -143,16 +145,16 @@ $(function() {
 							var childtr = tbodys.eq(i).children();
 							var childtd = $(childtr).children();
 							var material_no = $(childtd.eq(0)).text();
-							if(material_no==WORK_RESULT_TABLE.id){
+							if(material_no==MATERIAL_CHECK_TABLE.material_NO){
 								// 該当マテリアルのperformed_Time,Checkをセット
-								$('#'+tdperformed_Time+material_no).text(WORK_RESULT_TABLE.work_DATE);
+								$('#'+tdperformed_Time+material_no).text(MATERIAL_CHECK_TABLE.check_DATE);
 								$('#'+tdcheck+material_no).prop('checked', true);
 							}
 						}	
 					}
 				});
 				
-				// チェックボックスも有効
+				// チェックボックス無効
 				for( var i=0,l=tbodys.length;i<l;i++ ){
 					// 選択行のMATERIAL_NO取得
 					var childtr = tbodys.eq(i).children();
@@ -192,18 +194,19 @@ $(function() {
 						
 						// マテリアルの作業実績取得
 						args = 
-							"?WORK_GROUP="+wgrp+
-							"&WORK_ID=002"+
-							"&ID="+json.material_NO;
+							"?MATERIAL_NO="+json.material_NO+
+							"&BATCH_ID="+batch_id+
+							"&WORK_GROUP="+wgrp+
+							"&WORK_ID=002";
 						$.ajax({
 						type: "GET", 
-						url: '/rest/workresult/select'+args,
-						}).done(function(workresult, dataType) {
-							var workresult_arr = JSON.parse(workresult);
-							if(workresult_arr.list.length>0){
-								WORK_RESULT_TABLE = workresult_arr.list[0];
-								if(WORK_RESULT_TABLE.work_DATE=='' ||
-										WORK_RESULT_TABLE.work_DATE == null){
+						url: '/rest/materialcheck/select'+args,
+						}).done(function(materialcheck, dataType) {
+							var materialcheck_arr = JSON.parse(materialcheck);
+							if(materialcheck_arr.list.length>0){
+								MATERIAL_CHECK_TABLE = materialcheck_arr.list[0];
+								if(MATERIAL_CHECK_TABLE.check_DATE=='' ||
+										MATERIAL_CHECK_TABLE.check_DATE == null){
 									// 作業実施日が空白の場合
 									performed_Time.text("");
 						 	    	mcheck.append($("<input>", {
@@ -214,7 +217,7 @@ $(function() {
 							        	}));
 								}else{
 									//　作業実施日がある場合
-									performed_Time.text(WORK_RESULT_TABLE.work_DATE);
+									performed_Time.text(MATERIAL_CHECK_TABLE.check_DATE);
 									mcheck.append($("<input>", {
 							        	  type: "checkbox",
 							        	  id: tdcheck+json.material_NO,
@@ -262,7 +265,7 @@ $(function() {
 	})
 	$(okbtn+'002').click(function() {	// 手順2　OKボタン
 		
-		const exec_list = [];
+		const material_check_list = [];
         var tbodys = $(mtbl+" tbody");//全行を取得
 		for( var i=0,l=tbodys.length;i<l;i++ ){
 			// 選択行のMATERIAL_NO取得
@@ -270,11 +273,23 @@ $(function() {
 			var childtd = $(childtr).children();
 			var material_no = $(childtd.eq(0)).text();
 			if($('#'+tdcheck+material_no).prop('checked') == true){
-				exec_list.push(material_no);
+				// マテリアルチェックデータ生成
+				var new_MATERIAL_CHECK_TABLE = 
+				{
+				    material_NO       :material_no,
+				    batch_ID          :batch_id,
+				    process_ID        :process_id,
+				    work_GROUP        :wgrp,
+				    work_ID           :'002',
+				    check_USERID      :null,
+				    check_USERNAME    :null,
+				    check_DATE        :null
+				};
+				material_check_list.push(new_MATERIAL_CHECK_TABLE);
 			}
 		}
         
-		confirm_manufacturing(wgrp,'002',null,null,exec_list.join());
+		confirm_manufacturing(wgrp,'002',null,null,material_check_list);
 	})
 	$(okbtn+'003').click(function() {	// 手順3　OKボタン
 		// 有効期限ラベル出力チェック
