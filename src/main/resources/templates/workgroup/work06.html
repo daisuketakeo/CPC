@@ -22,6 +22,7 @@ $(function() {
 	var mtbl = '#mtbl'+wgrp;
 	var tdcheck = 'tdcheck'+wgrp;
 	var tdperformed_Time = 'tdperformed_Time'+wgrp;
+	var material_group_id_read = '#material_group_id_read'+wgrp;
 	
  	// 初期表示処理
 	$(setbtn).click(function() {
@@ -251,7 +252,7 @@ $(function() {
 				});
 		}
 		
-	})
+	});
 	
 	
 	// OKボタンクリック時の処理
@@ -262,7 +263,7 @@ $(function() {
 			return;
 		}
 		confirm_manufacturing(wgrp,'001',$(kitlabel).val(),null);
-	})
+	});
 	$(okbtn+'002').click(function() {	// 手順2　OKボタン
 		
 		const material_check_list = [];
@@ -290,7 +291,7 @@ $(function() {
 		}
         
 		confirm_manufacturing(wgrp,'002',null,null,material_check_list);
-	})
+	});
 	$(okbtn+'003').click(function() {	// 手順3　OKボタン
 		// 有効期限ラベル出力チェック
 		if($(expdlabel).val()==''){
@@ -298,7 +299,7 @@ $(function() {
 			return;
 		}
 		confirm_manufacturing(wgrp,'003',$(expdlabel).val(),null);
-	})
+	});
 	
 	// キットラベルPrintボタンクリック時の処理
 	$(kitlabelprintbtn).click(function() {
@@ -328,10 +329,33 @@ $(function() {
 	        //pdfMake.createPdf(docDef).download("Kitlabel.pdf");
 	        pdfMake.createPdf(docDef).open();
 		}
-	})
+	});
 	
 	// Startbtnボタンクリック時の処理
 	$(startbtn).click(function() {
+		if($(startbtn).val()=='Start'){
+			$(material_group_id_read).val('');
+			$(material_group_id_read).focus();
+			$(startbtn).val('Stop');
+		}else{
+			$(startbtn).val('Start');
+			$(material_group_id_read).val('');
+			$(startbtn).focus();
+		}
+	});
+	
+	// Startボタン押下後にフォーカスが外れたらフォーカスしなおす
+	$(material_group_id_read).blur(function (e) {
+	    if($(startbtn).val()=='Stop'){
+	    	$(material_group_id_read).val('');
+			$(material_group_id_read).focus();
+		}
+	});
+	// バーコード読み取り時の処理
+	$(material_group_id_read).on('input', function(event) {
+		
+		//console.log($(material_group_id_read).val());
+		
 		// チェックボックスも有効
 		var tbodys = $(mtbl+" tbody");//全行を取得
 		for( var i=0,l=tbodys.length;i<l;i++ ){
@@ -343,19 +367,26 @@ $(function() {
 		}
 		// 実施対象のマテリアル取得
 		var args = 
-			"?BATCH_ID="+batch_id;
+			"?MATERIAL_GORUP_ID="+$(material_group_id_read).val();
+		//console.log(args);
 		$.ajax({
 		type: "GET", 
-		url: '/ajax/get_exec_material_list'+args,
-		}).done(function(arry, dataType) {
-			$.each(arry,function(i,data){
-				if($('#'+tdcheck+data).length){
-					$('#'+tdcheck+data).prop('checked', true);
+		url: '/rest/materialgroup/select'+args,
+		}).done(function(data, dataType) {
+			//console.log(data);
+			var usage_arr = JSON.parse(data);
+			$.each(usage_arr.list,function(i,MATERIAL_GORUP_ID){
+				if($('#'+tdcheck+MATERIAL_GORUP_ID.material_NO).length){
+					$('#'+tdcheck+MATERIAL_GORUP_ID.material_NO).prop('checked', true);
 				}
 			});
+			$(startbtn).val('Start');
+			$(material_group_id_read).val('');
+			$(startbtn).focus();
 		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 			console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 		});
+		
 	})
 	
 	// 有効期限ラベルPrintボタンクリック時の処理
@@ -531,4 +562,7 @@ $(function() {
 <td>
 </tr>
 </table>
-
+<div class="disopaypanel">
+<input type="text" th:id="'material_group_id_read'+${wgrp}" 
+	style="width:0px;height:0px;position: absolute;top:20px;right:50px;z-index:-10;">
+</div>
