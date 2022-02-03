@@ -586,34 +586,3 @@
   border        : 1px #666666 solid; /* 罫線      */
   text-align    : left;
 }
-
-/* CSVテーブル全体 */
-.csvtbl {
-  border-collapse: collapse;         /* 境界線結合 */
-  border-spacing : 0;                /* 罫線間余白 */
-  font-size      : 9pt;              /* 文字サイズ */ 
-  display        : block;
-  overflow       : none;
-  height         : 150px;
-  border         : 1px;
-}
-/* CSVテーブル 明細 */
-.csvtbl td {
-  padding       : 5px;               /* 余白      */
-  border        : 1px black solid;   /* 罫線      */
-  text-align    : left;
-}
-/* CSVテーブル ヘッダ */
-.th_csvtbl {
-  content: "";
-  text-align    : center;            /* 文字位置  */
-  padding       : 5px;               /* 余白      */
-  border        : 1px black solid;   /* 罫線      */
-  background    : #cccccc;           /* 背景色    */
-  color         : black;             /* フォントの色 */
-}	
-/* CSVテーブル テキスト */
-.txt_csvtbl {
-  text-align    : right;             /* 文字位置  */
-  border-style  : none;              /* 罫線      */
-}	

@@ -92,28 +92,6 @@ function refrech_work(){
 	});
 }
 
-/***********************************
-確認ダイアログ表示
-***********************************/
-function confirm_qualitycontrol(wgp, wid,
-		CHECK_RESULT){
-	$('#confirmdialog').dialog({
-		dialogClass:'confirm_dialog',
-		modal:true, //モーダル表示
-		title:"Confirm", //タイトル
-		buttons: { //ボタン
-		"OK": function() {
-			$(this).dialog("close");
-			endwork($("#PROCESS_ID").val(),$("#BATCH_ID").val(),wgp, wid,
-					CHECK_RESULT,null);
-			},
-		"Cancel": function() {
-			$(this).dialog("close");
-			}
-		}
-	});
-}
-
 </script>
 <!-- コンテンツ -->
 <input type="hidden" id="WORK_GROUP_JSON" th:value="${WORK_GROUP_JSON}">

@@ -24,6 +24,8 @@ $(function() {
 	
 	var btnCamera = '#btnCamera'+wgrp;
 	var imgCapture1 = '#imgCapture1'+wgrp;
+	var pass = '#pass'+wgrp;
+	var fail = '#fail'+wgrp;
 	
 	// 作業手順取得
 	var args = "?WORK_GROUP="+wgrp;
@@ -36,8 +38,6 @@ $(function() {
  		    $(td).text(WORK_MASTER.work);
  		    $(work_id).val(WORK_MASTER.work_ID);
  		    $(imgCapture1).attr("src", "data:image/;base64,"+WORK_MASTER.capture1);
- 		    $(checkpass).prop('checked', true);
- 		    $(checkfail).prop('checked', false);
  	    }
 	    
 	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
@@ -107,7 +107,35 @@ $(function() {
 			return;
 		}
 		
-		confirm_qualitycontrol(wgrp,'001',CHECK_RESULT);
+		$('#confirmdialog').dialog({
+			dialogClass:'confirm_dialog',
+			modal:true, //モーダル表示
+			title:"confirm", //タイトル
+			buttons: { //ボタン
+			"OK": function() {
+				$(this).dialog("close");
+				try{
+					/* 014 Microscopy処理
+					// 作業実績登録
+					update_wr(
+							wgrp,$(work_id).val(),
+							null, null,null,CHECK_RESULT,
+						 	null,
+						 	null,
+						 	null,
+						 	null
+						 	);
+					*/
+				}catch(e){
+					console.log(e);
+				}
+				
+				},
+			"Cancel": function() {
+				$(this).dialog("close");
+				}
+			}
+		});
 	})
 	
 });

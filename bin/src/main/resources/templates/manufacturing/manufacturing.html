@@ -3,8 +3,6 @@
 
 var disp_flg = sessionStorage.getItem(['DISP_FLG']);
 
-var wgrp_diviation_status = 'W99';		// 作業グループの逸脱ステータス
-
 /***********************************
 画面初期処理
 ***********************************/
@@ -70,7 +68,7 @@ function search(){
 	        
 	     	// 作業手順再表示			
 			refrech_work();
-	     	
+	        
 	    });
 
 	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
@@ -95,18 +93,31 @@ function refrech_work(){
 /***********************************
 確認ダイアログ表示
 ***********************************/
-function confirm_qualitycontrol(wgp, wid,
-		CHECK_RESULT){
+function confirm_manufacturing(
+		wgp, wid, label, count_result, material_check_list,
+		CHECK_RESULT, CHECK_REASON){
 	$('#confirmdialog').dialog({
 		dialogClass:'confirm_dialog',
 		modal:true, //モーダル表示
 		title:"Confirm", //タイトル
 		buttons: { //ボタン
 		"OK": function() {
+			if(material_check_list!=null){
+				// マテリアルチェックリストがNULLでない場合
+				// マテリアルチェック登録処理実行
+				endwork_registMCT(
+						$("#PROCESS_ID").val(),$("#BATCH_ID").val(),wgp, wid,
+						material_check_list
+			 	);
+			}else{
+				// 作業完了処理実行
+				endwork($("#PROCESS_ID").val(),$("#BATCH_ID").val(),wgp, wid,
+						CHECK_RESULT, CHECK_REASON,null,null,
+						label,count_result
+			 	);
+			}
 			$(this).dialog("close");
-			endwork($("#PROCESS_ID").val(),$("#BATCH_ID").val(),wgp, wid,
-					CHECK_RESULT,null);
-			},
+		},
 		"Cancel": function() {
 			$(this).dialog("close");
 			}
@@ -122,7 +133,7 @@ function confirm_qualitycontrol(wgp, wid,
 
 <div class="panel_ebr">
 
- 	<div class="headername_ebr"><h4>EBR Quality control</h4></div>
+ 	<div class="headername_ebr"><h4>EBR Manufacturing</h4></div>
     <!-- ヘッダ -->
     <div class="tablepanel_ebr">
 		<table id="tbl1" class="table_ebr">
@@ -144,7 +155,6 @@ function confirm_qualitycontrol(wgp, wid,
 		    <td></tr>
 		    <tr style="text-align: right;"><td>
 			    <input type="button" id="closebtn" value="Close" class="btn custombtn">
-			    <input type="button" id="okbtn" value="OK" class="btn custombtn" onclick="test()">
 		    <td></tr>
 	    </table>
     </div>​

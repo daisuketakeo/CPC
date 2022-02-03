@@ -3,7 +3,15 @@
 $(function() {
 	
 	var wgrp = /*[[${wgrp}]]*/ '';
-	
+	var batch_id = $('#BATCH_ID').val();
+	var process_id = $('#PROCESS_ID').val();
+
+	// CSVファイル名
+	var csvfile1 = "";
+	var csvfile2 = "";
+	var csvfile3 = "";
+	var csvfile4 = "";
+
 	// 作業グループ名セット
 	getWorkGroupName(wgrp, wgrp, "work_group_name");
 	
@@ -20,23 +28,27 @@ $(function() {
 	var checkpass = '#checkpass'+wgrp;
 	var checkfail = '#checkfail'+wgrp;
 	
-	var btnDataget = '#btnDataget'+wgrp;
-	var csvfile1 = '#csvfile1'+wgrp;
-	var csvfile2 = '#csvfile2'+wgrp;
-	var pass = '#pass'+wgrp;
-	var fail = '#fail'+wgrp;
+	var btnDataGet = '#btnDataGet'+wgrp;
+	var tblcsv1 = '#tblcsv1'+wgrp;
+	//var csvdata11 = '#csvdata11'+wgrp;
+	//var csvdata12 = '#csvdata12'+wgrp;
 	
 	// 作業手順取得
 	var args = "?WORK_GROUP="+wgrp;
 	$.ajax({
 	    type: "GET", 
-	    url: '/rest/workmst/select'+args,
+	    url: '/ajax/get_ebrtest'+args,
 	}).done(function(data, dataType) {
-	    var usage_arr = JSON.parse(data);
-	    if(usage_arr.list.length>0){
- 	    	WORK_MASTER = usage_arr.list[0];
+	    if(data.length>0){
+ 	    	WORK_MASTER = data[0];
  		    $(td).text(WORK_MASTER.work);
  		    $(work_id).val(WORK_MASTER.work_ID);
+			csvfile1 = WORK_MASTER.csv1.split("\r\n");
+			if(WORK_MASTER.csv2!==null) csvfile2 = WORK_MASTER.csv2.split("\r\n");
+			if(WORK_MASTER.csv3!==null) csvfile3 = WORK_MASTER.csv3.split("\r\n");
+			if(WORK_MASTER.csv4!==null) csvfile4 = WORK_MASTER.csv4.split("\r\n");
+ 		    $(checkpass).prop('checked', true);
+ 		    $(checkfail).prop('checked', false);
  	    }
 	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
@@ -71,13 +83,13 @@ $(function() {
 				setDisabled(okbtn,true);
 				setDisabled(checkpass, true);
 				setDisabled(checkfail, true);
-				//setDisabled(btnCamera, true);
+				setDisabled(btnDataGet, true);
 			}else{
 				open_work(wgrp, true);	// 作業手順表示
 				setDisabled(okbtn,false);
 				setDisabled(checkpass, false);
 				setDisabled(checkfail, false);
-				//setDisabled(btnCamera, false);
+				setDisabled(btnDataGet, false);
 			}
 		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 		  // エラーメッセージの表示
@@ -86,30 +98,34 @@ $(function() {
 	})
  	
 	// データ取り込みクリック時の処理
-	$(btnDataget).click(function() {
-		// CSVファイル名を取得
-		var args = 
-			"?WORK_GROUP="+wgrp+
-			"&WORK_ID="+$("#work_id"+wgrp).val()+
-			"&ID="+id;
+	$(btnDataGet).click(function() {
+		// テーブルの明細部分(tbody)を生成
+		// tbodyをクリア
+		$("#tblcsv1"+wgrp+" > tbody").html("");
+		
+	    //データをテーブル形式にする 
+	    $.each(csvfile1,function(i,csvstr){
+	    	if(csvstr === ""){
+	    		return false;
+	    	}
+	    	var csv_arry = csvstr.split(",");
+	    	
+	    	var tbody = $('<tbody />');
+	    	
+			var tr1 = $('<tr/>');
+	        tr1.append($('<td/>').text(csv_arry[0]));
+	        tr1.append($('<td/>').text(csv_arry[1]+" "+csv_arry[2]));
+	        
+	        tbody.append(tr1);
+	        
+	        $(tblcsv1).append(tbody);
+	    });
 
 		/*
-		$.ajax({
-		type: "GET", 
-		url: '/ajax/xxxxxxxx'+args,
-		}).done(function(data, dataType) {
-		    var usage_arr = JSON.parse(data);
-		    if(usage_arr.list.length>0){
-	 	    	WORK_MASTER = usage_arr.list[0];
-	 	    	var csvfile_arr = JSON.parse(CAMERA_VISION_PATH+WORK_MASTER.CSV1);
-	 		    $(csvfile1).text(csvfile_arr.list[0]);
-	 		    $(csvfile2).text(csvfile_arr.list[1]);
-	 	    }
-		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-		  // エラーメッセージの表示
-		  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
-		});
-		*/
+		// CSVファイルの内容を設定
+	    $(csvdata11).val(csvfile1[0]);
+	    $(csvdata12).val(csvfile1[1]);
+	    */
 	})
 	
 	// OKボタンクリック時の処理
@@ -127,35 +143,7 @@ $(function() {
 			return;
 		}
 		
-		$('#confirmdialog').dialog({
-			dialogClass:'confirm_dialog',
-			modal:true, //モーダル表示
-			title:"confirm", //タイトル
-			buttons: { //ボタン
-			"OK": function() {
-				$(this).dialog("close");
-				try{
-					/* 014 Microscopy処理
-					// 作業実績登録
-					update_wr(
-							wgrp,$(work_id).val(),
-							null, null,null,CHECK_RESULT,
-						 	null,
-						 	null,
-						 	null,
-						 	null
-						 	);
-					*/
-				}catch(e){
-					console.log(e);
-				}
-				
-				},
-			"Cancel": function() {
-				$(this).dialog("close");
-				}
-			}
-		});
+		confirm_qualitycontrol(wgrp,'001',CHECK_RESULT);
 	})
 	
 });
@@ -208,16 +196,15 @@ $(function() {
 				<a href="#" th:id="'btnDataGet'+${wgrp}"><img src="/images/dataget.png" alt="データ取り込みアイコン"></i></a>
 			</td>
 			<td style="width:600px;">
-				<table class="table_ebr" style="border:1px;">
-				<tr><th colspan="2" class="th_ebr">Date</th></tr>
-				<tr><td style="border:1px solid;">Cell density</td><td style="border:1px solid;"><input type="text" th:id="'csvfile1'+${wgrp}" readonly>　cells/cm</td></tr>
-				<tr><td style="border:1px solid;">Initial seeding density</td><td style="border:1px solid;">1.3×10⁴ cells/cm</td></tr>
-				<tr><td style="border:1px solid;">Doubling</td><td style="border:1px solid;"><input type="text" th:id="'csvfile2'+${wgrp}" readonly>　hour</td></tr>
+				<table th:id="'tblcsv1'+${wgrp}" class="csvtbl">
+				<thead>
+					<tr><th colspan="2" class="th_csvtbl">Date</th></tr>
+				</thead>
 				<!-- 
-				<tr><td style="border:1px solid;">Cell density</td><td><input type="text" th:id="'csvfile1'+${wgrp}" readonly>　cells/cm</td></tr>
-				<tr><td>Initial seeding density</td><td>1.3×10⁴ cells/cm</td></tr>
-				<tr><td>Doubling</td><td><input type="text" th:id="'csvfile2'+${wgrp}" readonly>　hour</td></tr>
-				 -->
+				<tr><td>Cell density</td><td><input type="text" th:id="'csvdata11'+${wgrp}" class="txt_csvtbl" readonly>　cells/cm</td></tr>
+				<tr><td>Initial seeding density</td><td><input type="text" value="1.3×10⁴ " class="txt_csvtbl" readonly>  cells/cm</td></tr>
+				<tr><td>Doubling</td><td><input type="text" th:id="'csvdata12'+${wgrp}" class="txt_csvtbl" readonly>　hour</td></tr>
+				-->
 				</table>
 			</td>
 			<td style="width:100px;">
