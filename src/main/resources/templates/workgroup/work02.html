@@ -10,13 +10,10 @@ $(function() {
 	// 要素名
 	var setbtn = '#setbtn'+wgrp;
 	var okbtn = '#okbtn'+wgrp;
-	
 	var tdcheck = '#tdcheck'+wgrp;
 	var tdcoa = '#tdcoa'+wgrp;
 	var td = '#td'+wgrp;
-	
 	var work_id = '#work_id'+wgrp;
-	
 	var lotno = '#lotno'+wgrp;
 	var expdate = '#expdate'+wgrp;
 	var checkpass = '#checkpass'+wgrp;
@@ -25,7 +22,6 @@ $(function() {
 	var coapass = '#coapass'+wgrp;
 	var coafail = '#coafail'+wgrp;
 	var coareason = '#coareason'+wgrp;
-	
 	var btnBrowse = '#btnBrowse'+wgrp;
  	var btnSubmit = '#btnSubmit'+wgrp;
  	var downfile_text = '#downfile_text'+wgrp;
@@ -88,13 +84,15 @@ $(function() {
 	
 	// 一覧行クリック時の処理
 	$(setbtn).click(function(event, id) {
+		
+		// アプロードファイル名クリア
 		$(upfile_text).val('');
+		
 		// ステータスチェック
 		var args = 
 			"?WORK_GROUP="+wgrp+
 			"&WORK_ID="+$(work_id).val()+
 			"&ID="+id;
-
 		$.ajax({
 		type: "GET", 
 		url: '/ajax/check_status'+args,
@@ -155,7 +153,6 @@ $(function() {
 			"?WORK_GROUP="+wgrp+
 			"&WORK_ID="+$("#work_id"+wgrp).val()+
 			"&ID="+id;
-	    
 		$.ajax({
 		type: "GET", 
 		url: '/rest/workresult/select'+args,
@@ -212,7 +209,7 @@ $(function() {
 		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 			console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 		});
-	})
+	});
 	
 	// OKボタンクリック時の処理
 	$(okbtn).click(function() {
@@ -310,7 +307,7 @@ $(function() {
 	 		$(upfile_text).hide();
 			
 	     }
-	})
+	});
  	
 });
 </script>

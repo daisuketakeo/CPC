@@ -10,19 +10,18 @@ $(function() {
 	// 要素名
 	var setbtn = '#setbtn'+wgrp;
 	var okbtn = '#okbtn'+wgrp;
-	
 	var tdcheck = '#tdcheck'+wgrp;
 	var tdcoa = '#tdcoa'+wgrp;
 	var td = '#td'+wgrp;
-	
 	var work_id = '#work_id'+wgrp;
-	
 	var userlotno = '#userlotno'+wgrp;
+	var userlotnoprintbtn = '#userlotnoprintbtn'+wgrp;
 	
+	// ユーザロット入力不可
 	$(userlotno).prop("disabled",true);
 	
+	// 作業手順マスタ取得
 	var args = "?WORK_GROUP="+wgrp;
- 	// ajaxで受入一覧のJson取得
 	$.ajax({
 	    type: "GET", 
 	    url: '/rest/workmst/select'+args,
@@ -40,31 +39,61 @@ $(function() {
  	
  	// 一覧行クリック時の処理
 	$(setbtn).click(function(event, id) {
+		
 		// ステータスチェック
 		var args = 
 			"?WORK_GROUP="+wgrp+
 			"&WORK_ID="+$(work_id).val()+
 			"&ID="+id;
-
+		$.ajax({
+			type: "GET", 
+			url: '/ajax/check_status'+args,
+			}).done(function(data, dataType) {
+				if(data==false){
+					setDisabled(okbtn,true);
+				}else{
+					open_work(wgrp, true);	// 作業手順表示
+					setDisabled(okbtn,false);
+				}
+			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+				console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+			});
+		
+		// 受入テーブル取得
+		var args = 
+			"?MATERIAL_NO="+id;
 		$.ajax({
 		type: "GET", 
-		url: '/ajax/check_status'+args,
+		url: '/rest/accept/select'+args,
 		}).done(function(data, dataType) {
-			if(data==false){
-				setDisabled(okbtn,true);
-			}else{
-				open_work(wgrp, true);	// 作業手順表示
-				setDisabled(okbtn,false);
-			}
+			var usage_arr = JSON.parse(data);
+		    if(usage_arr.list.length>0){
+	 	    	ACCEPT_TABLE = usage_arr.list[0];
+	 		    $(userlotno).val(ACCEPT_TABLE.user_LOT_NO);
+	 	    }
 		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 			console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
-		});	
-	})
+		});
+	});
 	
 	// OKボタンクリック時の処理
 	$(okbtn).click(function() {
 		confirm_accept(wgrp,$(work_id).val());
-	})
+	});
+ 	
+	// UserLotNoPrintボタンクリック時の処理
+	$(userlotnoprintbtn).click(function() {
+		if($(userlotno).val()!=''){
+			//PDF作成処理
+	        var docDef = {
+	          content:[
+	            {qr: $(userlotno).val()}
+	          ],
+	        };
+	        //pdfMake.createPdf(docDef).download("Kitlabel.pdf");
+	        pdfMake.createPdf(docDef).open();
+		}
+	});
 	
 });
 </script>
@@ -109,7 +138,11 @@ $(function() {
 				<table>
 				<tr>
 				<td>User lot #</td>
-				<td><input type="text" th:id="'userlotno'+${wgrp}" style="width:400px"></td>
+				<td>
+					<input type="text" th:id="'userlotno'+${wgrp}" style="width:400px">
+					<input type="button" th:id="'userlotnoprintbtn'+${wgrp}" value="Print" 
+								class="btn custombtn" style="width:100px;">
+				</td>
 				</tr>
 				</table>
 				</td>

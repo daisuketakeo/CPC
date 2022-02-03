@@ -310,23 +310,6 @@ function initAT(){
  	});
   }
   
- function test(){
-	 
-     //PDF作成処理
-     var docDef = {
-       content:[
-         {qr: 'これはテストです'}
-       ],
-     };
-     pdfMake.createPdf(docDef).download("QR_CODE_TEST.pdf");
-     
-     
-     // ヘッダメニュー変更
-     $('#hamberger_menu_list').children().remove();
-     $('#hamberger_menu_list').append('<li><a href="#">TEST1</a></li>');
-     $('#hamberger_menu_list').append('<li><a href="#">TEST2</a></li>');
-     $('#hamberger_menu_list').append('<li><a href="#">あああああああああ</a></li>');
- }
 </script>
 <!-- コンテンツ -->
 <form action="#" method="post">
@@ -369,7 +352,6 @@ function initAT(){
 	    <td></tr>
 	    <tr style="text-align: right;"><td>
 		    <input type="button" id="closebtn" value="Close" class="btn custombtn">
-		    <input type="button" id="okbtn" value="OK" class="btn custombtn" onclick="test()">
 	    <td></tr>
     </table>
 

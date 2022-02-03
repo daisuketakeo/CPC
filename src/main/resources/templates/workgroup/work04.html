@@ -10,11 +10,9 @@ $(function() {
 	// 要素名
 	var setbtn = '#setbtn'+wgrp;
 	var okbtn = '#okbtn'+wgrp;
-	
 	var tdcheck = '#tdcheck'+wgrp;
 	var tdcoa = '#tdcoa'+wgrp;
 	var td = '#td'+wgrp;
-	
 	var work_id = '#work_id'+wgrp;
 	var storage = '#storage'+wgrp;
 	
@@ -61,13 +59,32 @@ $(function() {
 		}).done(function(data, dataType) {
 			if(data==false){
 				setDisabled(okbtn,true);
+				setDisabled(storage,true);
 			}else{
 				open_work(wgrp, true);	// 作業手順表示
 				setDisabled(okbtn,false);
+				setDisabled(storage,false);
 			}
 		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 			console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
-		});	
+		});
+		
+		// 受入テーブル取得
+		var args = 
+			"?MATERIAL_NO="+id;
+		$.ajax({
+		type: "GET", 
+		url: '/rest/accept/select'+args,
+		}).done(function(data, dataType) {
+			var usage_arr = JSON.parse(data);
+		    if(usage_arr.list.length>0){
+	 	    	ACCEPT_TABLE = usage_arr.list[0];
+	 		    $(storage).val(ACCEPT_TABLE.storage);
+	 	    }
+		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+			console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+		});
+		
 	})
 	
 	// OKボタンクリック時の処理
