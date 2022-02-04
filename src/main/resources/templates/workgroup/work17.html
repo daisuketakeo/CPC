@@ -5,9 +5,11 @@ $(function() {
 	var wgrp = /*[[${wgrp}]]*/ '';
 	var batch_id = $('#BATCH_ID').val();
 	var process_id = $('#PROCESS_ID').val();
-
+	
 	// CSVファイル名
 	var csvfile1 = "";
+	var csvfile2 = "";
+	var csvfile3 = "";
 
 	// 作業グループ名セット
 	getWorkGroupName(wgrp, wgrp, "work_group_name");
@@ -26,7 +28,12 @@ $(function() {
 	var checkfail = '#checkfail'+wgrp;
 	
 	var btnDataGet = '#btnDataGet'+wgrp;
+	var imgCapture1 = '#imgCapture1'+wgrp;
+	var imgCapture2 = '#imgCapture2'+wgrp;
+	var imgCapture3 = '#imgCapture3'+wgrp;
 	var tblcsv1 = '#tblcsv1'+wgrp;
+	var tblcsv2 = '#tblcsv2'+wgrp;
+	var tblcsv3 = '#tblcsv3'+wgrp;
 	
 	// 作業手順取得
 	var args = "?WORK_GROUP="+wgrp;
@@ -38,10 +45,16 @@ $(function() {
  	    	WORK_MASTER = data[0];
  		    $(td).text(WORK_MASTER.work);
  		    $(work_id).val(WORK_MASTER.work_ID);
+ 		    $(imgCapture1).attr("src", "data:image/;base64,"+WORK_MASTER.capture1);
+ 		    $(imgCapture2).attr("src", "data:image/;base64,"+WORK_MASTER.capture2);
+ 		    $(imgCapture3).attr("src", "data:image/;base64,"+WORK_MASTER.capture3);
 			if(WORK_MASTER.csv1!==null) csvfile1 = WORK_MASTER.csv1.split("\r\n");
+			if(WORK_MASTER.csv2!==null) csvfile2 = WORK_MASTER.csv2.split("\r\n");
+			if(WORK_MASTER.csv3!==null) csvfile3 = WORK_MASTER.csv3.split("\r\n");
  		    $(checkpass).prop('checked', true);
  		    $(checkfail).prop('checked', false);
  	    }
+	    
 	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 	});
@@ -60,12 +73,12 @@ $(function() {
 	});
  	
 	// 一覧行クリック時の処理
-	$(setbtn).click(function(event, id) {
+	$(setbtn).click(function() {
 		// ステータスチェック
 		var args = 
 			"?WORK_GROUP="+wgrp+
-			"&WORK_ID="+$("#work_id"+wgrp).val()+
-			"&ID="+id;
+			"&WORK_ID=001"+
+			"&ID="+batch_id;
 
 		$.ajax({
 		type: "GET", 
@@ -91,7 +104,12 @@ $(function() {
  	
 	// データ取り込みクリック時の処理
 	$(btnDataGet).click(function() {
+		$(imgCapture1).show();
+		$(imgCapture2).show();
+		$(imgCapture3).show();
+
 		// テーブルの明細部分(tbody)を生成
+		//-- tblcsv1
 		// tbodyをクリア
 		$("#tblcsv1"+wgrp+" > tbody").html("");
 		
@@ -111,6 +129,48 @@ $(function() {
 	        tbody.append(tr1);
 	        
 	        $(tblcsv1).append(tbody);
+	    });
+		//-- tblcsv2
+		// tbodyをクリア
+		$("#tblcsv2"+wgrp+" > tbody").html("");
+		
+	    //データをテーブル形式にする 
+	    $.each(csvfile2,function(i,csvstr){
+	    	if(csvstr === ""){
+	    		return false;
+	    	}
+	    	var csv_arry = csvstr.split(",");
+	    	
+	    	var tbody = $('<tbody />');
+	    	
+			var tr1 = $('<tr/>');
+	        tr1.append($('<td/>').text(csv_arry[0]));
+	        tr1.append($('<td/>').text(csv_arry[1]+" "+csv_arry[2]));
+	        
+	        tbody.append(tr1);
+	        
+	        $(tblcsv2).append(tbody);
+	    });
+		//-- tblcsv3
+		// tbodyをクリア
+		$("#tblcsv3"+wgrp+" > tbody").html("");
+		
+	    //データをテーブル形式にする 
+	    $.each(csvfile3,function(i,csvstr){
+	    	if(csvstr === ""){
+	    		return false;
+	    	}
+	    	var csv_arry = csvstr.split(",");
+	    	
+	    	var tbody = $('<tbody />');
+	    	
+			var tr1 = $('<tr/>');
+	        tr1.append($('<td/>').text(csv_arry[0]));
+	        tr1.append($('<td/>').text(csv_arry[1]+" "+csv_arry[2]));
+	        
+	        tbody.append(tr1);
+	        
+	        $(tblcsv3).append(tbody);
 	    });
 	})
 	
@@ -174,24 +234,26 @@ $(function() {
 		</table>
 		<table>
 			<tr style="vertical-align: top;">
-			<td style="width:100px;">
+			<td style="width:100px;" rowspan="3">
 				<!-- データ取り込みアイコン -->
-				<!-- spectre-icons.min.css だといまいちいいのがない -->
-				<!-- <a href="#" th:id="'btnDataGet'+${wgrp}"><i class="icon icon-2x icon-photo" style="color:black;"></i></a> -->
 				<!-- https://icooon-mono.com/ -->
 				<a href="#" th:id="'btnDataGet'+${wgrp}"><img src="/images/dataget.png" alt="データ取り込みアイコン"></i></a>
 			</td>
-			<td style="width:600px;">
+			<td style="width:200px;">
+				<img th:id="'imgCapture1'+${wgrp}" class="" 
+					width="400px" height="400px" alt="Capture1" style="display:none;">
+			</td>
+			<td style="width:400px;">
 				<table th:id="'tblcsv1'+${wgrp}" class="csvtbl">
 				<thead>
 					<tr><th colspan="2" class="th_csvtbl">Date</th></tr>
 				</thead>
 				</table>
 			</td>
-			<td style="width:100px;">
+			<td style="width:100px;" rowspan="3">
 				<label>Decision</label>
 			</td>
-			<td style="width:300px;">
+			<td style="width:300px;" rowspan="3">
 				<table>
 				<tr class="checklistcheckbox">
 					<td>
@@ -209,6 +271,32 @@ $(function() {
 						</label>
 					</td>
 				</tr>
+				</table>
+			</td>
+			</tr>
+			<tr style="vertical-align: top;">
+			<td style="width:200px;">
+				<img th:id="'imgCapture2'+${wgrp}" class="" 
+					width="400px" height="400px" alt="Capture2" style="display:none;">
+			</td>
+			<td style="width:400px;">
+				<table th:id="'tblcsv2'+${wgrp}" class="csvtbl">
+				<thead>
+					<tr><th colspan="2" class="th_csvtbl">Date</th></tr>
+				</thead>
+				</table>
+			</td>
+			</tr>
+			<tr style="vertical-align: top;">
+			<td style="width:200px;">
+				<img th:id="'imgCapture3'+${wgrp}" class="" 
+					width="400px" height="400px" alt="Capture3" style="display:none;">
+			</td>
+			<td style="width:400px;">
+				<table th:id="'tblcsv3'+${wgrp}" class="csvtbl">
+				<thead>
+					<tr><th colspan="2" class="th_csvtbl">Date</th></tr>
+				</thead>
 				</table>
 			</td>
 			</tr>
