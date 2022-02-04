@@ -15,18 +15,14 @@ $(function() {
 	// 要素名
 	var setbtn = '#setbtn'+wgrp;
 	var okbtn = '#okbtn'+wgrp;
-	
-	var tdcheck = '#tdcheck'+wgrp;
-	var tdcoa = '#tdcoa'+wgrp;
 	var td = '#td'+wgrp;
-	
-	var work_id = '#work_id'+wgrp;
-	
 	var checkpass = '#checkpass'+wgrp;
 	var checkfail = '#checkfail'+wgrp;
-	
 	var btnDataGet = '#btnDataGet'+wgrp;
 	var tblcsv1 = '#tblcsv1'+wgrp;
+	var eximg = '#eximg'+wgrp;
+	
+	$(tblcsv1).hide();
 	
 	// 作業手順取得
 	var args = "?WORK_GROUP="+wgrp;
@@ -37,17 +33,14 @@ $(function() {
 	    if(data.length>0){
  	    	WORK_MASTER = data[0];
  		    $(td).text(WORK_MASTER.work);
- 		    $(work_id).val(WORK_MASTER.work_ID);
-			if(WORK_MASTER.csv1!==null) csvfile1 = WORK_MASTER.csv1.split("\r\n");
- 		    $(checkpass).prop('checked', true);
- 		    $(checkfail).prop('checked', false);
+			if(WORK_MASTER.csv1!==null){
+				csvfile1 = WORK_MASTER.csv1.split("\r\n");
+				createdata(csvfile1, tblcsv1);
+			}
  	    }
 	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 	});
-	
-	setDisabled(checkpass,true);
-	setDisabled(checkfail,true);
 	
 	// チェックボックスの設定
 	$(checkpass).on("click", function(){
@@ -64,8 +57,8 @@ $(function() {
 		// ステータスチェック
 		var args = 
 			"?WORK_GROUP="+wgrp+
-			"&WORK_ID="+$("#work_id"+wgrp).val()+
-			"&ID="+id;
+			"&WORK_ID=001"+
+			"&ID="+batch_id;
 
 		$.ajax({
 		type: "GET", 
@@ -75,43 +68,75 @@ $(function() {
 				setDisabled(okbtn,true);
 				setDisabled(checkpass, true);
 				setDisabled(checkfail, true);
-				setDisabled(btnDataGet, true);
+				$(btnDataGet).css('pointer-events','none');
 			}else{
 				open_work(wgrp, true);	// 作業手順表示
 				setDisabled(okbtn,false);
 				setDisabled(checkpass, false);
 				setDisabled(checkfail, false);
-				setDisabled(btnDataGet, false);
+				$(btnDataGet).css('pointer-events','auto');
 			}
 		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 		  // エラーメッセージの表示
 		  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 		});
+		
+		// 逸脱アイコン非表示
+		$(eximg).hide();
+		
+		// 逸脱チェック
+		var args = 
+			"?BATCH_ID="+batch_id+
+			"&PROCESS_ID="+process_id+
+			"&WORK_GROUP="+wgrp;
+		$.ajax({
+		type: "GET", 
+		url: '/rest/workgroupstatus/select'+args,
+		}).done(function(data, dataType) {
+			var usage_arr = JSON.parse(data);
+		    if(usage_arr.list.length>0){
+		    	WORK_GROUP_STATUS_TABLE = usage_arr.list[0];
+	 		    if(WORK_GROUP_STATUS_TABLE.status==wgrp_diviation_status){
+	 		    	$(eximg).show();
+	 		    }else{
+	 		    	$(eximg).hide();
+	 		    }
+	 	    }
+		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+			console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+		});
+		
+		// 作業実績取得
+	 	var args = 
+			"?WORK_GROUP="+wgrp+
+			"&ID="+batch_id;
+		$.ajax({
+		type: "GET", 
+		url: '/rest/workresult/select'+args,
+		}).done(function(data, dataType) {
+			var usage_arr = JSON.parse(data);
+	 	    if(usage_arr.list.length>0){
+	 	    	
+	 	    	// 作業実績が存在する場合
+	 		    var WORK_RESULT_TABLE = usage_arr.list[0];
+	 			setCheckBoxPassFail(checkpass, checkfail, WORK_RESULT_TABLE.check_RESULT);
+	 			$(tblcsv1).show();
+	 			
+	 	    }else{
+		 	    // 作業実績が存在しない場合
+	 			setCheckBoxPassFail(checkpass, checkfail, '');
+	 			$(tblcsv1).hide();
+	 	    }
+	 	    
+		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+			console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+		});
+		
 	})
  	
 	// データ取り込みクリック時の処理
 	$(btnDataGet).click(function() {
-		// テーブルの明細部分(tbody)を生成
-		// tbodyをクリア
-		$("#tblcsv1"+wgrp+" > tbody").html("");
-		
-	    //データをテーブル形式にする 
-	    $.each(csvfile1,function(i,csvstr){
-	    	if(csvstr === ""){
-	    		return false;
-	    	}
-	    	var csv_arry = csvstr.split(",");
-	    	
-	    	var tbody = $('<tbody />');
-	    	
-			var tr1 = $('<tr/>');
-	        tr1.append($('<td/>').text(csv_arry[0]));
-	        tr1.append($('<td/>').text(csv_arry[1]+" "+csv_arry[2]));
-	        
-	        tbody.append(tr1);
-	        
-	        $(tblcsv1).append(tbody);
-	    });
+		$(tblcsv1).show();
 	})
 	
 	// OKボタンクリック時の処理
@@ -125,7 +150,7 @@ $(function() {
 		// 入力チェック
 		// Visually check
 		if(CHECK_RESULT==''){
-			alertdialog('Please check PASS or FAIL.(Visually check)');
+			alertdialog('Please check PASS or FAIL');
 			return;
 		}
 		
@@ -133,6 +158,31 @@ $(function() {
 	})
 	
 });
+
+function createdata(csvfile, tblcsv1){
+	
+	// テーブルの明細部分(tbody)を生成
+	// tbodyをクリア
+	$(tblcsv1+" > tbody").html("");
+	
+    //データをテーブル形式にする 
+    $.each(csvfile,function(i,csvstr){
+    	if(csvstr === ""){
+    		return false;
+    	}
+    	var csv_arry = csvstr.split(",");
+    	
+    	var tbody = $('<tbody />');
+    	
+		var tr1 = $('<tr/>');
+        tr1.append($('<td/>').text(csv_arry[0]));
+        tr1.append($('<td/>').text(csv_arry[1]+" "+csv_arry[2]));
+        
+        tbody.append(tr1);
+        
+        $(tblcsv1).append(tbody);
+    });
+}
 
 </script>
 <!-- コンテンツ -->
@@ -149,7 +199,12 @@ $(function() {
 			<labeL th:id="'work_group_name'+${wgrp}"></labeL>
 		<td>
 		<td class="workheader_allow">
-			<labeL th:id="'allow'+${wgrp}">▲</labeL>
+			<table>
+				<tr>
+					<td><img th:id="'eximg'+${wgrp}" alt="" class="aicon" src="/images/exclamation_mark.png"></td>
+					<td><labeL th:id="'allow'+${wgrp}">▲</labeL></td>
+				</tr>
+			</table>
 		<td>
 	</tr>
 </table>
@@ -179,7 +234,7 @@ $(function() {
 				<!-- spectre-icons.min.css だといまいちいいのがない -->
 				<!-- <a href="#" th:id="'btnDataGet'+${wgrp}"><i class="icon icon-2x icon-photo" style="color:black;"></i></a> -->
 				<!-- https://icooon-mono.com/ -->
-				<a href="#" th:id="'btnDataGet'+${wgrp}"><img src="/images/dataget.png" alt="データ取り込みアイコン"></i></a>
+				<a href="javascript:void(0);" th:id="'btnDataGet'+${wgrp}"><img src="/images/dataget.png" alt="データ取り込みアイコン"></i></a>
 			</td>
 			<td style="width:600px;">
 				<table th:id="'tblcsv1'+${wgrp}" class="csvtbl">

@@ -10,7 +10,7 @@ var PROCESS = new Map([
     ['EP4', ['Expansion'        ,'2', '/manufacturing']],
     ['EP5', ['BufferExchange'   ,'2', '/manufacturing']],
     ['EP6', ['Freezing'         ,'2', '/manufacturing']],
-    ['ET1', ['QC1'              ,'2', '/manufacturing']],
+    ['ET1', ['QC1'              ,'2', '/qualitycontrol']],
     ['ET2', ['QC2'              ,'3', '/qualitycontrol']],
     ['ET3', ['QC3'              ,'3', '/qualitycontrol']],
     ['ET4', ['QC4'              ,'3', '/qualitycontrol']],
@@ -252,10 +252,10 @@ $(function(){
 function search(){
 	
 	// 保持データクリア
-	$("#batch_id").val("");
+	//$("#batch_id").val("");
 	
 	// 工程フロー図非表示
-	$("#process_flow").hide();
+	//$("#process_flow").hide();
 	
 	// tbodyをクリア
 	$("#tbl1 > tbody").html("");
@@ -344,6 +344,10 @@ function search(){
 	        $('#tr'+INSTRUCTIONS_TABLE.batch_ID).click(function(){
 	        	select_row(this);
 	        });
+	        
+	        if($("#batch_id").val()==INSTRUCTIONS_TABLE.batch_ID){
+	        	select_row($('#tr'+INSTRUCTIONS_TABLE.batch_ID));
+	        }
 	    });
 
 	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {

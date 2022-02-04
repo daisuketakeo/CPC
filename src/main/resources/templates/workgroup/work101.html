@@ -110,9 +110,7 @@ $(function() {
 			alertdialog('Please input comment.');
 			return;
 		}
-		confirm_manufacturing(
-				wgrp,'001',null,null,null,
-				result,$(comment).val());
+		confirm_approval(wgrp,'001',result,$(comment).val());
 	})
 
 });

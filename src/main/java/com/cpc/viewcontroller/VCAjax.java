@@ -468,6 +468,16 @@ public class VCAjax extends VCCommon{
                             url = rest_processstatus+"insert";
                             postRest(url, newpst);
                         }
+                        
+                    	// 先頭工程の場合
+                    	if(data.getWORK_GROUP().equals("EP101")) {
+                    		// 指図のステータス更新
+                	 		INSTRUCTIONS_TABLE insdata = new INSTRUCTIONS_TABLE();
+                	 		insdata.setBATCH_ID(req.getID());
+                	 		insdata.setSTATUS("I03");
+                        	url = rest_instructions+"update";
+                        	postRest(url, insdata);
+                    	}
             		}
             	}
         	}

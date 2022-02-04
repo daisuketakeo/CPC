@@ -404,3 +404,28 @@ Blobへ変換 引数はbase64形式の文字列
 		}
 	});
  }
+ 
+/***********************************
+確認・承認画面の確認ダイアログ表示
+***********************************/
+function confirm_approval(
+		wgp, wid, CHECK_RESULT, CHECK_REASON){
+	$('#confirmdialog').dialog({
+		dialogClass:'confirm_dialog',
+		modal:true, //モーダル表示
+		title:"Confirm", //タイトル
+		buttons: { //ボタン
+		"OK": function() {
+				// 作業完了処理実行
+				endwork($("#PROCESS_ID").val(),$("#BATCH_ID").val(),wgp, wid,
+						CHECK_RESULT, CHECK_REASON,null,null,
+						null,null
+			 	);
+			$(this).dialog("close");
+		},
+		"Cancel": function() {
+			$(this).dialog("close");
+			}
+		}
+	});
+}
