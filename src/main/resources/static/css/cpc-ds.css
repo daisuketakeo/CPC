@@ -625,25 +625,79 @@
   font-size      : 9pt;              /* 文字サイズ */ 
   display        : block;
   overflow-y     : scroll;
-  height         : 500px;
   border         : 1px solid;
   position       : absolute;
-  top            : 0px;
   width          : 100%;
   display        : flex;
   justify-content: center;
 }
+/* 指図詳細テーブル ヘッダ */
+.insdetailArea th {
+  padding       : 5px;               /* 余白      */
+  border        : 1px #666666 solid; /* 罫線      */
+  text-align    : left;
+}
 /* 指図詳細テーブル 明細 */
-.insdetailArea td:nth-of-type(1) {
+.insdetailArea td {
   padding       : 5px;               /* 余白      */
   border        : 1px #666666 solid; /* 罫線      */
   text-align    : left;
-  width         : 200px;
 }
-.insdetailArea td:nth-of-type(2) {
-  padding       : 5px;               /* 余白      */
-  border        : 1px #666666 solid; /* 罫線      */
-  text-align    : left;
-  width         : 500px;
+/* 工程別指図 ヘッダリスト */
+.proc_list_header {
+  position       : absolute;
+  width          : 100%;
+  display        : flex;
+  justify-content: center;
 }
+.proc_list_header li:nth-of-type(1){
+	display: inline;
+	margin-right : 20px;
+}
+.proc_list_header li:nth-of-type(2){
+	display: inline;
+	margin-left : 20px;
+	margin-right : 20px;
+}
+.proc_list_header li:nth-of-type(3){
+	display: inline;
+	margin-left : 20px;
+}
+.proc_list_header a{
+	color:blue;
+}
+.proc_list_header label{
+	color:blue;
+}
+/* 工程別指図 CellQualia */
+.cellqualia_list_oya {
+  position       : relative;
+}
+.cellqualia_list {
+  position       : absolute;
+  background    : white;
+  z-index		: 2;
+  width			: 150px;
+}
+.cellqualia_list a{
+	color:blue;
+}
+.cellqualia_list li{
+	position	: absolute;
+	background	: white;
+	width		: 100px;
+}
+.cellqualia_list li:nth-of-type(1){
+	top		: 0px;
+	left	: 20px;
+}
+.cellqualia_list li:nth-of-type(2){
+	top		: 20px;
+	left	: 0px;
+}
+.cellqualia_list li:nth-of-type(3){
+	top		: 40px;
+	left	: 0px;
+}
+
 	

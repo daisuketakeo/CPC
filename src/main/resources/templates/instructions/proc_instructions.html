@@ -1,28 +1,249 @@
 <div fragment="proc_instructions">
 <script>
 $(function(){
-	console.log( $("#batch_id").val());
+	
+	if($("#batch_id").val()!=''){
+		init($("#batch_id").val(), "PREC1");
+	}
+	
+	$("#cellqualia_list").hide();
+	
+	// CellQualia リスト以外クリック時の処理
+	$(document).click(function(event) {
+	  if(!$(event.target).closest('.cellqualia_list').length) {
+		  if(!$(event.target).closest('.cellqualia_link').length) {
+			  $("#cellqualia_list").hide();
+		  }
+	  }
+	});
+	
+	// BatchIDクリック時の処理
+	$("#setbtnProcInsructions").click(function(event, id) {
+		init(id, "PREC1");
+	});
+	
 });
+
+//工程別画面表示
+function init(batch_id, process_id){
+	$(".notrname").show();
+	if(process_id=='PREC1') $("#proc_header_label").text("Preculture");
+	if(process_id=='ICP1') $("#proc_header_label").text("CellQualia");
+	if(process_id=='ICP2') $("#proc_header_label").text("CellQualia");
+	if(process_id=='ICP3') $("#proc_header_label").text("CellQualia");
+	if(process_id=='BEC1') {
+		$("#proc_header_label").text("Buffer exchange/ Concentration");
+		$(".notrname").hide();
+	}
+	
+	$("#proc_data1").text("");
+	$("#proc_data2").text("");
+	$("#proc_data3").text("");
+	$("#proc_data4").text("");
+	$("#proc_data5").text("");
+	$("#proc_data6").text("");
+	
+	// 8行目以降をクリア
+	var trs = $("#proc_tbl tr");
+	for( var i=7,l=trs.length;i<l;i++ ){
+		trs.eq(i).remove();
+	}
+	
+	// 指図テーブル取得
+	$.ajax({
+	    type: "GET", 
+	    url: '/rest/instructions/select?BATCH_ID='+batch_id,
+	}).done(function(data1, dataType) {
+		//console.log(data1);
+	    var usage_arr1 = JSON.parse(data1);
+	    $.each(usage_arr1.list,function(i,INSTRUCTIONS_TABLE){
+	    	// 工程別指図マスタ取得
+	    	//console.log("工程別指図マスタ取得");
+	    	var args =
+	    		"?IM_ID="+INSTRUCTIONS_TABLE.im_ID+
+	    		"&INS_PROC_ID="+process_id;
+	    	$.ajax({
+	    	    type: "GET", 
+	    	    url: '/rest/procinstructionsmst/select'+args,
+	    	}).done(function(data2, dataType) {
+	    		//console.log(data2);
+	    	    var usage_arr2 = JSON.parse(data2);
+	    	    $.each(usage_arr2.list,function(j,PROC_INSTRUCTIONS_MASTER){
+	    	    	
+	    	    	$("#proc_data1").text(PROC_INSTRUCTIONS_MASTER.recipe_NAME);
+	    	    	$("#proc_data2").text(PROC_INSTRUCTIONS_MASTER.cell_TYPE);
+	    	    	$("#proc_data3").text(PROC_INSTRUCTIONS_MASTER.target_AMOUNT);
+	    	    	$("#proc_data4").text(PROC_INSTRUCTIONS_MASTER.incubation);
+	    	    	$("#proc_data5").text(PROC_INSTRUCTIONS_MASTER.end_POINT);
+	    	    	$("#proc_data6").text(PROC_INSTRUCTIONS_MASTER.comment);
+					
+	    	    	var pre_item = "";
+	    	    	// 工程別指図詳細マスタ取得
+	    	    	//console.log("工程別指図っ詳細マスタ取得");
+	    	    	var args =
+	    	    		"?IM_ID="+INSTRUCTIONS_TABLE.im_ID+
+	    	    		"&INS_PROC_ID="+process_id;
+	    	    	$.ajax({
+	    	    	    type: "GET", 
+	    	    	    url: '/ajax/get_procdetail'+args,
+	    	    	}).done(function(data3, dataType) {
+	    	    		//console.log(data2);
+	    	    	    //var usage_arr3 = JSON.parse(data3);
+	    	    	    var count = 1;
+	    	    	    const proc_detail_list = [];
+	    	    	    $.each(data3,function(j,PROC_INSTRUCTIONS_DETAIL_MASTER){
+	    	    	    	//console.log(PROC_INSTRUCTIONS_DETAIL_MASTER.material_NO_NAME);
+
+	    	    	    	if(PROC_INSTRUCTIONS_DETAIL_MASTER.item_CONDITION==pre_item){
+	    	    	    		count++;
+	    	    	    	}else{
+	    	    	    		count = 1;
+	    	    	    	}
+	    	    	    	
+	    	    	        pre_item = PROC_INSTRUCTIONS_DETAIL_MASTER.item_CONDITION;
+	    	    	        
+	    	    	        var colspan_count = 0;
+	    	    	        if(PROC_INSTRUCTIONS_DETAIL_MASTER.capture!=''){
+	    	    	        	colspan_count = 3;
+	    	    	        }
+	    	    	        
+	    	    	        if(count>1){
+	    	    	        	// 先頭列が前の行と同じなら行結合
+		    	    	        var proc_detail = 
+		    					{
+		    	    	        	id				  :j,
+		    	    	        	rowspan_COUNT     :0,
+		   	    	        		item_CONDITION    :PROC_INSTRUCTIONS_DETAIL_MASTER.item_CONDITION,
+		   	    	        		material_NO_NAME  :PROC_INSTRUCTIONS_DETAIL_MASTER.material_NO_NAME,
+		   	    	        		required_QUANTITY :PROC_INSTRUCTIONS_DETAIL_MASTER.required_QUANTITY,
+		   	    	        		user_LOT_NO       :PROC_INSTRUCTIONS_DETAIL_MASTER.user_LOT_NO,
+		   	    	        		capture           :PROC_INSTRUCTIONS_DETAIL_MASTER.capture,
+		    					};
+		    	    	        proc_detail_list[j-count+1].rowspan_COUNT = count;
+	    	    	        }else{
+		    	    	        var proc_detail = 
+		    					{
+		    	    	        	id				  :j,
+		    	    	        	rowspan_COUNT     :1,
+		   	    	        		item_CONDITION    :PROC_INSTRUCTIONS_DETAIL_MASTER.item_CONDITION,
+		   	    	        		material_NO_NAME  :PROC_INSTRUCTIONS_DETAIL_MASTER.material_NO_NAME,
+		   	    	        		required_QUANTITY :PROC_INSTRUCTIONS_DETAIL_MASTER.required_QUANTITY,
+		   	    	        		user_LOT_NO       :PROC_INSTRUCTIONS_DETAIL_MASTER.user_LOT_NO,
+		   	    	        		capture           :PROC_INSTRUCTIONS_DETAIL_MASTER.capture,
+		    					};
+	    	    	        }
+	    	    	        
+	    	    	        proc_detail_list.push(proc_detail);
+	    	    	        
+	    	    	    });
+	    	    	    
+		    	    	// 工程別指図詳細の明細部分生成
+		    	    	for(j=0; j<proc_detail_list.length; j++)
+		    	    	{
+		    	    		var proc_detail = proc_detail_list[j];
+		    	    		var tr = $('<tr class="notrname"/>');
+	    	    	    	if(proc_detail.rowspan_COUNT>1){
+	    	    	    		tr.append($('<td rowspan="'+proc_detail.rowspan_COUNT+'"/>').text(proc_detail.item_CONDITION));
+	    	    	    	}else{
+	    	    	    		if(proc_detail.rowspan_COUNT==1){
+	    	    	    			tr.append($('<td/>').text(proc_detail.item_CONDITION));
+	        	    	    	}
+	    	    	    	}
+	    	    	    	if(proc_detail.capture==''){
+		    	    	    	tr.append($('<td/>').text(proc_detail.material_NO_NAME));
+		    	    	    	tr.append($('<td/>').text(proc_detail.required_QUANTITY));
+		    	    	    	tr.append($('<td/>').text(proc_detail.user_LOT_NO));
+	    	    	        }else{
+	    	    	        	var td = $('<td colspan="3"/>');
+	    	    	        	td.text(proc_detail.material_NO_NAME);
+	    	    	        	td.append($("<img></img>", {
+	    				        	  src: "data:image/;base64,"+proc_detail.capture,
+	    				        	}));
+	    	    	        	tr.append(td);
+	    	    	        }
+	    	    	    	
+	    	    	    	$('#proc_tbl').append(tr);
+		    	    	}
+	    	    	    
+	    	    	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+	    	    	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+	    	    	});
+	    	    	
+	    	    });
+	    	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+	    	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+	    	});
+	    	
+	    });
+	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+	});
+	
+}
+
+//CellQualia リンククリック時の処理
+function change_proc(process_id){
+	init($("#batch_id").val(), process_id);
+	$("#cellqualia_list").hide();
+}
+
+//CellQualia リンククリック時の処理
+function openCellqualiaList(){
+	$("#cellqualia_list").show();
+}
 </script>
 <input type="button" id="setbtnProcInsructions" style="display:none;">
-<table class="home">
-	<tr>
-		<td>
-			AAAAAAAAAAAA
-		</td>
-		<td>
-			BBBBBBBBBBBBBBBB
-		</td>
-	</tr>
-	<tr>
-		<td>
-			CCCCCCCCCCCCCCC
-		</td>
-		<td>
-			DDDDDDDDDDDDDDDDD
-		</td>
-	</tr>
-</table>
-
-	
+<div class="disopaypanel">
+	<div id="proc_list" class="proc_list_header" style="height:20px;top:0px;">
+		<ul>
+			<li><a href="javascript:void(0);" onclick="change_proc('PREC1');">Preculture</a></li>
+			<li class="cellqualia_list_oya">
+				<a href="javascript:void(0);" onclick="openCellqualiaList();" class="cellqualia_link">CellQualia v</a>
+				<div id="cellqualia_list" class="cellqualia_list" style="top:15px;left:20px;">
+					<ul>
+						<li><a href="javascript:void(0);" onclick="change_proc('ICP1');">Passage-2</a></li>
+						<li><a href="javascript:void(0);" onclick="change_proc('ICP2');">Passage-3</a></li>
+						<li><a href="javascript:void(0);" onclick="change_proc('ICP3');">Passage-4</a></li>
+					</ul>
+				</div>
+			</li>
+			<li><a href="javascript:void(0);" onclick="change_proc('BEC1');">Buffer exchange/ Concentration</a></li>
+		</ul>
+	</div>
+	<div style="position:absolute;width:90%;height:20px;top:30px;left:0px;">
+		<label id="proc_header_label">AAAAAAAA</label>
+	</div>
+	<table id="proc_tbl" class="insdetailArea" style="height:430px;top:60px;">
+		<tr>
+			<td style="width:200px">Recipe name</td>
+			<td style="width:500px" id="proc_data1" colspan="3"></td>
+		</tr>
+		<tr class="notrname">
+			<td>Cell type</td>
+			<td id="proc_data2" colspan="3"></td>
+		</tr>
+		<tr class="notrname">
+			<td>Target Amount</td>
+			<td id="proc_data3" colspan="3"></td>
+		</tr>
+		<tr class="notrname">
+			<td>Incubation</td>
+			<td id="proc_data4" colspan="3"></td>
+		</tr>
+		<tr class="notrname">
+			<td >End Point</td>
+			<td id="proc_data5" colspan="3"></td>
+		</tr>
+		<tr class="notrname">
+			<td >Comment</td>
+			<td id="proc_data6" colspan="3"></td>
+		</tr>
+		<tr class="notrname">
+       		<td style="width:200px">Item, Condition</td>
+       		<td style="width:200px">Material #, Name</td>
+       		<td style="width:100px">Required Quantity</td>
+       		<td style="width:200px">User lot #:</td>
+       	</tr>
+	</table>
+</div>
 </div>

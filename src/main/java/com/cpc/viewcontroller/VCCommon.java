@@ -72,6 +72,7 @@ public class VCCommon {
 	public static final String param_material_group_id   = "MATERIAL_GROUP_ID";		// MATERIAL_GROUP_ID
 	public static final String param_batch_id      = "BATCH_ID";		// BATCH_ID
 	public static final String param_im_id         = "IM_ID";			// IM_ID
+	public static final String param_ins_proc_id      = "INS_PROC_ID";	// INS_PROC_ID
 	public static final String param_work_group_json  = "WORK_GROUP_JSON";	// 画面へ渡す作業グループ情報(Json)
 	public static final String param_work_group_map   = "WORK_GROUP_MAP";	// 画面へ渡す作業グループ情報(MAP)
 	public static final String param_status_list      = "STATUS_LIST";		// 画面へ渡すステータスリスト
@@ -89,6 +90,8 @@ public class VCCommon {
 	public static final String rest_processmst = "/rest/processmst/";	// 工程スマスタ
 	public static final String rest_instructions = "/rest/instructions/";	// 製造指図テーブル
 	public static final String rest_instructionsmst = "/rest/instructionsmst/";	// 製造指図マスタ
+	public static final String rest_procinstructionsmst = "/rest/procinstructionsmst/";	// 工程別製造指図マスタ
+	public static final String rest_procinstructionsdetailmst = "/rest/procinstructionsdetailmst/";	// 工程別製造指図詳細マスタ
 	public static final String rest_airelation = "/rest/airelation/";	// 受入指図連携テーブル
 	public static final String rest_materialgroup = "/rest/materialgroup/";	// マテリアルグループテーブル
 	public static final String rest_processstatus = "/rest/processstatus/";	// 工程別ステータステーブル
@@ -179,6 +182,13 @@ public class VCCommon {
     	if(user.getAUTHORITY().equals("CP03")) return true;
     	if(user.getAUTHORITY().equals("QA01")) return true;
         return false;
+    }
+	
+	/*
+	 * 定義情報取得
+	 */
+	public PropertiesBean getProperties() {
+        return property;
     }
 		
 	/*
@@ -631,8 +641,7 @@ public class VCCommon {
     /*
      * EBR試験の画像ファイルをBase64形式に変換して取得
      */
-    public String get_base64(String filename) {
-    	String dir = property.getEBR_TEST_PATH();
+    public String get_base64(String dir, String filename) {
     	try {
             // ファイルがあれば
         	if (Files.exists(Paths.get(dir, filename))) {

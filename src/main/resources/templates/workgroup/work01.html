@@ -54,12 +54,12 @@ $(function() {
 		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 			console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 		});	
-	})
+	});
 	
 	// OKボタンクリック時の処理
 	$(okbtn).click(function() {
 		confirm_accept(wgrp,$(work_id).val());
-	})
+	});
 
 });
 

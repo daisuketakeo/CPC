@@ -9,13 +9,17 @@ $(function(){
 	// BatchIDクリック時の処理
 	$("#setbtnInsructionsDetail").click(function(event, id) {
 		init(id);
-	})
+	});
 	
 });
 
 function init(batch_id){
 	
 	//console.log(id);
+	for(i=0;i<27;i++){
+		$("#detail_data"+(i+1)).text("");
+	}
+	
 	$("#detail_data28").text(batch_id);
 	
 	// 作業グループステータス取得
@@ -25,7 +29,6 @@ function init(batch_id){
 	}).done(function(data1, dataType) {
 		//console.log(data1);
 	    var usage_arr1 = JSON.parse(data1);
-	    var diviation_flg = false;
 	    $.each(usage_arr1.list,function(i,INSTRUCTIONS_TABLE){
 	    	
 	    	$.ajax({
@@ -34,7 +37,6 @@ function init(batch_id){
 	    	}).done(function(data2, dataType) {
 	    		//console.log(data2);
 	    	    var usage_arr2 = JSON.parse(data2);
-	    	    var diviation_flg = false;
 	    	    $.each(usage_arr2.list,function(j,INSTRUCTIONS_MASTER){
 	    	    	
 	    	    	$("#detail_data1").text(INSTRUCTIONS_MASTER.name);
@@ -78,10 +80,10 @@ function init(batch_id){
 </script>
 <input type="button" id="setbtnInsructionsDetail" style="display:none;">
 <div class="disopaypanel">
-<table class="insdetailArea">
+<table class="insdetailArea" style="height:500px;top:0px;">
 	<tr>
-		<td>Name</td>
-		<td id="detail_data1"></td>
+		<td style="width:200px">Name</td>
+		<td style="width:500px" id="detail_data1"></td>
 	</tr>
 	<tr>
 		<td>Comment</td>

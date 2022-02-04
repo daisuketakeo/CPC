@@ -30,6 +30,8 @@ import com.cpc.model.MATERIAL_CHECK_TABLE;
 import com.cpc.model.MATERIAL_GROUP_TABLE;
 import com.cpc.model.PROCESS_MASTER;
 import com.cpc.model.PROCESS_STATUS_TABLE;
+import com.cpc.model.PROC_INSTRUCTIONS_DETAIL_MASTER;
+import com.cpc.model.PROC_INSTRUCTIONS_MASTER;
 import com.cpc.model.STATUS_MASTER;
 import com.cpc.model.USER_MASTER;
 import com.cpc.model.WORK_GROUP_MASTER;
@@ -88,23 +90,23 @@ public class VCAjax extends VCCommon{
         for(WORK_MASTER wm : list) {
         	// 画像ファイルをBase64に変換して取得
         	if(wm.getCAPTURE1()!=null && !wm.getCAPTURE1().isEmpty()) {
-        		String base64 = get_base64(wm.getCAPTURE1());
+        		String base64 = get_base64(super.getProperties().getEBR_TEST_PATH(), wm.getCAPTURE1());
         		wm.setCAPTURE1(base64);
         	}
         	if(wm.getCAPTURE2()!=null && !wm.getCAPTURE2().isBlank()) {
-        		String base64 = get_base64(wm.getCAPTURE2());
+        		String base64 = get_base64(super.getProperties().getEBR_TEST_PATH(), wm.getCAPTURE2());
         		wm.setCAPTURE2(base64);
         	}
         	if(wm.getCAPTURE3()!=null && !wm.getCAPTURE3().isEmpty()) {
-        		String base64 = get_base64(wm.getCAPTURE3());
+        		String base64 = get_base64(super.getProperties().getEBR_TEST_PATH(), wm.getCAPTURE3());
         		wm.setCAPTURE3(base64);
         	}
         	if(wm.getCAPTURE4()!=null && !wm.getCAPTURE4().isEmpty()) {
-        		String base64 = get_base64(wm.getCAPTURE4());
+        		String base64 = get_base64(super.getProperties().getEBR_TEST_PATH(), wm.getCAPTURE4());
         		wm.setCAPTURE4(base64);
         	}
         	if(wm.getCAPTURE5()!=null && !wm.getCAPTURE5().isEmpty()) {
-        		String base64 = get_base64(wm.getCAPTURE5());
+        		String base64 = get_base64(super.getProperties().getEBR_TEST_PATH(), wm.getCAPTURE5());
         		wm.setCAPTURE5(base64);
         	}
         	
@@ -826,6 +828,29 @@ public class VCAjax extends VCCommon{
         
     }
     
+    /*
+     * 工程別指図詳細データ取得
+     */
+    @GetMapping("/ajax/get_procdetail")
+    public List<PROC_INSTRUCTIONS_DETAIL_MASTER> get_procdetail(
+    		@RequestParam(param_im_id) String im_id,
+    		@RequestParam(param_ins_proc_id) String ins_proc_id) {
+    	
+    	// 工程別指図詳細マスタ取得
+    	String url = rest_procinstructionsdetailmst+"select"+
+				"?"+ param_im_id+"="+im_id+
+				"&"+ param_ins_proc_id+"="+ins_proc_id;
+	 	List<PROC_INSTRUCTIONS_DETAIL_MASTER> list = 
+	 			getRest(url, PROC_INSTRUCTIONS_DETAIL_MASTER.class);
+	 	for(PROC_INSTRUCTIONS_DETAIL_MASTER pim : list) {
+	 		if(pim.getCAPTURE()!=null && !pim.getCAPTURE().isEmpty()) {
+	 			String base64 = get_base64(super.getProperties().getIST_PROC_DETAIL_PATH(), pim.getCAPTURE());
+	 			pim.setCAPTURE(base64);
+	 		}
+	 	}
+    	
+    	return list;
+    }
    
     // 以下デバッグ用
     

@@ -288,6 +288,7 @@ function search(){
 	        $(abatchid).on('click',function(){
 	        	$('#detail_dialog').dialog("open");
 	        	$('#setbtnInsructionsDetail').trigger('click', [INSTRUCTIONS_TABLE.batch_ID]);
+	        	$('#setbtnProcInsructions').trigger('click', [INSTRUCTIONS_TABLE.batch_ID]);
         	});
 	        
 	        tdbatchid.append(abatchid);
