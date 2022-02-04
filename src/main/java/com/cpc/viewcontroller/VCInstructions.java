@@ -22,8 +22,10 @@ public class VCInstructions extends VCCommon{
     public VCInstructions() {
     }
     
-    @GetMapping("/instructions")
-    public String displaynew(Model model) {
+    @RequestMapping(value = "/instructions", method = {RequestMethod.GET,RequestMethod.POST})
+    public String displaynew(
+    		@RequestParam(name="BATCH_ID", required = false) String batch_id,
+    		Model model) {
         if(!super.loginCheck()) return disp_login;
         
         setHeaderAttr(model);
@@ -34,6 +36,10 @@ public class VCInstructions extends VCCommon{
     	// 指図リリース済み：ステータス名称
     	model.addAttribute("RELEASE_STATUS", getStatusName("I02"));
     	
+    	// BATCH_ID
+    	if(batch_id!=null) {
+    		model.addAttribute(param_batch_id, batch_id);
+    	}
 		return disp_main;
     }
     

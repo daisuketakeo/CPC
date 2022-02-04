@@ -18,7 +18,10 @@ $(function(){
 	
 	// キャンセルボタンクリック
 	$("#closebtn").click(function(){
-		location.href="/instructions";
+		$('<form/>', {action: "/instructions", method: 'post'})
+		  .append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: $("#BATCH_ID").val()}))
+		  .appendTo(document.body)
+		  .submit();
 	});
 	
 });
