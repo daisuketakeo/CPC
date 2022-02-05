@@ -34,7 +34,7 @@ public class VCInstructions extends VCCommon{
     	model.addAttribute(param_status_list, getStatusJson());
     	
     	// 指図リリース済み：ステータス名称
-    	model.addAttribute("RELEASE_STATUS", getStatusName("I02"));
+    	model.addAttribute("CREATE_STATUS", getStatusName("I01"));
     	
     	// BATCH_ID
     	if(batch_id!=null) {

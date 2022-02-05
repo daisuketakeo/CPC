@@ -4,21 +4,21 @@
 // 工程情報
 // PROCESS_ID, 要素名, 画面フラグ 
 var PROCESS = new Map([
-    ['EP1', ['PrecultureKitting','2', '/manufacturing']],
-    ['EP2', ['Preculture'       ,'2', '/manufacturing']],
-    ['EP3', ['ExpansionKitting' ,'2', '/manufacturing']],
-    ['EP4', ['Expansion'        ,'2', '/manufacturing']],
-    ['EP5', ['BufferExchange'   ,'2', '/manufacturing']],
-    ['EP6', ['Freezing'         ,'2', '/manufacturing']],
-    ['ET1', ['QC1'              ,'2', '/qualitycontrol']],
-    ['ET2', ['QC2'              ,'3', '/qualitycontrol']],
-    ['ET3', ['QC3'              ,'3', '/qualitycontrol']],
-    ['ET4', ['QC4'              ,'3', '/qualitycontrol']],
-    ['BR',  ['BatchRelease'     ,'4', '/batchrelease']]
+    ['EP1', ['PrecultureKitting','2', '/manufacturing', 0]],
+    ['EP2', ['Preculture'       ,'2', '/manufacturing', 1]],
+    ['ET1', ['QC1'              ,'2', '/qualitycontrol', 2]],
+    ['EP3', ['ExpansionKitting' ,'2', '/manufacturing', 3]],
+    ['EP4', ['Expansion'        ,'2', '/manufacturing', 4]],
+    ['EP5', ['BufferExchange'   ,'2', '/manufacturing', 5]],
+    ['EP6', ['Freezing'         ,'2', '/manufacturing', 6]],
+    ['ET2', ['QC2'              ,'3', '/qualitycontrol', 7]],
+    ['ET3', ['QC3'              ,'3', '/qualitycontrol', 8]],
+    ['ET4', ['QC4'              ,'3', '/qualitycontrol', 9]],
+    ['BR',  ['BatchRelease'     ,'4', '/batchrelease', 10]]
 ])
 
 var disp_flg = sessionStorage.getItem(['DISP_FLG']);
-var release_status = /*[[${RELEASE_STATUS}]]*/ '';
+var create_status = /*[[${CREATE_STATUS}]]*/ '';
 
 /***********************************
 画面初期処理
@@ -29,6 +29,11 @@ $(function(){
 	
 	// ヘッダスタイル変更
 	change_header_style(disp_flg);
+	
+    // ヘッダメニュー変更
+    $('#hamberger_menu_list').children().remove();
+    $('#hamberger_menu_list').append('<li><a id="hamberger_menu1" href="javascript:void(0);">Manufacturing instructions</a></li>');
+    $('#hamberger_menu_list').append('<li><a id="hamberger_menu2" href="javascript:void(0);">Manufacturing instructions by process</a></li>');
 
 	// 一覧取得
 	search();
@@ -60,24 +65,24 @@ $(function(){
 		  
 		  var tbodys = $("#tbl1 tbody");//全行を取得
 		  
-		  var released = false;
+		  var created = false;
 			for( var i=0,l=tbodys.length;i<l;i++ ){
 				// 選択行のMATERIAL_NO取得
 				var childtr = tbodys.eq(i).children();
 				var childtd = $(childtr).children();
 				var batch_id = $(childtd.eq(0)).text();
 				var status = $(childtd.eq(4)).text();
-				if(batch_id==$("#batch_id").val() && status==release_status){
-					released = true;
+				if(batch_id==$("#batch_id").val() && status==create_status){
+					created = true;
 				}
 			}	
 			
-		  if(released){
-			  alertdialog("This batch ["+$("#batch_id").val()+"] is released.");
-		  }else{
+		  if(created){
 			  $('#release_confirmdialog_label').text(
 		    		  "Release instructions?\nBatch ID["+$("#batch_id").val()+"]");
 	  	  	  $("#release_confirmdialog").dialog("open");
+		  }else{
+			  alertdialog("This batch ["+$("#batch_id").val()+"] can not release.");
 		  }
 	  }
 	});
@@ -87,6 +92,7 @@ $(function(){
 		$("#detail").hide();
 	});
 	
+	// 指図詳細タブ設定
 	$("#detail").tabs();
 	
 	// 品目ダイアログ
@@ -211,22 +217,39 @@ $(function(){
 	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 	});
 	
-	// 工程フロー図非表示
+	// 初期表示時、工程フロー図非表示
 	$("#process_flow").hide();
 	
-	// 工程フロー図 工程図クリック
+	// 工程フロー図 工程図クリック時処理設定
 	for (let [key, value] of PROCESS) {
 		$("#"+value[0]).click(function(){
-			if(disp_flg==value[1]){
-				// 作業手順の画面へ遷移				
-				  $('<form/>', {action: value[2], method: 'post'})
-				  .append($('<input/>', {type: 'hidden', name: 'PROCESS_ID', value: key}))
-				  .append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: $("#batch_id").val()}))
-				  .appendTo(document.body)
-				  .submit();
-			}else{
-				// 対象工程以外は操作不可
+			var tbodys = $("#tbl1 tbody");//全行を取得
+			var status = "";
+			for( var i=0,l=tbodys.length;i<l;i++ ){
+				// 選択行のMATERIAL_NO取得
+				var childtr = tbodys.eq(i).children();
+				var childtd = $(childtr).children();
+				var batch_id = $(childtd.eq(0)).text();
+				if(batch_id==$("#batch_id").val()){
+					status = (childtd.eq(4)).text();
+				}
+			}
+			
+			if(status==create_status){
+				// ステータスが指図作成済の場合操作不可
 				alertdialog(errmsg);
+			}else{
+				if(disp_flg==value[1]){
+					// 作業手順の画面へ遷移				
+					  $('<form/>', {action: value[2], method: 'post'})
+					  .append($('<input/>', {type: 'hidden', name: 'PROCESS_ID', value: key}))
+					  .append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: $("#batch_id").val()}))
+					  .appendTo(document.body)
+					  .submit();
+				}else{
+					// 対象工程以外は操作不可
+					alertdialog(errmsg);
+				}
 			}
 		});
 	}
@@ -244,6 +267,33 @@ $(function(){
 	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 	});
 	
+	// 製造指図メニュークリック
+	$("#hamberger_menu1").click(function() {
+		if($("#batch_id").val()==''){
+			alertdialog("Please select batch.");
+		}else{
+			$("#detail").tabs(
+				{ active: 0 } //タブの初期値指定
+			);
+			$('#detail_dialog').dialog("open");
+        	$('#setbtnInsructionsDetail').trigger('click', [INSTRUCTIONS_TABLE.batch_ID]);
+        	//$('#setbtnProcInsructions').trigger('click', [INSTRUCTIONS_TABLE.batch_ID]);
+		}
+	});
+	
+	// 工程別製造指図メニュークリック
+	$("#hamberger_menu2").click(function() {
+		if($("#batch_id").val()==''){
+			alertdialog("Please select batch.");
+		}else{
+			$("#detail").tabs(
+				{ active: 1 } //タブの初期値指定
+			);
+			$('#detail_dialog').dialog("open");
+			//$('#setbtnInsructionsDetail').trigger('click', [INSTRUCTIONS_TABLE.batch_ID]);
+        	$('#setbtnProcInsructions').trigger('click', [INSTRUCTIONS_TABLE.batch_ID]);
+		}
+	});
 });
 
 /***********************************
@@ -286,9 +336,12 @@ function search(){
 	        	});
 	        
 	        $(abatchid).on('click',function(){
+	        	$("#detail").tabs(
+    				{ active: 0 } //タブの初期値指定
+    			);
 	        	$('#detail_dialog').dialog("open");
 	        	$('#setbtnInsructionsDetail').trigger('click', [INSTRUCTIONS_TABLE.batch_ID]);
-	        	$('#setbtnProcInsructions').trigger('click', [INSTRUCTIONS_TABLE.batch_ID]);
+	        	//$('#setbtnProcInsructions').trigger('click', [INSTRUCTIONS_TABLE.batch_ID]);
         	});
 	        
 	        tdbatchid.append(abatchid);
@@ -372,81 +425,7 @@ function search(){
 	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 	});
 }
-/***********************************
-工程図のステータスセット
-***********************************/
-function setProcessStatus(batch_id, process_id){
-	
-	var args = "?BATCH_ID="+batch_id+
-				"&PROCESS_ID="+process_id;
-	
-	// 工程ステータス取得
-	$.ajax({
-	    type: "GET", 
-	    url: '/rest/processstatus/select'+args,
-	}).done(function(data, dataType) {
-		
-	    var usage_arr = JSON.parse(data);
-	    var end_flg = false;
-	    var current_flg = false;
-	    $.each(usage_arr.list,function(i,PROCESS_STATUS_TABLE){
-	    	// 完了チェック
-	    	for (const end of end_status) {
-	    		if(PROCESS_STATUS_TABLE.status==end){
-	    			end_flg = true;
-		    	}
-    		}
-	    	// 仕掛チェック
-	    	for (const current of current_status) {
-	    		if(PROCESS_STATUS_TABLE.status==current){
-	    			current_flg = true;
-		    	}
-    		}
-	    });
-	    
-	    if(end_flg){
-	    	// 完了アイコン表示
-	    	$('#cm'+PROCESS.get(process_id)[0]).show();
-	    }else{
-	    	$('#cm'+PROCESS.get(process_id)[0]).hide();
-	    }
-	    if(current_flg){
-	    	// 仕掛アイコン表示
-	    	$('#ar'+PROCESS.get(process_id)[0]).show();
-	    }else{
-	    	$('#ar'+PROCESS.get(process_id)[0]).hide();
-	    }
-	    
-	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
-	});
-	
-	// 作業グループステータス取得
-	$.ajax({
-	    type: "GET", 
-	    url: '/rest/workgroupstatus/select'+args,
-	}).done(function(data, dataType) {
-		
-	    var usage_arr = JSON.parse(data);
-	    var diviation_flg = false;
-	    $.each(usage_arr.list,function(i,WORK_GROUP_STATUS_TABLE){
-	    	if(WORK_GROUP_STATUS_TABLE.status==wgrp_diviation_status){
-	    		diviation_flg = true;
-	    	}
-	    });
-	    
-	    if(diviation_flg){
-	    	// 作業グループステータスに１つ以上逸脱があれば逸脱アイコン表示
-	    	$('#ex'+PROCESS.get(process_id)[0]).show();
-	    }else{
-	    	$('#ex'+PROCESS.get(process_id)[0]).hide();
-	    }
-	    
-	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
-	});
-	
-}
+
 /***********************************
 一覧の行クリック
 ***********************************/
@@ -472,10 +451,108 @@ function select_row(obj){
 	$("#process_flow").show();
 	
 	// 工程図のステータスセット
+	/*
 	for (let [key, value] of PROCESS) {
 		setProcessStatus(batch_id, key);
 	}
+	*/
 	
+	var args = "?BATCH_ID="+batch_id;
+
+	// 工程ステータス取得
+	$.ajax({
+	type: "GET", 
+	url: '/rest/processstatus/select'+args,
+	}).done(function(data, dataType) {
+	
+		var usage_arr = JSON.parse(data);
+		var end_process_count = 0;
+		$.each(usage_arr.list,function(i,PROCESS_STATUS_TABLE){
+			
+			var process_id = PROCESS_STATUS_TABLE.process_ID;
+			//console.log(process_id);
+			
+			var end_flg = false;
+			var current_flg = false;
+			
+			// 完了チェック
+			for (const end of end_status) {
+				if(PROCESS_STATUS_TABLE.status==end){
+					end_flg = true;
+				}
+			}
+			if(end_flg){
+				// 完了アイコン表示
+				$('#cm'+PROCESS.get(process_id)[0]).show();
+				// 最後の完了工程を保持
+				if(PROCESS.get(process_id)[3]>end_process_count){
+					end_process_count = PROCESS.get(process_id)[3];
+				}
+			}else{
+				$('#cm'+PROCESS.get(process_id)[0]).hide();
+			}
+			
+			// 仕掛チェック
+			for (const current of current_status) {
+				if(PROCESS_STATUS_TABLE.status==current){
+					current_flg = true;
+				}
+			}
+			if(current_flg){
+				// 仕掛アイコン表示
+				$('#ar'+PROCESS.get(process_id)[0]).show();
+			}else{
+				$('#ar'+PROCESS.get(process_id)[0]).hide();
+			}
+			
+			var args2 = "?BATCH_ID="+batch_id+
+						"&PROCESS_ID="+process_id;
+			
+			// 作業グループステータス取得
+			$.ajax({
+			type: "GET", 
+			url: '/rest/workgroupstatus/select'+args2,
+			}).done(function(data2, dataType) {
+			
+				var usage_arr2 = JSON.parse(data2);
+				var diviation_flg = false;
+				$.each(usage_arr2.list,function(j,WORK_GROUP_STATUS_TABLE){
+					if(WORK_GROUP_STATUS_TABLE.status==wgrp_diviation_status){
+						diviation_flg = true;
+					}
+				});
+				
+				if(diviation_flg){
+				// 作業グループステータスに１つ以上逸脱があれば逸脱アイコン表示
+					$('#ex'+PROCESS.get(process_id)[0]).show();
+				}else{
+					$('#ex'+PROCESS.get(process_id)[0]).hide();
+				}
+			
+			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+				console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+			});
+			
+		});
+		
+		if(end_process_count>0){
+			// 完了工程があればフロー図を最後の完了工程の次工程を一番左に表示
+			var end_process = '#lbl'+PROCESS.get('BR')[0];
+			for (let [key, value] of PROCESS) {
+				if(value[3]==(end_process_count+1)){
+					end_process = '#lbl'+PROCESS.get(key)[0];
+				}
+			}
+			console.log(end_process);
+			$("#process_flow").animate({scrollLeft:$(end_process).offset().left-30});
+		}else{
+			// 完了工程がなければ先頭工程を一番左に表示
+			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get('EP1')[0]).offset().left-30});
+		}
+		
+	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+		console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+	});
 	
 }
 
@@ -666,8 +743,8 @@ function select_row(obj){
 <div id="detail_dialog">
 	<div id="detail" style="height:100%;">
 		<ul>
-			<li><a href="/instructions_detail">製造指図</a></li>
-			<li><a href="/proc_instructions">工程別製造指図</a></li>
+			<li><a href="/instructions_detail">Manufacturing instructions</a></li>
+			<li><a href="/proc_instructions">Manufacturing instructions by process</a></li>
 		</ul>
 	</div>
 </div>
