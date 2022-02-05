@@ -365,11 +365,13 @@ Blobへ変換 引数はbase64形式の文字列
 		dialogClass:'confirm_dialog',
 		modal:true, //モーダル表示
 		title:"Confirm", //タイトル
-		buttons: { //ボタン
-		"OK": function() {
-			$(this).dialog("close");
+		buttons:[{
+			text: "OK",
+			class:"btn custombtn",
+			click: function() {
+				$(this).dialog("close");
 			}
-		}
+		}]
 	});
  }
   /***********************************
@@ -381,11 +383,13 @@ Blobへ変換 引数はbase64形式の文字列
 		dialogClass:'alertdialog',
 		modal:true, //モーダル表示
 		title:"Alert!", //タイトル
-		buttons: { //ボタン
-		"Close": function() {
-			$(this).dialog("close");
+		buttons:[{
+			text: "Close",
+			class:"btn custombtn",
+			click: function() {
+				$(this).dialog("close");
 			}
-		}
+		}]
 	});
  }
   /***********************************
@@ -397,11 +401,13 @@ Blobへ変換 引数はbase64形式の文字列
 		dialogClass:'error_dialog',
 		modal:true, //モーダル表示
 		title:"Error!", //タイトル
-		buttons: { //ボタン
-		"Close": function() {
-			$(this).dialog("close");
+		buttons:[{
+			text: "OK",
+			class:"btn custombtn",
+			click: function() {
+				$(this).dialog("close");
 			}
-		}
+		}]
 	});
  }
  
@@ -414,18 +420,25 @@ function confirm_approval(
 		dialogClass:'confirm_dialog',
 		modal:true, //モーダル表示
 		title:"Confirm", //タイトル
-		buttons: { //ボタン
-		"OK": function() {
+		buttons:[
+		{
+			text: "OK",
+			class:"btn custombtn",
+			click: function() {
 				// 作業完了処理実行
 				endwork($("#PROCESS_ID").val(),$("#BATCH_ID").val(),wgp, wid,
 						CHECK_RESULT, CHECK_REASON,null,null,
 						null,null
 			 	);
-			$(this).dialog("close");
-		},
-		"Cancel": function() {
-			$(this).dialog("close");
+				$(this).dialog("close");
 			}
-		}
+		},
+		{
+			text: "Cancel",
+			class:"btn custombtn",
+			click: function() {
+				$(this).dialog("close");
+			}
+		}]
 	});
 }

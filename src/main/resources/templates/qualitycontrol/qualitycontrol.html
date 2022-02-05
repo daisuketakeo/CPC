@@ -104,16 +104,23 @@ function confirm_qualitycontrol(wgp, wid,
 		dialogClass:'confirm_dialog',
 		modal:true, //モーダル表示
 		title:"Confirm", //タイトル
-		buttons: { //ボタン
-		"OK": function() {
-			$(this).dialog("close");
-			endwork($("#PROCESS_ID").val(),$("#BATCH_ID").val(),wgp, wid,
-					CHECK_RESULT,null);
+		buttons:[
+			{
+				text: "OK",
+				class:"btn custombtn",
+				click: function() {
+					$(this).dialog("close");
+					endwork($("#PROCESS_ID").val(),$("#BATCH_ID").val(),wgp, wid,
+							CHECK_RESULT,null);
+				}
 			},
-		"Cancel": function() {
-			$(this).dialog("close");
-			}
-		}
+			{
+				text: "Cancel",
+				class:"btn custombtn",
+				click: function() {
+					$(this).dialog("close");
+				}
+			}]
 	});
 }
 

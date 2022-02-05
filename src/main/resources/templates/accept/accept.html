@@ -301,15 +301,23 @@ function initAT(){
  		dialogClass:'confirm_dialog',
  		modal:true, //モーダル表示
  		title:"Confirm", //タイトル
- 		buttons: { //ボタン
- 		"OK": function() {
- 			$(this).dialog("close");
- 			endwork($("#PROCESS_ID").val(),$("#material_no").val(),wgp, wid);
+ 		buttons:[
+ 			{
+ 				text: "OK",
+ 				class:"btn custombtn",
+ 				click: function() {
+ 		 			endwork($("#PROCESS_ID").val(),$("#material_no").val(),wgp, wid);
+ 					$(this).dialog("close");
+ 				}
  			},
-		"Cancel": function() {
- 			$(this).dialog("close");
+ 			{
+ 				text: "Cancel",
+ 				class:"btn custombtn",
+ 				click: function() {
+ 					$(this).dialog("close");
+ 				}
  			}
- 		}
+ 		]
  	});
   }
   

@@ -32,8 +32,10 @@ $(function(){
 	
     // ヘッダメニュー変更
     $('#hamberger_menu_list').children().remove();
-    $('#hamberger_menu_list').append('<li><a id="hamberger_menu1" href="javascript:void(0);">Manufacturing instructions</a></li>');
-    $('#hamberger_menu_list').append('<li><a id="hamberger_menu2" href="javascript:void(0);">Manufacturing instructions by process</a></li>');
+	var hamberger_menu_ul = $('<ul />');
+	hamberger_menu_ul.append('<li><a id="hamberger_menu1" href="javascript:void(0);">Manufacturing instructions</a></li>');
+	hamberger_menu_ul.append('<li><a id="hamberger_menu2" href="javascript:void(0);">Manufacturing instructions by process</a></li>');
+	$('#hamberger_menu_list').append(hamberger_menu_ul);
 
 	// 一覧取得
 	search();
@@ -102,20 +104,28 @@ $(function(){
 	  height: 200,
       width: 350,
 	  modal: true,
-	  buttons: {
-	    "OK": function() {
-	    	if($('[name=cmbitemlist]').val()==''){
-	    		alertdialog("Please select item.");
-	    	}else{
-	    	  $('#create_confirmdialog_label').text(
-	  	    		  "Create instructions?\n["+$('[name=cmbitemlist] option:selected').text()+"]");
-	    	  $("#create_confirmdialog").dialog("open");
-	    	}
-	      $(this).dialog("close");
-	    },
-	    "Cancel": function() {
-	      $(this).dialog("close");}
-	  }
+		buttons:[
+			{
+				text: "OK",
+				class:"btn custombtn",
+				click: function() {
+					if($('[name=cmbitemlist]').val()==''){
+						alertdialog("Please select item.");
+					}else{
+						$('#create_confirmdialog_label').text(
+							"Create instructions?\n["+$('[name=cmbitemlist] option:selected').text()+"]");
+						$("#create_confirmdialog").dialog("open");
+					}
+					$(this).dialog("close");
+				}
+			},
+			{
+				text: "Cancel",
+				class:"btn custombtn",
+				click: function() {
+					$(this).dialog("close");
+				}
+			}]
 	});
 	
 	// 指図作成　確認ダイアログ
@@ -126,33 +136,41 @@ $(function(){
   	  title:"Confirm", //タイトル
  	  height: 200,
       width: 350,
-  	  buttons: { //ボタン
-  	   "OK": function() {
-  	     $(this).dialog("close");
-  		 // 指図作成実行
-  		 //　データを送信
-  		 var data = { IM_ID: $('[name=cmbitemlist]').val() };
-		 var XHR = new XMLHttpRequest();
-		 XHR.open( "POST", "/ajax/create_instructions");
-		 XHR.setRequestHeader('Content-Type', 'application/json');
-		 XHR.send(JSON.stringify(data));
-		　XHR.onreadystatechange = function() {
-		  if( XHR.readyState === 4 && XHR.status === 200 ) {
-			// 正常終了時に処理
-			// 一覧取得
-			search();
-		  }else{
-			if(XHR.responseText==''){
-			}else{
-				error(XHR.responseText); //エラーダイアログ表示
-			}
-		　 }
-		　}
-  	    },
-  	    "Cancel": function() {
-  	      $(this).dialog("close");
-  	    }
-  	  }
+		buttons:[
+			{
+				text: "OK",
+				class:"btn custombtn",
+				click: function() {
+				
+					$(this).dialog("close");
+					// 指図作成実行
+					// データを送信
+					var data = { IM_ID: $('[name=cmbitemlist]').val() };
+					var XHR = new XMLHttpRequest();
+					XHR.open( "POST", "/ajax/create_instructions");
+					XHR.setRequestHeader('Content-Type', 'application/json');
+					XHR.send(JSON.stringify(data));
+					XHR.onreadystatechange = function() {
+					if( XHR.readyState === 4 && XHR.status === 200 ) {
+						// 正常終了時に処理
+						// 一覧取得
+						search();
+					}else{
+						if(XHR.responseText==''){
+						}else{
+							error(XHR.responseText); //エラーダイアログ表示
+						}
+					}
+				}
+			}},
+			{
+				text: "Cancel",
+				class:"btn custombtn",
+				click: function() {
+					$(this).dialog("close");
+					return false;
+				}
+			}]
   	});
 	
 	// 指図リリース　確認ダイアログ
@@ -163,33 +181,38 @@ $(function(){
   	  title:"Confirm", //タイトル
  	  height: 200,
       width: 350,
-  	  buttons: { //ボタン
-  	   "OK": function() {
-  	     $(this).dialog("close");
-  		 // 指図作成実行
-  		 //　データを送信
-  		 var data = { BATCH_ID: $("#batch_id").val() };
-		 var XHR = new XMLHttpRequest();
-		 XHR.open( "POST", "/ajax/release_instructions");
-		 XHR.setRequestHeader('Content-Type', 'application/json');
-		 XHR.send(JSON.stringify(data));
-		　XHR.onreadystatechange = function() {
-		  if( XHR.readyState === 4 && XHR.status === 200 ) {
-			// 正常終了時に処理
-			// 一覧取得
-			search();
-		  }else{
-			if(XHR.responseText==''){
-			}else{
-				error(XHR.responseText); //エラーダイアログ表示
+		buttons:[{
+			text: "OK",
+			class:"btn custombtn",
+			click: function() {
+				$(this).dialog("close");
+				// 指図作成実行
+				// データを送信
+				var data = { BATCH_ID: $("#batch_id").val() };
+				var XHR = new XMLHttpRequest();
+				XHR.open( "POST", "/ajax/release_instructions");
+				XHR.setRequestHeader('Content-Type', 'application/json');
+				XHR.send(JSON.stringify(data));
+				XHR.onreadystatechange = function() {
+				if( XHR.readyState === 4 && XHR.status === 200 ) {
+					// 正常終了時に処理
+					// 一覧取得
+					search();
+				}else{
+					if(XHR.responseText==''){
+					}else{
+						error(XHR.responseText); //エラーダイアログ表示
+					}
+				}
 			}
-		　 }
-		　}
-  	    },
-  	    "Cancel": function() {
-  	      $(this).dialog("close");
-  	    }
-  	  }
+		}},
+		{
+			text: "Cancel",
+			class:"btn custombtn",
+			click: function() {
+				$(this).dialog("close");
+			}
+		}]
   	});
 	
 	// 指図詳細　ダイアログ
@@ -199,11 +222,13 @@ $(function(){
   	  title:"Instructions detail", //タイトル
  	  height: 700,
       width: "100%",
-  	  buttons: { //ボタン
-  	   "Close": function() {
-  	      $(this).dialog("close");
-  	    }
-  	  }
+      buttons:[
+          {text: "Close",
+           class:"btn custombtn",
+           click: function() {
+        	   $(this).dialog("close");
+        	   }
+          }]
   	});
 	
 	// 品目リスト取得
@@ -276,8 +301,8 @@ $(function(){
 				{ active: 0 } //タブの初期値指定
 			);
 			$('#detail_dialog').dialog("open");
-        	$('#setbtnInsructionsDetail').trigger('click', [INSTRUCTIONS_TABLE.batch_ID]);
-        	//$('#setbtnProcInsructions').trigger('click', [INSTRUCTIONS_TABLE.batch_ID]);
+        	$('#setbtnInsructionsDetail').trigger('click', [$("#batch_id").val()]);
+        	//$('#setbtnProcInsructions').trigger('click', [$("#batch_id").val()]);
 		}
 	});
 	
@@ -290,8 +315,8 @@ $(function(){
 				{ active: 1 } //タブの初期値指定
 			);
 			$('#detail_dialog').dialog("open");
-			//$('#setbtnInsructionsDetail').trigger('click', [INSTRUCTIONS_TABLE.batch_ID]);
-        	$('#setbtnProcInsructions').trigger('click', [INSTRUCTIONS_TABLE.batch_ID]);
+			//$('#setbtnInsructionsDetail').trigger('click', [$("#batch_id").val()]);
+        	$('#setbtnProcInsructions').trigger('click', [$("#batch_id").val()]);
 		}
 	});
 });
@@ -543,7 +568,6 @@ function select_row(obj){
 					end_process = '#lbl'+PROCESS.get(key)[0];
 				}
 			}
-			console.log(end_process);
 			$("#process_flow").animate({scrollLeft:$(end_process).offset().left-30});
 		}else{
 			// 完了工程がなければ先頭工程を一番左に表示
@@ -730,14 +754,17 @@ function select_row(obj){
       </td>
     </tr>   
   </table>
+  <span class="ui-helper-hidden-accessible"><input type="image"/></span>
 </div>
 <!-- 指図作成　確認ダイアログ  -->
 <div id="create_confirmdialog">
 	<label id="create_confirmdialog_label" style="white-space: pre-line;"></label>
+	<span class="ui-helper-hidden-accessible"><input type="image"/></span>
 </div>
 <!-- 指図リリース　確認ダイアログ  -->
 <div id="release_confirmdialog">
 	<label id="release_confirmdialog_label" style="white-space: pre-line;"></label>
+	<span class="ui-helper-hidden-accessible"><input type="image"/></span>
 </div>
 <!-- 指図詳細　ダイアログ  -->
 <div id="detail_dialog">
@@ -747,4 +774,5 @@ function select_row(obj){
 			<li><a href="/proc_instructions">Manufacturing instructions by process</a></li>
 		</ul>
 	</div>
+	<span class="ui-helper-hidden-accessible"><input type="image"/></span>
 </div>

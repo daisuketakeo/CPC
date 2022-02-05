@@ -103,28 +103,35 @@ function confirm_manufacturing(
 		dialogClass:'confirm_dialog',
 		modal:true, //モーダル表示
 		title:"Confirm", //タイトル
-		buttons: { //ボタン
-		"OK": function() {
-			if(material_check_list!=null){
-				// マテリアルチェックリストがNULLでない場合
-				// マテリアルチェック登録処理実行
-				endwork_registMCT(
-						$("#PROCESS_ID").val(),$("#BATCH_ID").val(),wgp, wid,
-						material_check_list
-			 	);
-			}else{
-				// 作業完了処理実行
-				endwork($("#PROCESS_ID").val(),$("#BATCH_ID").val(),wgp, wid,
-						CHECK_RESULT, CHECK_REASON,null,null,
-						label,count_result
-			 	);
-			}
-			$(this).dialog("close");
-		},
-		"Cancel": function() {
-			$(this).dialog("close");
-			}
-		}
+		buttons:[
+			{
+				text: "OK",
+				class:"btn custombtn",
+				click: function() {
+					if(material_check_list!=null){
+						// マテリアルチェックリストがNULLでない場合
+						// マテリアルチェック登録処理実行
+						endwork_registMCT(
+								$("#PROCESS_ID").val(),$("#BATCH_ID").val(),wgp, wid,
+								material_check_list
+					 	);
+					}else{
+						// 作業完了処理実行
+						endwork($("#PROCESS_ID").val(),$("#BATCH_ID").val(),wgp, wid,
+								CHECK_RESULT, CHECK_REASON,null,null,
+								label,count_result
+					 	);
+					}
+					$(this).dialog("close");
+				}
+			},
+			{
+				text: "Cancel",
+				class:"btn custombtn",
+				click: function() {
+					$(this).dialog("close");
+				}
+			}]
 	});
 }
 

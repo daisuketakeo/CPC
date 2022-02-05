@@ -231,28 +231,35 @@ $(function() {
 			dialogClass:'confirm_dialog',
 			modal:true, //モーダル表示
 			title:"confirm", //タイトル
-			buttons: { //ボタン
-			"OK": function() {
-				$(this).dialog("close");
-				try{
-					// 受入情報更新＋作業実績登録
-					update_ac_wr(
-							wgrp,$(work_id).val(),
-							null, null,null,QA_APP_STATUS,
-						 	null,
-						 	null,
-						 	null,
-						 	null
-						 	);
-				}catch(e){
-					console.log(e);
-				}
-				
+			buttons:[
+				{
+					text: "OK",
+					class:"btn custombtn",
+					click: function() {
+						$(this).dialog("close");
+						try{
+							// 受入情報更新＋作業実績登録
+							update_ac_wr(
+									wgrp,$(work_id).val(),
+									null, null,null,QA_APP_STATUS,
+								 	null,
+								 	null,
+								 	null,
+								 	null
+								 	);
+						}catch(e){
+							console.log(e);
+						}
+					}
 				},
-			"Cancel": function() {
-				$(this).dialog("close");
+				{
+					text: "Cancel",
+					class:"btn custombtn",
+					click: function() {
+						$(this).dialog("close");
+					}
 				}
-			}
+			]
 		});
 	})
 	

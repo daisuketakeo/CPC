@@ -118,10 +118,15 @@
 	color         : white;
 	width         : 100px;
 }
-.custombtn {
-	background    : #6683a7;
-	color         : white;
-	width         : 100px;
+.btn.custombtn{
+	background:#6683a7;
+	color:#fff;
+	transition: 0s;
+}
+.btn.custombtn:hover{
+	background:#191970;
+	color:#fff;
+	transition: 0s;
 }
 
 /*********************************

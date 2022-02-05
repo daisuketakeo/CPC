@@ -5,22 +5,56 @@
 		<!-- <span class="navbar-brand m-2" style="min-width: 200px;" th:text="${system_name}"></span> -->
 		<label class="navbar-brand m-2" style="min-width: 300px;" th:text="${user_name}"></label>
 		<a href="#" class="btn btn-link m-2 text-secondary" style="min-width: 80px;" th:href="@{/home}">Home</a>
-		<a href="#" class="btn btn-link m-2 text-secondary" style="min-width: 80px;" th:href="@{/logout}">Logout</a>
+		<a  id="logout_link" href="javascript:void(0);" class="btn btn-link m-2 text-secondary" style="min-width: 80px;">Logout</a>
 	</section>
 	<!-- ハンバーガーメニュー -->
 	<span class="hamberger"><hr><hr><hr></span>
-	<div class="hamberger_menu">
-		<ul id="hamberger_menu_list">
-		</ul>
+	<div class="hamberger_menu" id="hamberger_menu_list">
 	</div>
 </div>
-
+<div id="logout_confirmdialog">
+	<label id="logout_confirmdialog_label" style="white-space: pre-line;">
+		Sign out?
+	</label>
+	<span class="ui-helper-hidden-accessible"><input type="image"/></span>
+</div>
 <script>
 $(function(){
-    $(".hamberger").click(function() {
+	// ヘッダメニュー クリック
+	$(".hamberger").click(function() {
         $(this).toggleClass("close");
         $('.hamberger_menu').toggleClass("show");
     });
+	
+	// ログアウトリンク クリック
+    $("#logout_link").click(function() {
+    	$("#logout_confirmdialog").dialog("open");
+	    return false;
+    });
+ 	// ログアウト ダイアログ
+	$("#logout_confirmdialog").dialog({
+	  autoOpen: false,
+	  open : function(event, ui){
+		  $(".ui-dialog-titlebar" ).css("display", "none" );
+      },
+	  modal: true,
+		buttons:[
+			{
+				text: "OK",
+				class:"btn custombtn",
+				click: function() {
+					location.href='/login';
+					$(this).dialog("close");
+				}
+			},
+			{
+				text: "Cancel",
+				class:"btn custombtn",
+				click: function() {
+					$(this).dialog("close");
+				}
+			}]
+	});
 }());
 </script>
 
