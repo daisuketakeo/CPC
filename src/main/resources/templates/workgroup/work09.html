@@ -1,0 +1,120 @@
+<div th:fragment="paramset(wgrp)" th:remove="tag">
+<script th:inline="javascript">
+$(function() {
+	
+	var wgrp = /*[[${wgrp}]]*/ '';
+	
+	// 作業グループ名セット
+	getWorkGroupName(wgrp, wgrp, "work_group_name");
+	
+	// 要素名
+	var setbtn = '#setbtn'+wgrp;
+	var okbtn = '#okbtn'+wgrp;
+	
+	var tdcheck = '#tdcheck'+wgrp;
+	var tdcoa = '#tdcoa'+wgrp;
+	var td = '#td'+wgrp;
+	
+	var work_id = '#work_id'+wgrp;
+	
+	// 作業手順取得
+	var args = "?WORK_GROUP="+wgrp;
+	$.ajax({
+	    type: "GET", 
+	    url: '/rest/workmst/select'+args,
+	}).done(function(data, dataType) {
+	    var usage_arr = JSON.parse(data);
+	    if(usage_arr.list.length>0){
+ 	    	WORK_MASTER = usage_arr.list[0];
+ 		    $(td).text(WORK_MASTER.work);
+ 		    $(work_id).val(WORK_MASTER.work_ID);
+ 	    }
+	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+	});
+ 	
+ 	
+ 	// 一覧行クリック時の処理
+	$(setbtn).click(function(event, id) {
+		// ステータスチェック
+		var args = 
+			"?WORK_GROUP="+wgrp+
+			"&WORK_ID="+$(work_id).val()+
+			"&ID="+id;
+		$.ajax({
+		type: "GET", 
+		url: '/ajax/check_status'+args,
+		}).done(function(data, dataType) {
+			if(data==false){
+				setDisabled(okbtn,true);
+			}else{
+				open_work(wgrp, true);	// 作業手順表示
+				setDisabled(okbtn,false);
+			}
+		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+			console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+		});	
+	});
+	
+	// OKボタンクリック時の処理
+	$(okbtn).click(function() {
+		confirm_accept(wgrp,$(work_id).val());
+	});
+
+});
+
+</script>
+
+<!-- コンテンツ -->
+<input type="hidden" th:id="'work_id'+${wgrp}" >
+<input type="button" th:id="'setbtn'+${wgrp}" style="display:none;">
+<table style="width:100%;">
+<tr th:id="'tr_header'+${wgrp}"><td>
+<input type="checkbox" th:id="'header_check'+${wgrp}" checked="checked" style="display:none;">
+
+<!-- 作業手順ヘッダ START -->
+<table th:id="'header'+${wgrp}"class="wgrpheader" th:onclick="|header_click('__${wgrp}__')|">
+	<tr>
+		<td class="workheader_wgrp">
+			<labeL th:id="'work_group_name'+${wgrp}"></labeL>
+		<td>
+		<td class="workheader_allow">
+			<labeL th:id="'allow'+${wgrp}">▲</labeL>
+		<td>
+	</tr>
+</table>
+<!-- 作業手順ヘッダ END -->
+
+<table th:id="'proc_table'+${wgrp}" class="wgrpwork">
+<tr><td>
+
+<!-- 作業手順 START -->
+<table style="width:100%">
+	<tr>
+		<td>
+		<table style="width:100%">
+			<tr style="text-align: left;"><td>
+				<!-- 作業手順 -->
+				<table class="worktable">
+					<tr>
+						<td th:id="'td'+${wgrp}"></td>
+					</tr>
+				</table>
+			<td></tr>
+			<tr style="text-align: right;"><td>
+				<!-- 処理 -->
+				<input type="button" th:id="'okbtn'+${wgrp}" value="OK" 
+					class="btn custombtn" style="width:100px;" disabled="disabled">
+			<td></tr>
+		</table>
+		</td>
+	</tr>
+</table>
+<!-- 作業手順 END -->
+
+</td></tr>
+</table>
+<td>
+</tr>
+</table>
+

@@ -45,6 +45,15 @@ insert into ACCEPT_TABLE (MATERIAL_NO, MATERIAL_NAME, CATEGORY_NO, MANUFACTURER,
 'Q01'
 );
 
+insert into ACCEPT_TABLE (MATERIAL_NO, MATERIAL_NAME, CATEGORY_NO, MANUFACTURER, QTY, STATUS) values (
+'019',
+'AAAAAAAAAAAAAAAAAAAAAAAAAAA',
+'BBBBBBBBBBBBBBBBBBBBBBBBB',
+'CCCCCCCCCCCCCCCCCCCCCCCCCC',
+'123',
+'Q01'
+);
+
 delete from INSTRUCTIONS_TABLE;
 insert into INSTRUCTIONS_TABLE (BATCH_ID,PROTOCOL,STARTING_TIME,FINISH_TIME,STATUS) values ('B001','protocol001','2022/01/28','2022/01/29','Q06');
 insert into INSTRUCTIONS_TABLE (BATCH_ID,PROTOCOL,STARTING_TIME,FINISH_TIME,STATUS) values ('B002','protocol002','2022/01/28','2022/01/29','Q06');
@@ -129,12 +138,8 @@ insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values
 insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP4','EP404','002','２）Start run.','CP01');
 insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP4','EP404','003','３） After the completion of the culture, the harvest bag is promptly removed and moved to the next step.','CP01');
 insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP4','EP405','001','４） Review the Post-batch overview (SOP-M-MSC-006Appx.1) and confirm that there are no deviations.　　　Remove and dispose of used chemical bags and channels according to the procedure.','CP01');
-insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP4','EP406','001','','CP01');
-insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP4','EP407','001','','CP01');
-insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP4','EP408','001','','CP01');
-insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP4','EP409','001','','CP01');
-insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP4','EP410','001','','CP02,CP03');
-insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP4','EP411','001','','CP03');
+insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP4','EP406','001','','CP02,CP03');
+insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP4','EP407','001','','CP03');
 insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY,CAPTURE1,CAPTURE2,CAPTURE3,CAPTURE4,CAPTURE5,CSV1,CSV2,CSV3,CSV4,CSV5) values ('ET2','ET201','001','１） Quantify the concentration of cysteine in the supernatant of the culture medium using LC-MS. Confirm that its concentration is below the specified value throughout the incubation.','QC01,QC02','ET201-1.png',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('ET2','ET202','001','','QC01,QC02');
 insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('ET2','ET203','001','','QA01');
@@ -167,20 +172,25 @@ insert into INSTRUCTIONS_MASTER (IM_ID,NAME,MATERIAL_GORUP_ID,PROTOCOL) values (
 insert into INSTRUCTIONS_MASTER (IM_ID,NAME,MATERIAL_GORUP_ID,PROTOCOL) values ('IM002','MOC_MSC_EXP5L_2021/EE/FF','MG001','PROTOCOL002');
 
 
-delete MATERIAL_GROUP_TABLE;
-insert into MATERIAL_GROUP_TABLE ('MG001','001');
-insert into MATERIAL_GROUP_TABLE ('MG001','017');
-insert into MATERIAL_GROUP_TABLE ('MG001','018');
-insert into MATERIAL_GROUP_TABLE ('MG002','001');
-insert into MATERIAL_GROUP_TABLE ('MG002','002');
+delete from MATERIAL_GROUP_TABLE;
+insert into MATERIAL_GROUP_TABLE values ('MG001','001');
+insert into MATERIAL_GROUP_TABLE values ('MG001','017');
+insert into MATERIAL_GROUP_TABLE values ('MG001','018');
+insert into MATERIAL_GROUP_TABLE values ('MG002','001');
+insert into MATERIAL_GROUP_TABLE values ('MG002','002');
 
 
-delete AI_RELATION_TABLE;
-insert into AI_RELATION_TABLE ('IM001','EP1','001');
-insert into AI_RELATION_TABLE ('IM001','EP1','002');
-insert into AI_RELATION_TABLE ('IM001','EP1','017');
-insert into AI_RELATION_TABLE ('IM002','EP1','017');
-insert into AI_RELATION_TABLE ('IM002','EP1','018');
+delete from AI_RELATION_TABLE;
+insert into AI_RELATION_TABLE values ('IM001','EP1','001');
+insert into AI_RELATION_TABLE values ('IM001','EP1','002');
+insert into AI_RELATION_TABLE values ('IM001','EP1','016');
+insert into AI_RELATION_TABLE values ('IM002','EP1','017');
+insert into AI_RELATION_TABLE values ('IM002','EP1','018');
+insert into AI_RELATION_TABLE values ('IM001','EP4','001');
+insert into AI_RELATION_TABLE values ('IM001','EP4','002');
+insert into AI_RELATION_TABLE values ('IM001','EP4','016');
+insert into AI_RELATION_TABLE values ('IM001','EP4','017');
+insert into AI_RELATION_TABLE values ('IM001','EP4','018');
 
 
 delete from PROC_INSTRUCTIONS_MASTER;
