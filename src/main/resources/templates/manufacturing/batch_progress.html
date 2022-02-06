@@ -1,0 +1,41 @@
+<div th:fragment="paramset(wgrp)" th:remove="tag">
+<script>
+$(function(){
+	
+	// BatchIDクリック時の処理
+	$("#setbtnBatchProgress").click(function(event, id, wgrp) {
+		console.log(id);
+		console.log(wgrp);
+	    // シーケンス取得
+		$.ajax({
+		    type: "GET", 
+		    url: '/ajax/get_sequence',
+		}).done(function(data, dataType) {
+			
+			console.log(data.SEQUENCE);
+			console.log(data.SEQUENCE_INTERVAL);
+			console.log(data.CELLQUALIA_TOP_AUTOTRANS);
+			
+			setTimeout(function(){
+				var okbtn = '#okbtn'+wgrp+'002';
+				if($(okbtn).length){
+			 		setDisabled(okbtn,false);
+			 	}
+				
+				if($("#batch_progress_dialog").length){
+			 		$("#batch_progress_dialog").dialog("close");
+			 	}
+              }, 3*1000);
+
+		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+		  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+		});
+	});
+    
+});
+</script>
+<input type="button" id="setbtnBatchProgress" style="display:none;">
+
+<img alt="" class="aicon" src="/images/batch_progress.png" style="width:100%; height: 100%">
+
+</div>

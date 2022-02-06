@@ -1,14 +1,17 @@
 <div fragment="instructions_detail">
 <script>
+
 $(function(){
 	
-	if($("#batch_id").val()!=''){
-		init($("#batch_id").val());
+	var BATCH_ID = sessionStorage.getItem(['BATCH_ID']);
+	if(BATCH_ID!=''){
+		init(BATCH_ID);
 	}
 	
 	// BatchIDクリック時の処理
-	$("#setbtnInsructionsDetail").click(function(event, id) {
-		init(id);
+	$("#setbtnInsructionsDetail").click(function() {
+		var BATCH_ID = sessionStorage.getItem(['BATCH_ID']);
+		init(BATCH_ID);
 	});
 	
 });

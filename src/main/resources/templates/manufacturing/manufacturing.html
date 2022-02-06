@@ -11,6 +11,16 @@ $(function(){
 	// ヘッダスタイル変更
 	change_header_style(disp_flg);
 	
+    // ヘッダメニュー変更
+    $('#hamberger_menu_list').children().remove();
+	var hamberger_menu_ul = $('<ul />');
+	hamberger_menu_ul.append('<li><a id="hamberger_menu1" href="javascript:void(0);">Manufacturing instructions</a></li>');
+	hamberger_menu_ul.append('<li><a id="hamberger_menu2" href="javascript:void(0);">Manufacturing instructions by process</a></li>');
+	hamberger_menu_ul.append('<li><a id="hamberger_menu3" href="javascript:void(0);">Pre-batch overview</a></li>');
+	hamberger_menu_ul.append('<li id="hamberger_menu4_li"><a id="hamberger_menu4" href="javascript:void(0);">Batch progress</a></li>');
+	hamberger_menu_ul.append('<li id="hamberger_menu5_li"><a id="hamberger_menu5" href="javascript:void(0);">Post-batch overview</a></li>');
+	$('#hamberger_menu_list').append(hamberger_menu_ul);
+	
 	// 一覧取得
 	search();
 	
@@ -20,6 +30,150 @@ $(function(){
 		  .append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: $("#BATCH_ID").val()}))
 		  .appendTo(document.body)
 		  .submit();
+	});
+	
+	// 指図詳細Closeボタンクリック
+	$("#closetab").click(function(){
+		$("#detail").hide();
+	});
+	
+	// 指図詳細タブ設定
+	$("#detail").tabs();
+	
+	// 指図詳細　ダイアログ
+	$('#detail_dialog').dialog({
+	  autoOpen: false,
+  	  modal:true, //モーダル表示
+  	  title:"Instructions detail", //タイトル
+ 	  height: 700,
+      width: "100%",
+      buttons:[
+          {text: "Close",
+           class:"btn custombtn",
+           click: function() {
+        	   $(this).dialog("close");
+        	   }
+          }]
+  	});
+	
+    // CellQualia Top　ダイアログ
+	$('#cellqualia_top_dialog').dialog({
+	  autoOpen: false,
+  	  modal:true, //モーダル表示
+  	  title:"CellQualia Top", //タイトル
+ 	  height: 700,
+      width: "100%"
+  	});
+    
+	// Batcvh Progress　ダイアログ
+	$('#batch_progress_dialog').dialog({
+	  autoOpen: false,
+  	  modal:true, //モーダル表示
+  	  title:"Batch progress", //タイトル
+ 	  height: 700,
+      width: "100%"
+  	});
+	
+	// Pre batch overview　ダイアログ
+	$('#pre_batch_dialog').dialog({
+	  autoOpen: false,
+  	  modal:true, //モーダル表示
+  	  title:"Pre-batch overview", //タイトル
+ 	  height: 700,
+      width: "100%"
+  	});
+	
+	// Post batch overview　ダイアログ
+	$('#post_batch_dialog').dialog({
+	  autoOpen: false,
+  	  modal:true, //モーダル表示
+  	  title:"Post-batch overview", //タイトル
+ 	  height: 700,
+      width: "100%"
+  	});
+	
+	// 製造指図メニュークリック
+	$("#hamberger_menu1").click(function() {
+		if($("#BATCH_ID").val()==''){
+			alertdialog("Please select batch.");
+		}else{
+			$("#detail").tabs(
+				{ active: 0 } //タブの初期値指定
+			);
+			$('#detail_dialog').dialog("open");
+			sessionStorage.setItem(['BATCH_ID'],[$("#BATCH_ID").val()]);
+        	$('#setbtnInsructionsDetail').trigger('click');
+		}
+	});
+	
+	// 工程別製造指図メニュークリック
+	$("#hamberger_menu2").click(function() {
+		if($("#BATCH_ID").val()==''){
+			alertdialog("Please select batch.");
+		}else{
+			$("#detail").tabs(
+				{ active: 1 } //タブの初期値指定
+			);
+			$('#detail_dialog').dialog("open");
+			sessionStorage.setItem(['BATCH_ID'],[$("#BATCH_ID").val()]);
+        	$('#setbtnProcInsructions').trigger('click');
+		}
+	});
+	
+	// Pre-batch overview
+	$("#hamberger_menu3").click(function() {
+		if($("#PRE_BATCH_OV").val()=='0'){
+			alertdialog("Pre-batch overview cannot be selected.");
+		}else{
+			$('#pre_batch_dialog').dialog("open");
+		}
+
+	});
+	// Batch progress
+	$("#hamberger_menu4").click(function() {
+		$('#batch_progress_dialog').dialog("open");
+	});
+	$("#hamberger_menu4_li").hide();
+	// Post-batch overview
+	$("#hamberger_menu5").click(function() {
+		$('#post_batch_dialog').dialog("open");
+	});
+	$("#hamberger_menu5_li").hide();
+	
+	// Expansionの先頭作業（1. Preparation (Room Temperature)）実績取得
+ 	var args = 
+ 		"?WORK_GROUP=EP401"+
+ 		"&WORK_ID=001"+
+		"&ID="+$("#BATCH_ID").val();
+	$.ajax({
+	type: "GET", 
+	url: '/rest/workresult/select'+args,
+	}).done(function(data, dataType) {
+		var usage_arr = JSON.parse(data);
+	    $.each(usage_arr.list,function(i,WORK_RESULT_TABLE){
+	    	// 先頭作業完了ならメニューのPre batch overviewを有効にする
+	    	$("#PRE_BATCH_OV").val('1');
+		});
+	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+		console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+	});
+	// Expansionの 2. Culture（手順2：Start run)作業実績取得
+ 	var args = 
+ 		"?WORK_GROUP=EP404"+
+ 		"&WORK_ID=002"+
+		"&ID="+$("#BATCH_ID").val();
+	$.ajax({
+	type: "GET", 
+	url: '/rest/workresult/select'+args,
+	}).done(function(data, dataType) {
+		var usage_arr = JSON.parse(data);
+	    $.each(usage_arr.list,function(i,WORK_RESULT_TABLE){
+	    	// 作業完了ならヘッダメニューの「Batch progress」「Post-batch overview」有効にする
+		    $("#hamberger_menu4_li").show();
+		    $("#hamberger_menu5_li").show();
+		});
+	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+		console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 	});
 	
 });
@@ -140,6 +294,7 @@ function confirm_manufacturing(
 <input type="hidden" id="WORK_GROUP_JSON" th:value="${WORK_GROUP_JSON}">
 <input type="hidden" id="BATCH_ID" th:value="${BATCH_ID}">
 <input type="hidden" id="PROCESS_ID" th:value="${PROCESS_ID}">
+<input type="hidden" id="PRE_BATCH_OV" value="0">
 
 <div class="panel_ebr">
 
@@ -170,4 +325,30 @@ function confirm_manufacturing(
     </div>​
     
   </div>
+</div>
+<!-- 指図詳細　ダイアログ  -->
+<div id="detail_dialog">
+	<div id="detail" style="height:100%;">
+		<ul>
+			<li><a href="/instructions_detail">Manufacturing instructions</a></li>
+			<li><a href="/proc_instructions">Manufacturing instructions by process</a></li>
+		</ul>
+	</div>
+	<span class="ui-helper-hidden-accessible"><input type="image"/></span>
+</div>
+<!-- CellQualia Top　ダイアログ  -->
+<div id="cellqualia_top_dialog">
+	<div th:insert="/manufacturing/cellqualia_top::paramset('__${wgrp}__')"></div>
+</div>
+<!-- Batch Progress　ダイアログ  -->
+<div id="batch_progress_dialog">
+	<div th:insert="/manufacturing/batch_progress::paramset('__${wgrp}__')"></div>
+</div>
+<!-- Pre batch overview　ダイアログ  -->
+<div id="pre_batch_dialog">
+	<div th:insert="/manufacturing/pre_batch_over_view::paramset('__${wgrp}__')"></div>
+</div>
+<!-- Post batch overview　ダイアログ  -->
+<div id="post_batch_dialog">
+	<div th:insert="/manufacturing/post_batch_over_view::paramset('__${wgrp}__')"></div>
 </div>

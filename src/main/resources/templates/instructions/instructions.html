@@ -301,8 +301,8 @@ $(function(){
 				{ active: 0 } //タブの初期値指定
 			);
 			$('#detail_dialog').dialog("open");
-        	$('#setbtnInsructionsDetail').trigger('click', [$("#batch_id").val()]);
-        	//$('#setbtnProcInsructions').trigger('click', [$("#batch_id").val()]);
+			sessionStorage.setItem(['BATCH_ID'],[$("#batch_id").val()]);
+        	$('#setbtnInsructionsDetail').trigger('click');
 		}
 	});
 	
@@ -315,8 +315,8 @@ $(function(){
 				{ active: 1 } //タブの初期値指定
 			);
 			$('#detail_dialog').dialog("open");
-			//$('#setbtnInsructionsDetail').trigger('click', [$("#batch_id").val()]);
-        	$('#setbtnProcInsructions').trigger('click', [$("#batch_id").val()]);
+			sessionStorage.setItem(['BATCH_ID'],[$("#batch_id").val()]);
+        	$('#setbtnProcInsructions').trigger('click');
 		}
 	});
 });

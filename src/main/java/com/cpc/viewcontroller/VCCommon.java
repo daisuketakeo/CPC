@@ -49,7 +49,9 @@ public class VCCommon {
 	public static final String disp_login = "login";	// ログイン画面
 	public static final String disp_main = "main";	// メイン画面
 	public static final String disp_home = "home";	// ホーム画面
-	public static final String disp_body = "body";	// メイン画面ボディ部s
+	public static final String disp_body = "body";	// メイン画面ボディ部
+	public static final String disp_cellqualia_top = "cellqualia_top";	// CellQualia Top画面
+	public static final String disp_batch_progress = "batch_progress";	// Batch Progress画面
 	
 	/*
 	 * 画面属性
@@ -658,8 +660,7 @@ public class VCCommon {
     /*
      * EBR試験のCSVファイルを取得
      */
-    public String get_csv(String filename) {
-    	String dir = property.getEBR_TEST_PATH();
+    public String get_csv(String dir, String filename) {
     	try {
             // ファイルがあれば
         	if (Files.exists(Paths.get(dir, filename))) {

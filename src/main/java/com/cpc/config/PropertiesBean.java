@@ -28,4 +28,6 @@ public class PropertiesBean {
 	
 	private String KIT_LABEL_FIX_STRING;
 	
+	private String SEQUENCE_INTERVAL;
+	private String CELLQUALIA_TOP_AUTOTRANS;
 }

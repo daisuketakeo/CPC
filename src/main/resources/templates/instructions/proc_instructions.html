@@ -2,8 +2,9 @@
 <script>
 $(function(){
 	
-	if($("#batch_id").val()!=''){
-		init($("#batch_id").val(), "PREC1");
+	var BATCH_ID = sessionStorage.getItem(['BATCH_ID']);
+	if(BATCH_ID!=''){
+		init(BATCH_ID, "PREC1");
 	}
 	
 	$("#cellqualia_list").hide();
@@ -18,8 +19,9 @@ $(function(){
 	});
 	
 	// BatchIDクリック時の処理
-	$("#setbtnProcInsructions").click(function(event, id) {
-		init(id, "PREC1");
+	$("#setbtnProcInsructions").click(function() {
+		var BATCH_ID = sessionStorage.getItem(['BATCH_ID']);
+		init(BATCH_ID, "PREC1");
 	});
 	
 });
@@ -183,7 +185,8 @@ function init(batch_id, process_id){
 
 //CellQualia リンククリック時の処理
 function change_proc(process_id){
-	init($("#batch_id").val(), process_id);
+	var BATCH_ID = sessionStorage.getItem(['BATCH_ID']);
+	init(BATCH_ID, process_id);
 	$("#cellqualia_list").hide();
 }
 

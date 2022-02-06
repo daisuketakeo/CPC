@@ -112,28 +112,50 @@ public class VCAjax extends VCCommon{
         	
         	// CSVファイルをリスト形式に変換して取得
         	if(wm.getCSV1()!=null && !wm.getCSV1().isEmpty()) {
-        		String csv = get_csv(wm.getCSV1());
+        		String csv = get_csv(super.getProperties().getEBR_TEST_PATH(), wm.getCSV1());
         		wm.setCSV1(csv);
         	}
         	if(wm.getCSV2()!=null && !wm.getCSV2().isEmpty()) {
-        		String csv = get_csv(wm.getCSV2());
+        		String csv = get_csv(super.getProperties().getEBR_TEST_PATH(), wm.getCSV2());
         		wm.setCSV2(csv);
         	}
         	if(wm.getCSV3()!=null && !wm.getCSV3().isEmpty()) {
-        		String csv = get_csv(wm.getCSV3());
+        		String csv = get_csv(super.getProperties().getEBR_TEST_PATH(), wm.getCSV3());
         		wm.setCSV3(csv);
         	}
         	if(wm.getCSV4()!=null && !wm.getCSV4().isEmpty()) {
-        		String csv = get_csv(wm.getCSV4());
+        		String csv = get_csv(super.getProperties().getEBR_TEST_PATH(), wm.getCSV4());
         		wm.setCSV4(csv);
         	}
         	if(wm.getCSV5()!=null && !wm.getCSV5().isEmpty()) {
-        		String csv = get_csv(wm.getCSV5());
+        		String csv = get_csv(super.getProperties().getEBR_TEST_PATH(), wm.getCSV5());
         		wm.setCSV5(csv);
         	}
         }
         
     	return list;
+    }
+    
+    /*
+     * EBR試験の画像ファイル／CSVファイル格納フォルダ取得
+     */
+    @GetMapping("/ajax/get_sequence")
+    public Map<String,String> get_sequence() {
+    	
+    	String SEQUENCE = get_csv(
+    			super.getProperties().getCONFIG_PATH(),
+    			super.getProperties().getSEQUENCE_FILE());
+    	String SEQUENCE_INTERVAL = super.getProperties().getSEQUENCE_INTERVAL();
+    	String CELLQUALIA_TOP_AUTOTRANS = super.getProperties().getCELLQUALIA_TOP_AUTOTRANS();
+    	Map<String,String> map = new HashMap<String,String>(){
+    		{
+    			put("SEQUENCE", SEQUENCE);
+    			put("SEQUENCE_INTERVAL", SEQUENCE_INTERVAL);
+    			put("CELLQUALIA_TOP_AUTOTRANS", CELLQUALIA_TOP_AUTOTRANS);
+    		}
+    	};
+    	
+    	return map;
     }
     
     /*

@@ -18,6 +18,7 @@ $(function() {
 	var startbtn = '#startbtn'+wgrp;
 	var mtbl = '#mtbl'+wgrp;
 	var tdcheck = 'tdcheck'+wgrp;
+	var tdhidden = 'tdhidden'+wgrp;
 	var tdperformed_Time = 'tdperformed_Time'+wgrp;
 	var material_group_id_read = '#material_group_id_read'+wgrp;
 	
@@ -91,9 +92,11 @@ $(function() {
 			console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 		});
 		
-		// 作業実績取得
+		
+		// キッティング時の作業実績取得
 	 	var args = 
-			"?WORK_GROUP="+wgrp+
+	 		"?WORK_GROUP=EP3"+wgrp.substring(3,5)+
+	 		"&WORK_ID=001"+
 			"&ID="+batch_id;
 		$.ajax({
 		type: "GET", 
@@ -102,11 +105,27 @@ $(function() {
 			
 			var usage_arr = JSON.parse(data);
 		    $.each(usage_arr.list,function(i,WORK_RESULT_TABLE){
-		    	if(WORK_RESULT_TABLE.work_ID=='001'){
-		    		$(kitlabel).text(WORK_RESULT_TABLE.label);
-		    	}
+		    	$(kitlabel).text(WORK_RESULT_TABLE.label);
 			});
 	 	    
+		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+			console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+		});
+		
+		// 先頭作業（1. Preparation (Room Temperature)）実績取得
+	 	var args = 
+	 		"?WORK_GROUP=EP401"+
+	 		"&WORK_ID=001"+
+			"&ID="+batch_id;
+		$.ajax({
+		type: "GET", 
+		url: '/rest/workresult/select'+args,
+		}).done(function(data, dataType) {
+			var usage_arr = JSON.parse(data);
+		    $.each(usage_arr.list,function(i,WORK_RESULT_TABLE){
+		    	// 先頭作業完了ならメニューのPre batch overviewを有効にする
+		    	$("#PRE_BATCH_OV").val('1');
+			});
 		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 			console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 		});
@@ -147,6 +166,7 @@ $(function() {
 							}
 						}	
 					}
+					
 				});
 				
 				// チェックボックス無効
@@ -230,6 +250,41 @@ $(function() {
 						        	  disabled: true,
 						        	}));
 					 	    }
+							
+							// キッティング時のマテリアルの作業実績取得
+							var kitting_result = $("<input>", {
+						        	  type: "hidden",
+						        	  id: tdhidden+json.material_NO,
+						        	});
+							args = 
+								"?MATERIAL_NO="+json.material_NO+
+								"&BATCH_ID="+batch_id+
+								"&WORK_GROUP=EP3"+wgrp.substring(3,5)+
+								"&WORK_ID=002";
+							$.ajax({
+							type: "GET", 
+							url: '/rest/materialcheck/select'+args,
+							}).done(function(kmaterialcheck, dataType) {
+								var kmaterialcheck_arr = JSON.parse(kmaterialcheck);
+								if(kmaterialcheck_arr.list.length>0){
+									MATERIAL_CHECK_TABLE_kitting = kmaterialcheck_arr.list[0];
+									if(MATERIAL_CHECK_TABLE_kitting.check_DATE=='' ||
+											MATERIAL_CHECK_TABLE_kitting.check_DATE == null){
+										// 作業実施日が空白の場合
+							 	    	
+									}else{
+										//　作業実施日がある場合
+										kitting_result.val(MATERIAL_CHECK_TABLE_kitting.check_DATE);
+									}
+						 	    }
+								
+								$(mcheck).append(kitting_result);
+								
+							}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+								console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+							});
+							
+							
 							tr1.append(performed_Time);
 							tr1.append(mcheck);
 							
@@ -263,6 +318,11 @@ $(function() {
 			var childtd = $(childtr).children();
 			var material_no = $(childtd.eq(0)).text();
 			if($('#'+tdcheck+material_no).prop('checked') == true){
+				
+				if($('#'+tdhidden+material_no).val()==''){
+					alertdialog("Different materials checked.");
+					return;
+				}
 				// マテリアルチェックデータ生成
 				var new_MATERIAL_CHECK_TABLE = 
 				{
@@ -279,14 +339,33 @@ $(function() {
 			}
 		}
         
+		if(material_check_list.length==0){
+			alertdialog("Please select material.");
+			return;
+		}
+        
 		confirm_manufacturing(wgrp,'002',null,null,material_check_list);
 	});
 	$(okbtn+'003').click(function() {	// 手順3　OKボタン
 		confirm_manufacturing(wgrp,'003',null,null);
 	});
+	$(okbtn+'004').click(function() {	// 手順4　OKボタン
+		confirm_manufacturing(wgrp,'004',null,null);
+	});
 	
 	// Startbtnボタンクリック時の処理
 	$(startbtn).click(function() {
+		
+		var tbodys = $(mtbl+" tbody");//全行を取得
+		// チェックボックス無効
+		for( var i=0,l=tbodys.length;i<l;i++ ){
+			// 選択行のMATERIAL_NO取得
+			var childtr = tbodys.eq(i).children();
+			var childtd = $(childtr).children();
+			var material_no = $(childtd.eq(0)).text();
+			$('#'+tdcheck+material_no).prop('checked', false);
+		}
+		
 		if($(startbtn).val()=='Start'){
 			$(material_group_id_read).val('');
 			$(material_group_id_read).focus();
@@ -453,6 +532,25 @@ $(function() {
 			<tr style="text-align: right;"><td>
 				<!-- 処理 -->
 				<input type="button" th:id="'okbtn'+${wgrp}+'003'" value="OK" 
+					class="btn custombtn" style="width:100px;" disabled="disabled">
+			<td></tr>
+		</table>
+		</td>
+	</tr>
+	<!-- 手順4 -->
+	<tr>
+		<td>
+		<table style="width:100%">
+			<tr style="text-align: left;"><td>
+				<table class="worktable">
+					<tr>
+						<td th:id="'td'+${wgrp}+'004'"></td>
+					</tr>
+				</table>
+			<td></tr>
+			<tr style="text-align: right;"><td>
+				<!-- 処理 -->
+				<input type="button" th:id="'okbtn'+${wgrp}+'004'" value="OK" 
 					class="btn custombtn" style="width:100px;" disabled="disabled">
 			<td></tr>
 		</table>
