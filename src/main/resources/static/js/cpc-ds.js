@@ -97,6 +97,51 @@ function initnewWRT(){
  /***********************************
 作業実績登録
 ***********************************/
+ function endwork_withapp(
+ 	PROCESS_ID, ID, 
+ 	WORK_GROUP1, WORK_ID1, CHECK_RESULT1, CHECK_REASON1,
+ 	WORK_GROUP2, WORK_ID2, CHECK_RESULT2, CHECK_REASON2
+ 	){
+ 	
+     // 作業実績生成
+     initnewWRT();
+     new_WORK_RESULT_TABLE.process_ID        = PROCESS_ID;
+     new_WORK_RESULT_TABLE.work_GROUP        = WORK_GROUP1;
+     new_WORK_RESULT_TABLE.work_ID           = WORK_ID1;
+     new_WORK_RESULT_TABLE.id                = ID;
+     new_WORK_RESULT_TABLE.check_RESULT      = CHECK_RESULT1;
+     new_WORK_RESULT_TABLE.check_REASON      = CHECK_REASON1;
+     new_WORK_RESULT_TABLE.check_COA         = null;
+     new_WORK_RESULT_TABLE.check_COA_REASON  = null;
+     new_WORK_RESULT_TABLE.check_FILE_NAME   = null;
+     new_WORK_RESULT_TABLE.check_FILE_BASE64 = null;
+     new_WORK_RESULT_TABLE.label             = null;
+     new_WORK_RESULT_TABLE.count_RESULT      = null;
+    
+ 	//データを送信
+ 	var XHR = new XMLHttpRequest();
+ 	XHR.open( "POST", "/ajax/workend" );
+ 	XHR.setRequestHeader('Content-Type', 'application/json');
+ 	XHR.send(JSON.stringify(new_WORK_RESULT_TABLE));
+	XHR.onreadystatechange = function() {
+	  if( XHR.readyState === 4 && XHR.status === 200 ) {
+		// 正常終了時に処理
+		endwork(PROCESS_ID,ID,WORK_GROUP2, WORK_ID2,
+				CHECK_RESULT2, CHECK_REASON2,null,null,
+				null,null
+	 	);
+	  }else{
+		if(XHR.responseText==''){
+		}else{
+			error(XHR.responseText); //エラーダイアログ表示
+		}
+	  }
+	}
+ }
+ 
+/***********************************
+作業実績登録
+***********************************/
  function endwork_registMCT(
  	PROCESS_ID, ID, WORK_GROUP, WORK_ID, mct_list
  	){
@@ -429,6 +474,36 @@ function confirm_approval(
 				endwork($("#PROCESS_ID").val(),$("#BATCH_ID").val(),wgp, wid,
 						CHECK_RESULT, CHECK_REASON,null,null,
 						null,null
+			 	);
+				$(this).dialog("close");
+			}
+		},
+		{
+			text: "Cancel",
+			class:"btn custombtn",
+			click: function() {
+				$(this).dialog("close");
+			}
+		}]
+	});
+}
+function confirm_approval2(
+		wgp1, wid1, CHECK_RESULT1, CHECK_REASON1,
+		wgp2, wid2, CHECK_RESULT2, CHECK_REASON2){
+	$('#confirmdialog').dialog({
+		dialogClass:'confirm_dialog',
+		modal:true, //モーダル表示
+		title:"Confirm", //タイトル
+		buttons:[
+		{
+			text: "OK",
+			class:"btn custombtn",
+			click: function() {
+				// 作業完了処理実行
+				endwork_withapp(
+					$("#PROCESS_ID").val(),$("#BATCH_ID").val(),
+					wgp1, wid1, CHECK_RESULT1, CHECK_REASON1,
+					wgp2, wid2, CHECK_RESULT2, CHECK_REASON2
 			 	);
 				$(this).dialog("close");
 			}

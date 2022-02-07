@@ -4,17 +4,17 @@
 // 工程情報
 // PROCESS_ID, 要素名, 画面フラグ 
 var PROCESS = new Map([
-    ['EP1', ['PrecultureKitting','2', '/manufacturing', 0]],
-    ['EP2', ['Preculture'       ,'2', '/manufacturing', 1]],
-    ['ET1', ['QC1'              ,'2', '/qualitycontrol', 2]],
-    ['EP3', ['ExpansionKitting' ,'2', '/manufacturing', 3]],
-    ['EP4', ['Expansion'        ,'2', '/manufacturing', 4]],
-    ['EP5', ['BufferExchange'   ,'2', '/manufacturing', 5]],
-    ['EP6', ['Freezing'         ,'2', '/manufacturing', 6]],
-    ['ET2', ['QC2'              ,'3', '/qualitycontrol', 7]],
-    ['ET3', ['QC3'              ,'3', '/qualitycontrol', 8]],
-    ['ET4', ['QC4'              ,'3', '/qualitycontrol', 9]],
-    ['BR',  ['BatchRelease'     ,'4', '/batchrelease', 10]]
+    ['EP1', ['PrecultureKitting','2', '/manufacturing',  0, false]],
+    ['EP2', ['Preculture'       ,'2', '/manufacturing',  1, false]],
+    ['ET1', ['QC1'              ,'2', '/qualitycontrol', 2, false]],
+    ['EP3', ['ExpansionKitting' ,'2', '/manufacturing',  3, false]],
+    ['EP4', ['Expansion'        ,'2', '/manufacturing',  4, false]],
+    ['EP5', ['BufferExchange'   ,'2', '/manufacturing',  5, false]],
+    ['EP6', ['Freezing'         ,'2', '/manufacturing',  6, false]],
+    ['ET2', ['QC2'              ,'3', '/qualitycontrol', 7, false]],
+    ['ET3', ['QC3'              ,'3', '/qualitycontrol', 8, false]],
+    ['ET4', ['QC4'              ,'3', '/qualitycontrol', 9, false]],
+    ['BR',  ['BatchRelease'     ,'4', '/batchrelease',  10, false]]
 ])
 
 var disp_flg = sessionStorage.getItem(['DISP_FLG']);
@@ -262,7 +262,7 @@ $(function(){
 			
 			if(status==create_status){
 				// ステータスが指図作成済の場合操作不可
-				alertdialog(errmsg);
+				alertdialog('Please relese.');
 			}else{
 				if(disp_flg==value[1]){
 					// 作業手順の画面へ遷移				
@@ -476,12 +476,6 @@ function select_row(obj){
 	$("#process_flow").show();
 	
 	// 工程図のステータスセット
-	/*
-	for (let [key, value] of PROCESS) {
-		setProcessStatus(batch_id, key);
-	}
-	*/
-	
 	var args = "?BATCH_ID="+batch_id;
 
 	// 工程ステータス取得
@@ -491,7 +485,6 @@ function select_row(obj){
 	}).done(function(data, dataType) {
 	
 		var usage_arr = JSON.parse(data);
-		var end_process_count = 0;
 		$.each(usage_arr.list,function(i,PROCESS_STATUS_TABLE){
 			
 			var process_id = PROCESS_STATUS_TABLE.process_ID;
@@ -509,25 +502,10 @@ function select_row(obj){
 			if(end_flg){
 				// 完了アイコン表示
 				$('#cm'+PROCESS.get(process_id)[0]).show();
-				// 最後の完了工程を保持
-				if(PROCESS.get(process_id)[3]>end_process_count){
-					end_process_count = PROCESS.get(process_id)[3];
-				}
+				PROCESS.get(process_id)[4] = true;
 			}else{
 				$('#cm'+PROCESS.get(process_id)[0]).hide();
-			}
-			
-			// 仕掛チェック
-			for (const current of current_status) {
-				if(PROCESS_STATUS_TABLE.status==current){
-					current_flg = true;
-				}
-			}
-			if(current_flg){
-				// 仕掛アイコン表示
-				$('#ar'+PROCESS.get(process_id)[0]).show();
-			}else{
-				$('#ar'+PROCESS.get(process_id)[0]).hide();
+				PROCESS.get(process_id)[4] = false;
 			}
 			
 			var args2 = "?BATCH_ID="+batch_id+
@@ -560,18 +538,54 @@ function select_row(obj){
 			
 		});
 		
-		if(end_process_count>0){
-			// 完了工程があればフロー図を最後の完了工程の次工程を一番左に表示
-			var end_process = '#lbl'+PROCESS.get('BR')[0];
-			for (let [key, value] of PROCESS) {
-				if(value[3]==(end_process_count+1)){
-					end_process = '#lbl'+PROCESS.get(key)[0];
-				}
-			}
-			$("#process_flow").animate({scrollLeft:$(end_process).offset().left-30});
-		}else{
-			// 完了工程がなければ先頭工程を一番左に表示
+		for (let [key, value] of PROCESS) {
+			$('#ar'+PROCESS.get(key)[0]).hide();
+		}
+		
+		if(!PROCESS.get('EP1')[4]){
+			$('#ar'+PROCESS.get('EP1')[0]).show();
 			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get('EP1')[0]).offset().left-30});
+		}
+		if(!PROCESS.get('EP2')[4] && PROCESS.get('EP1')[4]){
+			$('#ar'+PROCESS.get('EP2')[0]).show();
+			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get('EP2')[0]).offset().left-30});
+		}
+		if(!PROCESS.get('ET1')[4] && PROCESS.get('EP2')[4]){
+			$('#ar'+PROCESS.get('ET1')[0]).show();
+			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get('ET1')[0]).offset().left-30});
+		}
+		if(!PROCESS.get('EP3')[4] && PROCESS.get('ET1')[4]){
+			$('#ar'+PROCESS.get('EP3')[0]).show();
+			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get('EP3')[0]).offset().left-30});
+		}
+		if(!PROCESS.get('EP4')[4] && PROCESS.get('EP3')[4]){
+			$('#ar'+PROCESS.get('EP4')[0]).show();
+			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get('EP4')[0]).offset().left-30});
+		}
+		if(!PROCESS.get('EP5')[4] && PROCESS.get('EP4')[4]){
+			$('#ar'+PROCESS.get('EP5')[0]).show();
+			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get('EP5')[0]).offset().left-30});
+		}
+		if(!PROCESS.get('EP6')[4] && PROCESS.get('EP5')[4]){
+			$('#ar'+PROCESS.get('EP6')[0]).show();
+			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get('EP6')[0]).offset().left-30});
+		}
+		if(!PROCESS.get('ET2')[4] && PROCESS.get('EP4')[4]){
+			$('#ar'+PROCESS.get('ET2')[0]).show();
+			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get('ET2')[0]).offset().left-30});
+		}
+		if(!PROCESS.get('ET3')[4] && PROCESS.get('EP5')[4]){
+			$('#ar'+PROCESS.get('ET3')[0]).show();
+			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get('ET3')[0]).offset().left-30});
+		}
+		if(!PROCESS.get('ET4')[4] && PROCESS.get('EP6')[4]){
+			$('#ar'+PROCESS.get('ET4')[0]).show();
+			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get('ET4')[0]).offset().left-30});
+		}
+		if(!PROCESS.get('BR')[4] 
+			&& PROCESS.get('ET2')[4] && PROCESS.get('ET3')[4] && PROCESS.get('ET4')[4]){
+			$('#ar'+PROCESS.get('BR')[0]).show();
+			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get('BR')[0]).offset().left-30});
 		}
 		
 	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {

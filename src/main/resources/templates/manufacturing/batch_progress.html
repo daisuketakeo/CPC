@@ -12,10 +12,6 @@ $(function(){
 		    url: '/ajax/get_sequence',
 		}).done(function(data, dataType) {
 			
-			console.log(data.SEQUENCE);
-			console.log(data.SEQUENCE_INTERVAL);
-			console.log(data.CELLQUALIA_TOP_AUTOTRANS);
-			
 			setTimeout(function(){
 				var okbtn = '#okbtn'+wgrp+'002';
 				if($(okbtn).length){
