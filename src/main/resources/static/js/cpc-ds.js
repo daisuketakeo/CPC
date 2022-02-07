@@ -5,6 +5,22 @@ var wgrp_diviation_status = 'W99';		// 作業グループの逸脱ステータ�
 var end_status = ['P05','T05','B03'];	// 工程の完了ステータス
 var current_status = ['P02','P03','P04','T02','T03','T04','B02'];	// 工程の仕掛ステータス
 
+// 工程情報
+// PROCESS_ID, 要素名, 画面フラグ 
+var PROCESS = new Map([
+    ['EP1', ['PrecultureKitting','2', '/manufacturing',  0, false]],
+    ['EP2', ['Preculture'       ,'2', '/manufacturing',  1, false]],
+    ['ET1', ['QC1'              ,'2', '/qualitycontrol', 2, false]],
+    ['EP3', ['ExpansionKitting' ,'2', '/manufacturing',  3, false]],
+    ['EP4', ['Expansion'        ,'2', '/manufacturing',  4, false]],
+    ['EP5', ['BufferExchange'   ,'2', '/manufacturing',  5, false]],
+    ['EP6', ['Freezing'         ,'2', '/manufacturing',  6, false]],
+    ['ET2', ['QC2'              ,'3', '/qualitycontrol', 7, false]],
+    ['ET3', ['QC3'              ,'3', '/qualitycontrol', 8, false]],
+    ['ET4', ['QC4'              ,'3', '/qualitycontrol', 9, false]],
+    ['BR',  ['BatchRelease'     ,'4', '/batchrelease',  10, false]]
+]);
+
 // 作業実績情報
 var new_WORK_RESULT_TABLE = 
 {

@@ -556,6 +556,23 @@
   display: flex;
   justify-content: right;
 }
+.headername_ebr2 {
+  position: absolute;
+  left:50px;
+  text-align: left;
+}
+.tablepanel_ebr2 {
+  position: absolute;
+  left:50px;
+  display: flex;
+  justify-content: left;
+}
+.workpanel_ebr2 {
+  position: absolute;
+  width:100%;
+  display: flex;
+  justify-content: right;
+}
 
 /* 一覧テーブル全体 */
 .table_ebr {
@@ -576,7 +593,12 @@
     background    : #99b9d7;           /* 背景色    */
     color         : white;           /* フォントの色 */
 }
-
+/* 一覧テーブル 明細 */
+.table_ebr td {
+  padding       : 5px;                 /* 余白      */
+  border        : 1px #666666 solid; /* 罫線      */
+  text-align    : left;
+}
 /* マテリアル一覧テーブル全体 */
 .mtableArea {
   border-collapse: collapse;         /* 境界線結合 */

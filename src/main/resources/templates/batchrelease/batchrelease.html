@@ -26,10 +26,37 @@ $(function(){
 	
 	// キャンセルボタンクリック
 	$("#closebtn").click(function(){
+		/*
 		$('<form/>', {action: "/instructions", method: 'post'})
 		  .append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: $("#BATCH_ID").val()}))
 		  .appendTo(document.body)
 		  .submit();
+		*/
+		sessionStorage.removeItem('BR_PROCESS_ID');
+		sessionStorage.removeItem('BR_WORK_GROUP');
+		history.back();
+	});
+	
+	// Previewボタンクリック
+	$("#previewbtn").click(function(){
+		
+	 	var args = 
+	 		"?WORK_GROUP=EP401"+
+	 		"&WORK_ID=001"+
+			"&ID="+$("#BATCH_ID").val();
+		$.ajax({
+		type: "GET", 
+		url: '/rest/workresult/select'+args,
+		}).done(function(data, dataType) {
+			var usage_arr = JSON.parse(data);
+		    $.each(usage_arr.list,function(i,WORK_RESULT_TABLE){
+			});
+		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+			console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+		});
+		
+		// 印刷禁止でPDF表示
+	     window.open("/pdfjs/web/viewer.html?file=/preview");
 	});
 	
 	// 指図詳細Closeボタンクリック
@@ -203,22 +230,8 @@ function search(){
 	        var tr1 = $('<tr/>');
 	        tr1.append($('<td/>').text(INSTRUCTIONS_TABLE.batch_ID));
 	        tr1.append($('<td/>').text(INSTRUCTIONS_TABLE.protocol));
-	        
-	        // 逸脱チェック
-	     	// 作業グループステータス取得
-			args = "?PROCESS_ID="+$("#PROCESS_ID").val();
-			$.ajax({
-			type: "GET", 
-			url: '/rest/processmst/select'+args,
-			}).done(function(wgrpdata, wgrpdataType) {
-				var wgrp_arr = JSON.parse(wgrpdata);
-				$.each(wgrp_arr.list,function(j,PROCESS_MASTER){
-					tr1.append($('<td/>').text(PROCESS_MASTER.process_NAME));
-				});
-			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-				console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
-			});
-
+	        tr1.append($('<td/>').text(INSTRUCTIONS_TABLE.starting_TIME));
+	        tr1.append($('<td/>').text(INSTRUCTIONS_TABLE.finish_TIME));
 	        tbody.append(tr1);
 	        
 	        $('#tbl1').append(tbody);
@@ -229,15 +242,320 @@ function search(){
 	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 	});
 	
+	// Deviation Report 非表示
+	$("#devreport_header").hide();
+	$("#devreport_table").hide();
+	
+	// 作業グループマスタ取得
+	$.ajax({
+	type: "GET", 
+	url: '/rest/workgroupmst/select',
+	}).done(function(data, dataType) {
+		
+		var pre_process = '';
+		var pre_wgrp = null;
+		const wgrp_list = [];
+		var usage_arr = JSON.parse(data);
+		// 各工程最後の手順取得
+	    $.each(usage_arr.list,function(i,WORK_GROUP_MASTER){
+	    	if( pre_process!='' && pre_process!=WORK_GROUP_MASTER.process_ID){
+	    		wgrp_list.push(pre_wgrp);
+	    	}
+	    	pre_process = WORK_GROUP_MASTER.process_ID;
+	    	pre_wgrp = WORK_GROUP_MASTER;
+		});
+	    
+	    //console.log(wgrp_list);
+	    
+	    $.each(wgrp_list,function(i,WORK_GROUP_MASTER){
+	    	
+	    	if(WORK_GROUP_MASTER.process_ID=='IS'){
+	    		var tr_is = $('#br_row1');
+	    		$(tr_is).empty();
+	    		
+	    		// Deviation
+	    		tr_is.append($('<td/>').text(''));
+	    		tr_is.css({'background':'#b2fff0'});
+	    		
+	    		// Process ID
+	    		tr_is.append($('<td/>').text(WORK_GROUP_MASTER.process_ID));
+	    		// Process Name
+	    		tr_is.append($('<td/>').text('Manufacturing order'));
+	    		
+	    		// 指図作成日時取得
+			 	var args = 
+					"?WORK_GROUP=IS01"+
+					"&ID="+$("#BATCH_ID").val();
+				$.ajax({
+				type: "GET", 
+				url: '/rest/workresult/select'+args,
+				}).done(function(workresult_is1, dataType) {
+					
+					var json_is1 = JSON.parse(workresult_is1);
+				    $.each(json_is1.list,function(i,WORK_RESULT_TABLE_IS01){
+				    	tr_is.append($('<td/>').text(WORK_RESULT_TABLE_IS01.work_USERNAME));	// Performed by	
+			    		tr_is.append($('<td/>').text(WORK_RESULT_TABLE_IS01.work_DATE));		// Performed Date
+			    		
+			    		tr_is.append($('<td/>').text('-'));		// Confirmed by	
+			    		tr_is.append($('<td/>').text('-'));		// Confirmed Date	
+			    		
+			    		// 指図リリース日時取得
+			    		var args = 
+							"?WORK_GROUP=IS02"+
+							"&ID="+$("#BATCH_ID").val();
+						$.ajax({
+						type: "GET", 
+						url: '/rest/workresult/select'+args,
+						}).done(function(workresult_is2, dataType) {
+							
+							var json_is2 = JSON.parse(workresult_is2);
+						    $.each(json_is2.list,function(i,WORK_RESULT_TABLE_IS02){
+						    	tr_is.append($('<td/>').text(WORK_RESULT_TABLE_IS02.work_USERNAME));	// Approved by	
+					    		tr_is.append($('<td/>').text(WORK_RESULT_TABLE_IS02.work_DATE));		// Approved Date	
+							});
+					 	    
+						}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+							console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+						});
+						
+					});
+			 	    
+				}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+					console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+				});
+	    	}
+	    	
+	    	// 作業実績取得
+		 	var args = 
+				"?WORK_GROUP="+WORK_GROUP_MASTER.work_GROUP+
+				"&BATCH_ID="+$("#BATCH_ID").val();
+			$.ajax({
+			type: "GET", 
+			url: '/ajax/get_applist'+args,
+			}).done(function(data, dataType) {
+				
+				var tr = $('<tr/>');
+				if(WORK_GROUP_MASTER.process_ID=='EP1'){
+		    		tr = $('#br_row2');
+		    	}
+				if(WORK_GROUP_MASTER.process_ID=='EP2'){
+		    		tr = $('#br_row3');
+		    	}
+				if(WORK_GROUP_MASTER.process_ID=='ET1'){
+		    		tr = $('#br_row4');
+		    	}
+				if(WORK_GROUP_MASTER.process_ID=='EP3'){
+		    		tr = $('#br_row5');
+		    	}
+				if(WORK_GROUP_MASTER.process_ID=='EP4'){
+		    		tr = $('#br_row6');
+		    	}
+				
+				if(WORK_GROUP_MASTER.process_ID=='ET2'){
+		    		tr = $('#qc_row1');
+		    	}
+				if(WORK_GROUP_MASTER.process_ID=='ET3'){
+		    		tr = $('#qc_row2');
+		    	}
+				if(WORK_GROUP_MASTER.process_ID=='ET4'){
+		    		tr = $('#qc_row3');
+		    	}
+				
+				tr.empty();
+
+				// Deviation
+				var td_deviation = $('<td/>');
+		        
+		        // 逸脱チェック
+		     	// 作業グループステータス取得
+				var args = 
+						"?BATCH_ID="+$("#BATCH_ID").val()+
+						"&PROCESS_ID="+WORK_GROUP_MASTER.process_ID;
+				$.ajax({
+				type: "GET", 
+				url: '/rest/workgroupstatus/select'+args,
+				}).done(function(wgrpdata, wgrpdataType) {
+				
+					var wgrp_arr = JSON.parse(wgrpdata);
+					var diviation_flg = false;
+					$.each(wgrp_arr.list,function(j,WORK_GROUP_STATUS_TABLE){
+						if(WORK_GROUP_STATUS_TABLE.status==wgrp_diviation_status){
+							diviation_flg = true;
+						}
+					});
+					
+					if(diviation_flg){
+						// 作業グループステータスに１つ以上逸脱があれば
+						// 逸脱アイコン表示
+						td_deviation.append($("<img></img>", {
+				        	  src: "/images/deviation.png",
+				        	  addClass: "aicon",
+				        	}));
+						td_deviation.css({'text-align':'center'});
+						tr.css({'background':'#ffff00','cursor':'pointer'});
+						tr.click(function() {
+							select_row(WORK_GROUP_MASTER.process_ID);
+			            });
+					}else{
+						td_deviation.text('');
+						tr.css({'background':'#b2fff0'});
+					}
+				
+				}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+					console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+				});
+			   
+	        	tr.append(td_deviation);
+	        	
+				// Process ID
+				tr.append($('<td/>').text(WORK_GROUP_MASTER.process_ID));
+				
+				// 工程フロー図の工程名称取得
+				$.ajax({
+				    type: "GET", 
+				    url: '/rest/processmst/select?PROCESS_ID='+WORK_GROUP_MASTER.process_ID,
+				}).done(function(data2, dataType) {
+				    var usage_arr2 = JSON.parse(data2); 
+				    $.each(usage_arr2.list,function(i,PROCESS_MASTER){
+				    	
+				    	// Process Name
+						tr.append($('<td/>').text(PROCESS_MASTER.process_NAME));
+						
+						if(data.length>=1){
+							WORK_RESULT_TABLE = data[0];
+				 		    tr.append($('<td/>').text(WORK_RESULT_TABLE.work_USERNAME));	// Performed by	
+				 		    tr.append($('<td/>').text(WORK_RESULT_TABLE.work_DATE));		// Performed Date	
+				 	    }else{
+				 	    	tr.append($('<td/>').text(''));
+				 		    tr.append($('<td/>').text(''));
+				 	    }
+						if(data.length>=2){
+							WORK_RESULT_TABLE = data[1];
+							tr.append($('<td/>').text(WORK_RESULT_TABLE.work_USERNAME));	// Confirmed by	
+				 		    tr.append($('<td/>').text(WORK_RESULT_TABLE.work_DATE));		// Confirmed Date	
+				 	    }else{
+				 	    	tr.append($('<td/>').text(''));
+				 		    tr.append($('<td/>').text(''));
+				 	    }
+				 	    if(data.length>=3){
+							WORK_RESULT_TABLE = data[2];
+							tr.append($('<td/>').text(WORK_RESULT_TABLE.work_USERNAME));	// Approved by	
+				 		    tr.append($('<td/>').text(WORK_RESULT_TABLE.work_DATE));		// Approved Date
+				 	    }else{
+				 	    	tr.append($('<td/>').text(''));
+				 		    tr.append($('<td/>').text(''));
+				 	    }
+				    	
+				    });
+				}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+				  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+				});
+				
+			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+				console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+			});
+			
+		});
+ 	    
+	    var BR_PROCESS_ID = sessionStorage.getItem(['BR_PROCESS_ID']);
+		if(BR_PROCESS_ID!=null && BR_PROCESS_ID!=''){
+			select_row(BR_PROCESS_ID);
+		}
+		
+	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+		console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+	});
+	
 }
 
+/***********************************
+Batch record,QC Test recordの行クリック
+***********************************/
+function select_row(process_id){
+	
+	console.log(process_id);
+	
+	// tbodyをクリア
+	$("#tbl3 > tbody").html("");
+
+	// 作業グループステータス取得
+	var args = 
+			"?BATCH_ID="+$("#BATCH_ID").val()+
+			"&PROCESS_ID="+process_id;
+	$.ajax({
+	type: "GET", 
+	url: '/rest/workgroupstatus/select'+args,
+	}).done(function(wgrpdata, wgrpdataType) {
+	
+		var wgrp_arr = JSON.parse(wgrpdata);
+		$.each(wgrp_arr.list,function(j,WORK_GROUP_STATUS_TABLE){
+			
+			if(WORK_GROUP_STATUS_TABLE.status==wgrp_diviation_status){
+				
+				var tbody = $('<tbody />');
+				var tr = $('<tr />');
+				tr.css({'background':'#ffff00','cursor':'pointer'});
+				
+				tr.click(function() {
+					select_row2(
+							WORK_GROUP_STATUS_TABLE.process_ID, 
+							WORK_GROUP_STATUS_TABLE.work_GROUP);
+	            });
+				
+				tr.append($('<td />').text(WORK_GROUP_STATUS_TABLE.deviation_NO));
+				tr.append($('<td />').text(WORK_GROUP_STATUS_TABLE.deviation_DATE));
+				tr.append($('<td />').text(WORK_GROUP_STATUS_TABLE.reported_DATE));
+				tr.append($('<td />').text(WORK_GROUP_STATUS_TABLE.reported_BY));
+				tr.append($('<td />').text(WORK_GROUP_STATUS_TABLE.occurrent_DATE));
+				tr.append($('<td />').text(WORK_GROUP_STATUS_TABLE.closing_DATE));
+				tr.append($('<td />').text(WORK_GROUP_STATUS_TABLE.reviewed_DATE));
+				tr.append($('<td />').text(WORK_GROUP_STATUS_TABLE.reviewed_BY));
+				
+				tbody.append(tr);
+				
+				$('#tbl3').append(tbody);				
+			}
+
+		});
+		
+		// Deviation Report 表示
+		$("#devreport_header").show();
+		$("#devreport_table").show();
+		
+		// データ保持
+		sessionStorage.setItem(['BR_PROCESS_ID'],[process_id]);
+		
+		$("html,body").animate({scrollTop:$("#devreport_header").offset().top});
+	
+	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+		console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+	});
+	
+}
+/***********************************
+Deviation Reportの行クリック
+***********************************/
+function select_row2(process_id, wgrp){
+	
+	//console.log(process_id);
+	
+	// データ保持
+	sessionStorage.setItem(['BR_WORK_GROUP'],[wgrp]);
+	
+	// 作業手順の画面へ遷移				
+	$('<form/>', {action: PROCESS.get(process_id)[2], method: 'post'})
+	.append($('<input/>', {type: 'hidden', name: 'PROCESS_ID', value: process_id}))
+	.append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: $("#BATCH_ID").val()}))
+	.appendTo(document.body)
+	.submit();
+	
+}
 </script>
 <!-- コンテンツ -->
 <input type="hidden" id="WORK_GROUP_JSON" th:value="${WORK_GROUP_JSON}">
 <input type="hidden" id="BATCH_ID" th:value="${BATCH_ID}">
-<input type="hidden" id="PROCESS_ID" th:value="${PROCESS_ID}">
 <input type="hidden" id="PRE_BATCH_OV" value="0">
-<div class="panel_ebr">
+<div class="panel_ebr" style="height: 150px;">
 
  	<div class="headername_ebr"><h4>Batch release</h4></div>
     <!-- ヘッダ -->
@@ -247,20 +565,140 @@ function search(){
 				<tr>
 					<th class="th_ebr" style="min-width:150px">Batch ID</th>
 					<th class="th_ebr" style="min-width:150px">Protocol</th>
-					<th class="th_ebr" style="min-width:300px">Process</th>
+					<th class="th_ebr" style="min-width:200px">Starting Time</th>
+					<th class="th_ebr" style="min-width:200px">Finish Time</th>
 				</tr>
 	        </thead>
 		</table>
 	</div>
-	<div class="workpanel_ebr">
-	    <table style="width:100%;">
-		    <tr style="text-align: right;"><td>
-			    <input type="button" id="closebtn" value="Close" class="btn custombtn">
-		    <td></tr>
-	    </table>
-    </div>​
+</div>
+
+<table>
+	<tr>
+		<td>
+			<div style="min-width:50px;"></div>
+		</td>
+		<td>
+			<h4>Batch record</h4>
+		</td>
+	</tr>
+	<tr>
+		<td>
+		</td>
+		<td>
+			<table id="tbl2" class="table_ebr">
+				<thead>
+					<tr>
+						<th class="th_ebr" style="min-width:100px">Deviation</th>
+						<th class="th_ebr" style="min-width:100px">Process #</th>
+						<th class="th_ebr" style="min-width:150px">Process Name</th>
+						<th class="th_ebr" style="min-width:100px">Performed by</th>
+						<th class="th_ebr" style="min-width:120px">Performed Date</th>
+						<th class="th_ebr" style="min-width:100px">Confirmed by</th>
+						<th class="th_ebr" style="min-width:120px">Confirmed Date</th>
+						<th class="th_ebr" style="min-width:100px">Approved by</th>
+						<th class="th_ebr" style="min-width:120px">Approved Date</th>
+					</tr>
+		        </thead>
+		        <tbody><tr id="br_row1"></tr></tbody>
+		        <tbody><tr id="br_row2"></tr></tbody>
+		        <tbody><tr id="br_row3"></tr></tbody>
+		        <tbody><tr id="br_row4"></tr></tbody>
+		        <tbody><tr id="br_row5"></tr></tbody>
+		        <tbody><tr id="br_row6"></tr></tbody>
+			</table>
+		</td>
+	</tr>
+	
+	<tr>
+		<td>
+			<div style="min-height:20px;"></div>
+		</td>
+	</tr>
+	
+	<tr>
+		<td>
+		</td>
+		<td>
+			<h4>QC Test record</h4>
+		</td>
+	</tr>
+	<tr>
+		<td>
+		</td>
+		<td>
+			<table id="tbl2" class="table_ebr">
+				<thead>
+					<tr>
+						<th class="th_ebr" style="min-width:100px">Deviation</th>
+						<th class="th_ebr" style="min-width:100px">Process #</th>
+						<th class="th_ebr" style="min-width:150px">Process Name</th>
+						<th class="th_ebr" style="min-width:100px">Performed by</th>
+						<th class="th_ebr" style="min-width:120px">Performed Date</th>
+						<th class="th_ebr" style="min-width:100px">Confirmed by</th>
+						<th class="th_ebr" style="min-width:120px">Confirmed Date</th>
+						<th class="th_ebr" style="min-width:100px">Approved by</th>
+						<th class="th_ebr" style="min-width:120px">Approved Date</th>
+					</tr>
+		        </thead>
+		        <tbody><tr id="qc_row1"></tr></tbody>
+		        <tbody><tr id="qc_row2"></tr></tbody>
+		        <tbody><tr id="qc_row3"></tr></tbody>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td>
+		</td>
+		<td>
+		   Certificate of analysis：
+		   <input type="button" id="previewbtn" value="Preview" class="btn custombtn">
+		</td>
+	</tr>
+	
+	<tr>
+		<td>
+			<div style="min-height:20px;"></div>
+		</td>
+	</tr>
+	
+	<tr id="devreport_header">
+		<td>
+		</td>
+		<td>
+			<h4>Deviation Report</h4>
+		</td>
+	</tr>
+	<tr id="devreport_table">
+		<td>
+		</td>
+		<td>
+			<table id="tbl3" class="table_ebr">
+				<thead>
+					<tr>
+						<th class="th_ebr" style="min-width:100px">Deviation #</th>
+						<th class="th_ebr" style="min-width:100px">Deviation Date</th>
+						<th class="th_ebr" style="min-width:100px">Reported Date</th>
+						<th class="th_ebr" style="min-width:100px">Reported by</th>
+						<th class="th_ebr" style="min-width:100px">Occurrent Date</th>
+						<th class="th_ebr" style="min-width:100px">Closing Date</th>
+						<th class="th_ebr" style="min-width:100px">Reviewed Date</th>
+						<th class="th_ebr" style="min-width:100px">Reviewed by</th>
+					</tr>
+		        </thead>
+			</table>
+		</td>
+	</tr>
+</table>
+
+<div>
+ <table style="width:100%;">
+  <tr style="text-align: right;"><td>
+   <input type="button" id="closebtn" value="Close" class="btn custombtn">
+  <td></tr>
+ </table>
+</div>
     
-  </div>
 </div>
 
 <!-- 指図詳細　ダイアログ  -->

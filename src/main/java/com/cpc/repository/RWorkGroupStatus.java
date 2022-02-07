@@ -22,11 +22,29 @@ public interface RWorkGroupStatus{
             + ", PROCESS_ID "
             + ", WORK_GROUP "
             + ", STATUS "
+            + ", DEVIATION_NO "
+            + ", DEVIATION_DATE "
+            + ", REPORTED_DATE "
+            + ", REPORTED_BY "
+            + ", OCCURRENT_DATE "
+            + ", CLOSING_DATE "
+            + ", REVIEWED_DATE "
+            + ", REVIEWED_BY "
+            + ", BATCH_RELEASE "
          +") VALUES ( "
             + "  #{BATCH_ID} "
             + ", #{PROCESS_ID} "
             + ", #{WORK_GROUP} "
             + ", #{STATUS} "
+            + ", #{DEVIATION_NO} "
+            + ", #{DEVIATION_DATE} "
+            + ", #{REPORTED_DATE} "
+            + ", #{REPORTED_BY} "
+            + ", #{OCCURRENT_DATE} "
+            + ", #{CLOSING_DATE} "
+            + ", #{REVIEWED_DATE} "
+            + ", #{REVIEWED_BY} "
+            + ", #{BATCH_RELEASE} "
          +")"
          )
     int insert(WORK_GROUP_STATUS_TABLE model);
@@ -36,6 +54,15 @@ public interface RWorkGroupStatus{
         "UPDATE WORK_GROUP_STATUS_TABLE ",
         "  <set>",
         "    <if test='STATUS != null'> , STATUS = #{STATUS} </if>",
+        "    <if test='DEVIATION_NO != null'> , DEVIATION_NO = #{DEVIATION_NO} </if>",
+        "    <if test='DEVIATION_DATE != null'> , DEVIATION_DATE = #{DEVIATION_DATE} </if>",
+        "    <if test='REPORTED_DATE != null'> , REPORTED_DATE = #{REPORTED_DATE} </if>",
+        "    <if test='REPORTED_BY != null'> , REPORTED_BY = #{REPORTED_BY} </if>",
+        "    <if test='OCCURRENT_DATE != null'> , OCCURRENT_DATE = #{OCCURRENT_DATE} </if>",
+        "    <if test='CLOSING_DATE != null'> , CLOSING_DATE = #{CLOSING_DATE} </if>",
+        "    <if test='REVIEWED_DATE != null'> , REVIEWED_DATE = #{REVIEWED_DATE} </if>",
+        "    <if test='REVIEWED_BY != null'> , REVIEWED_BY = #{REVIEWED_BY} </if>",
+        "    <if test='BATCH_RELEASE != null'> , BATCH_RELEASE = #{BATCH_RELEASE} </if>",
         "  </set>",
         "  WHERE ",
         "       BATCH_ID = #{BATCH_ID}",

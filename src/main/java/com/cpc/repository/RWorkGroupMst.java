@@ -69,6 +69,7 @@ public interface RWorkGroupMst{
         "      AND WORK_GROUP = #{WORK_GROUP}",
         "    </if>",
         "  </where>",
+        "  order by PROCESS_ID asc,WORK_GROUP asc",
         "</script>",
     })
     List<WORK_GROUP_MASTER> select(WORK_GROUP_MASTER model);

@@ -26,10 +26,14 @@ $(function(){
 	
 	// キャンセルボタンクリック
 	$("#closebtn").click(function(){
+		/*
 		$('<form/>', {action: "/instructions", method: 'post'})
 		  .append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: $("#BATCH_ID").val()}))
 		  .appendTo(document.body)
 		  .submit();
+		*/
+		sessionStorage.removeItem('BR_WORK_GROUP');
+		history.back();
 	});
 	
 	// 指図詳細Closeボタンクリック
@@ -225,7 +229,13 @@ function search(){
 	        
 	     	// 作業手順再表示			
 			refrech_work();
-	        
+	     	
+	     	// Batch release画面から遷移した場合
+	     	// 逸脱の作業グループをトップに表示する
+			var BR_WORK_GROUP = sessionStorage.getItem(['BR_WORK_GROUP']);
+			if(BR_WORK_GROUP!=null && BR_WORK_GROUP!=''){
+				$("html,body").animate({scrollTop:$("#tr_header"+BR_WORK_GROUP).offset().top});
+			}
 	    });
 
 	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
