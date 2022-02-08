@@ -251,6 +251,11 @@ $(function() {
 			alertdialog('Please input reason.(COA)');
 			return;
 		}
+		// 添付ファイル
+		if($(downfile_text).val()==''){
+			alertdialog('Please attach file.');
+			return;
+		}
 		
 		$('#confirmdialog').dialog({
 			dialogClass:'confirm_dialog',

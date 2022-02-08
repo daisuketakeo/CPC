@@ -46,7 +46,7 @@ $(function(){
 	// 指図リリースボタンクリック
 	$("#releasebtn").click(function(){
 	  if($("#batch_id").val()==''){
-		  alertdialog("Please select Batch ID.");
+		  alertdialog("Please select batch.");
 	  }else{
 		  
 		  var tbodys = $("#tbl1 tbody");//全行を取得
@@ -68,7 +68,7 @@ $(function(){
 		    		  "Release instructions?\nBatch ID["+$("#batch_id").val()+"]");
 	  	  	  $("#release_confirmdialog").dialog("open");
 		  }else{
-			  alertdialog("This batch ["+$("#batch_id").val()+"] can not release.");
+			  alertdialog("This batch ["+$("#batch_id").val()+"] released.");
 		  }
 	  }
 	});
@@ -400,7 +400,14 @@ function search(){
 	        
 	        // 一覧の行ダブルクリック
 	        $('#tr'+INSTRUCTIONS_TABLE.batch_ID).dblclick(function(){
-	        	alert('「Batch Record Review」 Open ['+INSTRUCTIONS_TABLE.batch_ID+']');
+	        	if(disp_flg=='4'){
+		        	// batch release画面へ遷移				
+					  $('<form/>', {action: '/batchrelease', method: 'post'})
+					  .append($('<input/>', {type: 'hidden', name: 'PROCESS_ID', value: 'BR'}))
+					  .append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: INSTRUCTIONS_TABLE.batch_ID}))
+					  .appendTo(document.body)
+					  .submit();
+				}
 	        });
 	        // 一覧の行クリック
 	        $('#tr'+INSTRUCTIONS_TABLE.batch_ID).click(function(){

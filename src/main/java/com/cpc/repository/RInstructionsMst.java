@@ -79,7 +79,8 @@ public interface RInstructionsMst{
             + ", PRB_ICP_MATERIAL_OVERVIEW "
             + ", PRB_ICP_MATERIAL_IDENTIFICATION "
             + ", PRB_ICP_CULTURE_CONDITION "
-            + ", PRB_ICP_ALERM_WARNINGS "
+            + ", PRB_ICP_ALERM "
+            + ", PRB_ICP_WARNINGS "
             + ", PRB_YOBI1 "
             + ", PRB_YOBI2 "
             + ", PRB_YOBI3 "
@@ -145,7 +146,8 @@ public interface RInstructionsMst{
             + ", #{PRB_ICP_MATERIAL_OVERVIEW} "
             + ", #{PRB_ICP_MATERIAL_IDENTIFICATION} "
             + ", #{PRB_ICP_CULTURE_CONDITION} "
-            + ", #{PRB_ICP_ALERM_WARNINGS} "
+            + ", #{PRB_ICP_ALERM} "
+            + ", #{PRB_ICP_WARNINGS} "
             + ", #{PRB_YOBI1} "
             + ", #{PRB_YOBI2} "
             + ", #{PRB_YOBI3} "
@@ -217,7 +219,8 @@ public interface RInstructionsMst{
         "    <if test='PRB_ICP_MATERIAL_OVERVIEW != null'> , PRB_ICP_MATERIAL_OVERVIEW = #{PRB_ICP_MATERIAL_OVERVIEW} </if>",
         "    <if test='PRB_ICP_MATERIAL_IDENTIFICATION != null'> , PRB_ICP_MATERIAL_IDENTIFICATION = #{PRB_ICP_MATERIAL_IDENTIFICATION} </if>",
         "    <if test='PRB_ICP_CULTURE_CONDITION != null'> , PRB_ICP_CULTURE_CONDITION = #{PRB_ICP_CULTURE_CONDITION} </if>",
-        "    <if test='PRB_ICP_ALERM_WARNINGS != null'> , PRB_ICP_ALERM_WARNINGS = #{PRB_ICP_ALERM_WARNINGS} </if>",
+        "    <if test='PRB_ICP_ALERM != null'> , PRB_ICP_ALERM = #{PRB_ICP_ALERM} </if>",
+        "    <if test='PRB_ICP_WARNINGS != null'> , PRB_ICP_WARNINGS = #{PRB_ICP_WARNINGS} </if>",
         "    <if test='PRB_YOBI1 != null'> , PRB_YOBI1 = #{PRB_YOBI1} </if>",
         "    <if test='PRB_YOBI2 != null'> , PRB_YOBI2 = #{PRB_YOBI2} </if>",
         "    <if test='PRB_YOBI3 != null'> , PRB_YOBI3 = #{PRB_YOBI3} </if>",

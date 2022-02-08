@@ -68,7 +68,8 @@ public class INSTRUCTIONS_MASTER  implements Serializable{
 	private String PRB_ICP_MATERIAL_OVERVIEW;
 	private String PRB_ICP_MATERIAL_IDENTIFICATION;
 	private String PRB_ICP_CULTURE_CONDITION;
-	private String PRB_ICP_ALERM_WARNINGS;
+	private String PRB_ICP_ALERM;
+	private String PRB_ICP_WARNINGS;
 	private String PRB_YOBI1;
 	private String PRB_YOBI2;
 	private String PRB_YOBI3;

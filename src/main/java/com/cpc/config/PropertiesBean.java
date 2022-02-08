@@ -17,11 +17,17 @@ public class PropertiesBean {
 	private String PRE_BATCH_PATH;
 	private String EBR_TEST_PATH;
 	private String IST_PROC_DETAIL_PATH;
+	private String BATCH_PROGRESS_CSV_PATH;
+	private String BATCH_PROGRESS_CAPTURE_PATH;
+	private String POST_BATCH_OVERVIEW_PATH;
+	private String PRE_BATCH_OVERVIEW_PATH;
 	
 	private String USER_LOT_NO_FILE;
 	private String STORAGE_FILE;
 	private String SEQUENCE_FILE;
 	private String MONITORING_DATA_FILE;
+	
+	private String BATCH_ID_FIX_STRING;
 	
 	private String CHECKLIST_MSG1;
 	private String CHECKLIST_MSG2;
