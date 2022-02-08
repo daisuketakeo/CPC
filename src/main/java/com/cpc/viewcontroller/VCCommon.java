@@ -122,7 +122,7 @@ public class VCCommon {
 	public static final String is = "IS"; // 指図
 //	public static final String ep = "EP"; // EBR製造
 //	public static final String et = "ET"; // EBR試験
-//	public static final String br = "BR"; // バッチレコードレビュー
+	public static final String br = "BR"; // バッチレコードレビュー
 			
 	/*
 	 * ログイン状態チェック

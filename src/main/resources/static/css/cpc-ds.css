@@ -729,4 +729,26 @@
 	left	: 0px;
 }
 
-	
+/*********************************
+ Batch release
+*********************************/
+/*チェックリスト：チェックボックス*/
+.br_checkbox{
+    text-align: left;
+	left: 20px;
+}
+.br_checkbox input[type=checkbox] {
+	width:			14px;
+	height:			14px;
+	-moz-transform:		scale(1.4);
+	-webkit-transform:	scale(1.4);
+	transform:		scale(1.4);
+}
+/*チェックリスト：理由*/
+.br_reaoson{
+    text-align: left;
+	left: 20px;
+}
+.br_reaoson input[type=text] {
+	width:600px;
+}

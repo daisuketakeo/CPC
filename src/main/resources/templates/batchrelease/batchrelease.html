@@ -2,7 +2,9 @@
 <script th:inline="javascript">
 
 var disp_flg = sessionStorage.getItem(['DISP_FLG']);
-
+var no_deviation_color='#b2fff0';
+var deviation_color='#ffff00';
+var deviation_no_relaese_color='#e99173';
 /***********************************
 画面初期処理
 ***********************************/
@@ -203,6 +205,83 @@ $(function(){
 		console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 	});
 	
+	var wgrp1 = "BR01";
+	var okbtn1 = '#okbtn'+wgrp1;
+	var release1 = '#release'+wgrp1;
+	var reject1 = '#reject'+wgrp1;
+	var reason1 = '#reason'+wgrp1;
+	
+	// チェックボックスの設定
+	$(release1).on("click", function(){
+        $(reject1).prop('checked', false);
+        $(this).prop('checked', true);
+	});
+	$(reject1).on("click", function(){
+        $(release1).prop('checked', false);
+        $(this).prop('checked', true);
+	});
+	
+	// OKボタンクリック時の処理
+	$(okbtn1).click(function() {
+		
+		var CHECK_RESULT = '';
+		if($(release1).prop('checked')) CHECK_RESULT='1';
+		if($(reject1).prop('checked')) CHECK_RESULT='0';
+		
+		if(CHECK_RESULT==''){
+			alertdialog('Please check Release or Reject.');
+			return;
+		}
+		if(CHECK_RESULT=='0' && $(reason1).val()==''){
+			alertdialog('Please input reason.');
+			return;
+		}
+		
+		confirm_batch_release(wgrp1, "001", CHECK_RESULT, $(reason1).val())
+	});
+	
+	// ステータスチェック
+	var args = 
+		"?WORK_GROUP="+wgrp1+
+		"&WORK_ID=001"+
+		"&ID="+$("#BATCH_ID").val();
+	$.ajax({
+	type: "GET", 
+	url: '/ajax/check_status'+args,
+	}).done(function(data, dataType) {
+		if(data==false){
+			setDisabled(okbtn1, true);
+			setDisabled(release1, true);
+			setDisabled(reject1, true);
+			setDisabled(reason1, true);
+		}else{
+			setDisabled(okbtn1, false);
+			setDisabled(release1, false);
+			setDisabled(reject1, false);
+			setDisabled(reason1, false);
+		}
+	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+		console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+	});
+	
+    // 作業実績取得
+	$.ajax({
+		type: "GET", 
+		url: '/rest/workresult/select'+args,
+		}).done(function(data, dataType) {
+			var usage_arr = JSON.parse(data);
+	 	    if(usage_arr.list.length>0){
+	 	    	// 作業実績が存在する場合
+	 		    var WORK_RESULT_TABLE = usage_arr.list[0];
+	 	    	// チェックリストのデータ設定
+	 			setTextBox(reason1, WORK_RESULT_TABLE.check_REASON);
+	 			setCheckBoxPassFail(release1, reject1, WORK_RESULT_TABLE.check_RESULT);
+	 	    }
+	 	    
+		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+			console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+		});
+	
 });
 
 /***********************************
@@ -275,7 +354,7 @@ function search(){
 	    		
 	    		// Deviation
 	    		tr_is.append($('<td/>').text(''));
-	    		tr_is.css({'background':'#b2fff0'});
+	    		tr_is.css({'background':no_deviation_color});
 	    		
 	    		// Process ID
 	    		tr_is.append($('<td/>').text(WORK_GROUP_MASTER.process_ID));
@@ -392,13 +471,13 @@ function search(){
 				        	  addClass: "aicon",
 				        	}));
 						td_deviation.css({'text-align':'center'});
-						tr.css({'background':'#ffff00','cursor':'pointer'});
+						tr.css({'background':deviation_color,'cursor':'pointer'});
 						tr.click(function() {
 							select_row(WORK_GROUP_MASTER.process_ID);
 			            });
 					}else{
 						td_deviation.text('');
-						tr.css({'background':'#b2fff0'});
+						tr.css({'background':no_deviation_color});
 					}
 				
 				}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
@@ -473,8 +552,6 @@ Batch record,QC Test recordの行クリック
 ***********************************/
 function select_row(process_id){
 	
-	console.log(process_id);
-	
 	// tbodyをクリア
 	$("#tbl3 > tbody").html("");
 
@@ -494,7 +571,7 @@ function select_row(process_id){
 				
 				var tbody = $('<tbody />');
 				var tr = $('<tr />');
-				tr.css({'background':'#ffff00','cursor':'pointer'});
+				tr.css({'background':deviation_color,'cursor':'pointer'});
 				
 				tr.click(function() {
 					select_row2(
@@ -537,8 +614,6 @@ Deviation Reportの行クリック
 ***********************************/
 function select_row2(process_id, wgrp){
 	
-	//console.log(process_id);
-	
 	// データ保持
 	sessionStorage.setItem(['BR_WORK_GROUP'],[wgrp]);
 	
@@ -549,6 +624,47 @@ function select_row2(process_id, wgrp){
 	.appendTo(document.body)
 	.submit();
 	
+}
+
+/***********************************
+確認ダイアログ表示
+***********************************/
+function confirm_batch_release(wgrp, wid, CHECK_RESULT, CHECK_REASON){
+	
+	var wgrp1 = "BR01";
+	var okbtn1 = '#okbtn'+wgrp1;
+	var release1 = '#release'+wgrp1;
+	var reject1 = '#reject'+wgrp1;
+	var reason1 = '#reason'+wgrp1;
+	
+	$('#confirmdialog').dialog({
+		dialogClass:'confirm_dialog',
+		modal:true, //モーダル表示
+		title:"Confirm", //タイトル
+		buttons:[
+			{
+				text: "OK",
+				class:"btn custombtn",
+				click: function() {
+					// 作業完了処理実行
+					endwork("BR",$("#BATCH_ID").val(), wgrp, wid,
+							CHECK_RESULT, CHECK_REASON
+				 	);
+					setDisabled(okbtn1, true);
+					setDisabled(release1, true);
+					setDisabled(reject1, true);
+					setDisabled(reason1, true);
+					$(this).dialog("close");
+				}
+			},
+			{
+				text: "Cancel",
+				class:"btn custombtn",
+				click: function() {
+					$(this).dialog("close");
+				}
+			}]
+	});
 }
 </script>
 <!-- コンテンツ -->
@@ -676,19 +792,94 @@ function select_row2(process_id, wgrp){
 			<table id="tbl3" class="table_ebr">
 				<thead>
 					<tr>
-						<th class="th_ebr" style="min-width:100px">Deviation #</th>
-						<th class="th_ebr" style="min-width:100px">Deviation Date</th>
-						<th class="th_ebr" style="min-width:100px">Reported Date</th>
-						<th class="th_ebr" style="min-width:100px">Reported by</th>
-						<th class="th_ebr" style="min-width:100px">Occurrent Date</th>
-						<th class="th_ebr" style="min-width:100px">Closing Date</th>
-						<th class="th_ebr" style="min-width:100px">Reviewed Date</th>
-						<th class="th_ebr" style="min-width:100px">Reviewed by</th>
+						<th class="th_ebr" style="min-width:120px">Deviation #</th>
+						<th class="th_ebr" style="min-width:120px">Deviation Date</th>
+						<th class="th_ebr" style="min-width:120px">Reported Date</th>
+						<th class="th_ebr" style="min-width:145px">Reported by</th>
+						<th class="th_ebr" style="min-width:120px">Occurrent Date</th>
+						<th class="th_ebr" style="min-width:120px">Closing Date</th>
+						<th class="th_ebr" style="min-width:120px">Reviewed Date</th>
+						<th class="th_ebr" style="min-width:145px">Reviewed by</th>
 					</tr>
 		        </thead>
 			</table>
 		</td>
 	</tr>
+	
+	<tr>
+		<td>
+			<div style="min-height:20px;"></div>
+		</td>
+	</tr>
+	
+	<tr id="judgement1_header">
+		<td>
+		</td>
+		<td>
+			<h4>Judgment</h4>
+		</td>
+	</tr>
+	<tr id="judgement1_check" class="br_checkbox">
+		<td>
+		</td>
+		<td>
+			<table>
+				<tr>
+					<td>
+						<label>Result</label>
+					</td>
+					<td>
+						<div style="min-width:20px;"></div>
+					</td>
+					<td>
+						<label>
+							<input type="checkbox" id="releaseBR01">
+							Release
+						</label>
+					</td>
+					<td>
+						<div style="min-width:20px;"></div>
+					</td>
+					<td>
+						<label>
+							<input type="checkbox" id="rejectBR01">
+							Reject
+						</label>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr id="judgement1_reason" class="br_reaoson">
+		<td>
+		</td>
+		<td>
+			<table>
+				<tr>
+					<td>
+					<label>
+						Reason
+					</label>
+					</td>
+					<td>
+						<div style="min-width:20px;"></div>
+					</td>
+					<td>
+						<input type="text" id="reasonBR01" >
+					</td>
+					<td>
+						<div style="min-width:20px;"></div>
+					</td>
+					<td>
+						<!-- 処理 -->
+						<input type="button" id="okbtnBR01" value="OK" 
+							class="btn custombtn" style="width:100px;">
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	
 </table>
 
 <div>
