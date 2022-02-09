@@ -35,5 +35,20 @@ public class PropertiesBean {
 	private String KIT_LABEL_FIX_STRING;
 	
 	private String SEQUENCE_INTERVAL;
+	
 	private String CELLQUALIA_TOP_AUTOTRANS;
+	private String CELLQUALIA_TOP_LOGO;
+	private String CELLQUALIA_TOP_TOP;
+	private String CELLQUALIA_TOP_FINISHED;
+	private String CELLQUALIA_TOP_ALARMS;
+	private String CELLQUALIA_TOP_MAINTENANCE;
+	private String CELLQUALIA_TOP_PRE_BATCH;
+	private String CELLQUALIA_TOP_BATCH_PROGRESS;
+	private String CELLQUALIA_TOP_POST_BATCH_STANDALONE;
+	private String CELLQUALIA_TOP_POST_BATCH_ENTERPRISE;
+	private String CELLQUALIA_TOP_BATCH_LIST;
+	private String CELLQUALIA_TOP_DELIVERY;
+	private String CELLQUALIA_TOP_COSTS;
+	private String CELLQUALIA_TOP_LOG_ANALYSIS;
+
 }
