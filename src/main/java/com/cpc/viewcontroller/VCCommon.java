@@ -402,7 +402,7 @@ public class VCCommon {
     }
     
     /*
-     * ステータスリスト取得(Json)
+     * ステータス名称取得
      */
     public String getStatusName(String status_code) {
     	String url= rest_statusmst+"select?STATUS_CODE="+status_code;
@@ -642,7 +642,7 @@ public class VCCommon {
     }
     
     /*
-     * EBR試験の画像ファイルをBase64形式に変換して取得
+     * 画像ファイルをBase64形式に変換して取得
      */
     public String get_base64(String dir, String filename) {
     	try {
@@ -659,7 +659,7 @@ public class VCCommon {
     }
     
     /*
-     * EBR試験のCSVファイルを取得
+     * CSVファイルを取得
      */
     public String get_csv(String dir, String filename) {
     	try {
@@ -731,6 +731,22 @@ public class VCCommon {
         }
         
         return newno;
+    }
+    
+    /*
+     * ファイル存在チェック
+     */
+    public boolean checkExist(String dir, String filename) {
+    	try {
+            // ファイルがあれば
+        	if (Files.exists(Paths.get(dir, filename))) {
+                // ファイル読み込み
+            	return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    	return false;
     }
 
 }

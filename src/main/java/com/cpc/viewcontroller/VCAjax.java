@@ -1,6 +1,7 @@
 ﻿package com.cpc.viewcontroller;
 
 import java.awt.Color;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -37,9 +38,14 @@ import com.cpc.model.USER_MASTER;
 import com.cpc.model.WORK_GROUP_MASTER;
 import com.cpc.model.WORK_MASTER;
 import com.cpc.model.WORK_RESULT_TABLE;
+import com.lowagie.text.Cell;
 import com.lowagie.text.Document;
+import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.Table;
+import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfEncryptor;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfWriter;
@@ -79,7 +85,7 @@ public class VCAjax extends VCCommon{
     }
     
     /*
-     * EBR試験の画像ファイル／CSVファイル格納フォルダ取得
+     * EBR試験の画像ファイル／CSVファイル内容取得
      */
     @GetMapping("/ajax/get_ebrtest")
     public List<WORK_MASTER> get_ebrtestdir(
@@ -137,7 +143,7 @@ public class VCAjax extends VCCommon{
     }
     
     /*
-     * EBR試験の画像ファイル／CSVファイル格納フォルダ取得
+     * 処理シーケンス情報取得
      */
     @GetMapping("/ajax/get_sequence")
     public Map<String,String> get_sequence() {
@@ -740,44 +746,6 @@ public class VCAjax extends VCCommon{
     }
     
     /*
-     * 実施対象マテリアル一覧取得
-     */
-    @GetMapping("/ajax/get_exec_material_list")
-    public List<String> get_exec_material_list(
-    		@RequestParam(param_batch_id) String batch_id) {
-    	
-    	List<String> rtn = new ArrayList<String>();
-    	
-    	// 製造指図テーブル取得
-    	String url= rest_instructions+"select"+
-				"?"+ param_batch_id+"="+batch_id;
-	 	List<INSTRUCTIONS_TABLE> list1 = getRest(url, INSTRUCTIONS_TABLE.class);
-	 	
-	 	if(list1.size()>0) {
-	 		String im_id = list1.get(0).getIM_ID();
-	 		// 指図指図マスタ取得
-	 		url= rest_instructionsmst+"select"+
-					"?"+ param_im_id+"="+im_id;
-		 	List<INSTRUCTIONS_MASTER> list2 = getRest(url, INSTRUCTIONS_MASTER.class);
-		 	if(list2.size()>0) {
-
-		 		String mg_id = list2.get(0).getMATERIAL_GORUP_ID();
-		 		// 指図指図マスタ取得
-		 		url= rest_materialgroup+"select"+
-						"?"+ param_material_group_id+"="+mg_id;
-			 	List<MATERIAL_GROUP_TABLE> list3 = getRest(url, MATERIAL_GROUP_TABLE.class);
-			 	if(list3.size()>0) {
-			 		for(MATERIAL_GROUP_TABLE mgt : list3) {
-			 			rtn.add(mgt.getMATERIAL_NO());
-			 		}
-			 	}
-		 	}
-	 	}
-	 	
-        return rtn;
-    }
-    
-    /*
      * 承認一覧取得
      */
     @GetMapping("/ajax/get_applist")
@@ -1015,67 +983,180 @@ public class VCAjax extends VCCommon{
     	
     	return list;
     }
-   
-    // 以下デバッグ用
     
-    
-    @GetMapping("/ajax/pdf_test")
-    public void pdf_test() {
-
-    	
-    	  String DEST = "C:/cpc/hello.pdf";
-    	  try {
-    		  
-    		   Document doc = new Document();
-    		   PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(DEST)); 
-    		   //setting font family, color
-    		   Font font = new Font(Font.NORMAL, 16, Font.BOLDITALIC, Color.RED);
-    		   doc.open();
-    		   Paragraph para = new Paragraph("Hello! This PDF is created using openPDF", font);
-    		   doc.add(para);
-    		   doc.close();
-    		   writer.close(); 
-    		   
-
-    	  } catch (Exception e) {
-    	   // TODO Auto-generated catch block
-    	   e.printStackTrace();
-    	  }   
-        
-    }
-    
-    @GetMapping("/preview")
-    public void preview(HttpServletRequest request, HttpServletResponse response) {
-    	
-    	// PDF file address
-        File file = new File ("C:/cpc/compressed.tracemonkey-pldi-09.pdf");
-		if (file.exists()) {
-		   byte[] data = null;
-		   FileInputStream input=null;
-		   try {
-		       input= new FileInputStream(file);
-		       data = new byte[input.available()];
-		       input.read(data);
-		       response.getOutputStream().write(data);
-		   } catch (Exception e) {
-		      e.printStackTrace();
-		   }finally{
-		       try {
-		           if(input!=null){
-		               input.close();
-		           }
-		       } catch (IOException e) {
-		           e.printStackTrace();
-		       }
-		   }
-		}
-    }
-    
+    /*
+     * PDF Viewer（印刷、ダウンロード不可）
+     */
     @GetMapping("/viewer")
     public String viewer() {
-    	
     	return "redirect:/instructions/js/pdfjs/web/viewer";
     }
     
+    /*
+     * COA PDF出力
+     */
+	@GetMapping("/preview_coa")
+	public void preview_coa(
+		@RequestParam(param_batch_id) String batch_id,
+		HttpServletRequest request,
+		HttpServletResponse response) {
+
+		try {
+			
+			Map<String,String> map = new HashMap<String,String>();
+			String pass = "Passed";
+			String fail = "Failed";
+			String url = rest_workresult+"select"
+	                + "?"+param_process_id+"=ET3"
+	                + "&"+param_id+"="+batch_id;
+			
+            // 作業実績取得
+            List<WORK_RESULT_TABLE> et3_workresult = getRest(url, WORK_RESULT_TABLE.class);
+            for(WORK_RESULT_TABLE wrt : et3_workresult) {
+            	String key = wrt.getWORK_GROUP()+wrt.getWORK_ID();
+            	String val = wrt.getCHECK_RESULT()!=null && wrt.getCHECK_RESULT().equals("1") ? pass
+            			: wrt.getCHECK_RESULT()!=null && wrt.getCHECK_RESULT().equals("0") ? fail : "";
+            	if(!map.containsKey(key)) {
+            		map.put(key, val);
+            	}
+            }
+            
+            url = rest_workresult+"select"
+	                + "?"+param_process_id+"=ET4"
+	                + "&"+param_id+"="+batch_id;
+            
+            // 作業実績取得
+            List<WORK_RESULT_TABLE> et4_workresult = getRest(url, WORK_RESULT_TABLE.class);
+            for(WORK_RESULT_TABLE wrt : et4_workresult) {
+            	String key = wrt.getWORK_GROUP()+wrt.getWORK_ID();
+            	String val = wrt.getCHECK_RESULT()!=null && wrt.getCHECK_RESULT().equals("1") ? pass
+            			: wrt.getCHECK_RESULT()!=null && wrt.getCHECK_RESULT().equals("0") ? fail : "";
+            	if(!map.containsKey(key)) {
+            		map.put(key, val);
+            	}
+            }
+            
+			Document doc = new Document();
+			ByteArrayOutputStream baOutStr = new ByteArrayOutputStream();
+			PdfWriter writer = PdfWriter.getInstance(doc, baOutStr);
+			
+			String ttf = BaseFont.COURIER;
+			String encording = BaseFont.WINANSI;
+			if(checkExist(super.getProperties().getCONFIG_PATH(),
+					super.getProperties().getCOA_PDF_FONT_FILE())){
+				ttf = super.getProperties().getCONFIG_PATH()+super.getProperties().getCOA_PDF_FONT_FILE();
+				encording = BaseFont.IDENTITY_H;
+			}
+			
+			//setting font family, color
+			BaseFont bf = BaseFont.createFont(ttf,encording,false);
+			Font font12 = new Font(bf, 12, Font.NORMAL);
+			Font font12_underline = new Font(bf, 12, Font.UNDERLINE);
+			Font font20_header = new Font(bf, 20, Font.BOLD);
+			
+			//doc.addAuthor("CPC"); 
+			//doc.addSubject("COA");
+			
+			doc.open();
+			
+			doc.add(new Paragraph("Certificate of analysis", font20_header));
+			doc.add(new Paragraph("　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　",font12_underline));
+			doc.add(new Paragraph("\n"));
+			doc.add(new Paragraph("Product Name/Description: hMSC", font12));
+			doc.add(new Paragraph("Lot #: XXXXXXXX", font12));
+			doc.add(new Paragraph("Storage Conditions: - 80 degrees C", font12));
+			doc.add(new Paragraph("Expiration XXXX/XX/XX", font12));
+			doc.add(new Paragraph("\n"));
+			doc.add(new Paragraph("\n"));
+			doc.add(new Paragraph("Quality Control Data:", font12));
+			// 表の作成
+            Table table = new Table(3);
+            table.setWidth( 99 );
+
+            // 横の表示位置
+            //table.setDefaultHorizontalAlignment( Element.ALIGN_CENTER );
+            // 縦の表示位置
+            //table.setDefaultVerticalAlignment( Element.ALIGN_MIDDLE );
+            // 表の余白を指定
+            table.setPadding(1);
+            // 表のセル間の感覚を指定
+            table.setSpacing(0);
+            // 表の線の色を指定
+            table.setBorderColor( new Color( 0, 0, 0 ) );
+            
+            List<Cell> table_list = new ArrayList<Cell>();
+            // 1行目
+            table_list.add(new Cell( new Phrase( "Test Items", font12) ));
+            table_list.add(new Cell( new Phrase( "Specifications", font12) ));
+            table_list.add(new Cell( new Phrase( "Results", font12) ));
+            // 2行目
+            table_list.add(new Cell( new Phrase( "1) Doubling time", font12) ));
+            table_list.add(new Cell( new Phrase( "< 18 hours", font12) ));
+            table_list.add(new Cell( new Phrase( map.get("ET302001"), font12) ));
+            // 3行目
+            table_list.add(new Cell( new Phrase( "2) Distribution of cell shapes", font12) ));
+            table_list.add(new Cell( new Phrase( "Aa least 90% of the population should be within ±20% of the maximum frequency value.", font12) ));
+            table_list.add(new Cell( new Phrase( map.get("ET303001"), font12) ));
+            // 4行目
+            table_list.add(new Cell( new Phrase( "3) Antigen Analysis", font12) ));
+            table_list.add(new Cell( new Phrase( "Positivity rate of CD73,CD90, and CD105 is greater than 70%.", font12) ));
+            table_list.add(new Cell( new Phrase( map.get("ET304001"), font12) ));
+            // 5行目
+            table_list.add(new Cell( new Phrase( "4) Size of mitochondria", font12) ));
+            table_list.add(new Cell( new Phrase( "Precision ratio < 30%", font12) ));
+            table_list.add(new Cell( new Phrase( map.get("ET305001"), font12) ));
+            // 6行目
+            table_list.add(new Cell( new Phrase( "5) Cell viability", font12) ));
+            table_list.add(new Cell( new Phrase( "80%>", font12) ));
+            table_list.add(new Cell( new Phrase( map.get("ET401001"), font12) ));
+            // 7行目
+            table_list.add(new Cell( new Phrase( "6) Cytokine secretion", font12) ));
+            table_list.add(new Cell( new Phrase( "IL-10 and INF-γ", font12) ));
+            table_list.add(new Cell( new Phrase( map.get("ET402001"), font12) ));
+            // 8行目
+            table_list.add(new Cell( new Phrase( "7) Sterility test", font12) ));
+            table_list.add(new Cell( new Phrase( "Negative", font12) ));
+            table_list.add(new Cell( new Phrase( map.get("ET403001"), font12) ));
+            // 9行目
+            table_list.add(new Cell( new Phrase( "8) Endotoxin test", font12) ));
+            table_list.add(new Cell( new Phrase( "<EU/mL", font12) ));
+            table_list.add(new Cell( new Phrase( map.get("ET404001"), font12) ));
+            // 10行目
+            table_list.add(new Cell( new Phrase( "9) Mycoplasma test", font12) ));
+            table_list.add(new Cell( new Phrase( "Negative", font12) ));
+            table_list.add(new Cell( new Phrase( map.get("ET405001"), font12) ));
+            // 11行目
+            table_list.add(new Cell( new Phrase( "10) Virus test", font12) ));
+            table_list.add(new Cell( new Phrase( "Negative", font12) ));
+            table_list.add(new Cell( new Phrase( map.get("ET406001"), font12) ));
+
+            
+            for(Cell cell : table_list) {
+            	table.addCell( cell );
+            }
+
+            doc.add( table );
+            doc.add(new Paragraph("\n"));
+			doc.add(new Paragraph("\n"));
+			
+            Paragraph para1 = new Paragraph( "Approved by_____________", font12 );
+            para1.setAlignment(Element.ALIGN_RIGHT);
+            doc.add( para1 );
+			
+            Paragraph para2 = new Paragraph( "Date             _____________", font12 );
+            para2.setAlignment(Element.ALIGN_RIGHT);
+            doc.add( para2 );
+            
+			doc.close();
+			writer.close();
+			
+			// PDFを返す
+			response.getOutputStream().write(baOutStr.toByteArray());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+   
 }
 

@@ -38,24 +38,8 @@ $(function(){
 	
 	// Previewボタンクリック
 	$("#previewbtn").click(function(){
-		
-	 	var args = 
-	 		"?WORK_GROUP=EP401"+
-	 		"&WORK_ID=001"+
-			"&ID="+$("#BATCH_ID").val();
-		$.ajax({
-		type: "GET", 
-		url: '/rest/workresult/select'+args,
-		}).done(function(data, dataType) {
-			var usage_arr = JSON.parse(data);
-		    $.each(usage_arr.list,function(i,WORK_RESULT_TABLE){
-			});
-		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-			console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
-		});
-		
 		// 印刷禁止でPDF表示
-	     window.open("/pdfjs/web/viewer.html?file=/preview");
+	     window.open("/pdfjs/web/viewer.html?file=/preview_coa?BATCH_ID="+$("#BATCH_ID").val());
 	});
 	
 	// 指図詳細Closeボタンクリック

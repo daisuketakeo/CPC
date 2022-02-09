@@ -21,6 +21,7 @@ public class PropertiesBean {
 	private String BATCH_PROGRESS_CAPTURE_PATH;
 	private String POST_BATCH_OVERVIEW_PATH;
 	private String PRE_BATCH_OVERVIEW_PATH;
+	private String CELLQUALIA_TOP_PATH;
 	
 	private String USER_LOT_NO_FILE;
 	private String BATCH_ID_NO_FILE;
@@ -39,6 +40,7 @@ public class PropertiesBean {
 	
 	private String CELLQUALIA_TOP_AUTOTRANS;
 	private String CELLQUALIA_TOP_LOGO;
+	private String CELLQUALIA_TOP_MACHINE_STATUS_SUMMARY;
 	private String CELLQUALIA_TOP_TOP;
 	private String CELLQUALIA_TOP_FINISHED;
 	private String CELLQUALIA_TOP_ALARMS;
@@ -51,5 +53,7 @@ public class PropertiesBean {
 	private String CELLQUALIA_TOP_DELIVERY;
 	private String CELLQUALIA_TOP_COSTS;
 	private String CELLQUALIA_TOP_LOG_ANALYSIS;
+	
+	private String COA_PDF_FONT_FILE;
 
 }
