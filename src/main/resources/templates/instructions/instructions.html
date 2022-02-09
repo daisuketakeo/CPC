@@ -253,6 +253,7 @@ $(function(){
 					  $('<form/>', {action: value[2], method: 'post'})
 					  .append($('<input/>', {type: 'hidden', name: 'PROCESS_ID', value: key}))
 					  .append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: $("#batch_id").val()}))
+					  .append($('<input/>', {type: 'hidden', name: 'RETURN_URL', value: "/instructions"}))
 					  .appendTo(document.body)
 					  .submit();
 				}else{
@@ -335,7 +336,7 @@ function search(){
 	    $.each(usage_arr.list,function(i,INSTRUCTIONS_TABLE){
 	    	var tbody = $('<tbody />');
 	    	
-	        var tr1 = $('<tr id="tr'+INSTRUCTIONS_TABLE.batch_ID+'"/>');
+	        var tr1 = $('<tr/>');
 	        
 	        var tdbatchid = $('<td/>');
 	        var abatchid = $("<a></a>", {
@@ -383,7 +384,6 @@ function search(){
 					// ステータスを逸脱に変更＋逸脱アイコン表示
 					tdstatus.text(deviation);
 			        tdstatus.append($("<img></img>", {
-			        	  id: "divaicon"+INSTRUCTIONS_TABLE.batch_ID,
 			        	  src: "/images/exclamation_mark.png",
 			        	  addClass: "aicon",
 			        	}));
@@ -399,23 +399,24 @@ function search(){
 	        $('#tbl1').append(tbody);
 	        
 	        // 一覧の行ダブルクリック
-	        $('#tr'+INSTRUCTIONS_TABLE.batch_ID).dblclick(function(){
+	        tr1.dblclick(function(){
 	        	if(disp_flg=='4'){
 		        	// batch release画面へ遷移				
 					  $('<form/>', {action: '/batchrelease', method: 'post'})
 					  .append($('<input/>', {type: 'hidden', name: 'PROCESS_ID', value: 'BR'}))
 					  .append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: INSTRUCTIONS_TABLE.batch_ID}))
+					  .append($('<input/>', {type: 'hidden', name: 'RETURN_URL', value: "/instructions"}))
 					  .appendTo(document.body)
 					  .submit();
 				}
 	        });
 	        // 一覧の行クリック
-	        $('#tr'+INSTRUCTIONS_TABLE.batch_ID).click(function(){
+	        tr1.click(function(){
 	        	select_row(this);
 	        });
 	        
 	        if($("#batch_id").val()==INSTRUCTIONS_TABLE.batch_ID){
-	        	select_row($('#tr'+INSTRUCTIONS_TABLE.batch_ID));
+	        	select_row(tr1);
 	        }
 	    });
 
@@ -474,58 +475,59 @@ function select_row(obj){
 	type: "GET", 
 	url: '/rest/processstatus/select'+args,
 	}).done(function(data, dataType) {
-	
 		var usage_arr = JSON.parse(data);
 		$.each(usage_arr.list,function(i,PROCESS_STATUS_TABLE){
 			
 			var process_id = PROCESS_STATUS_TABLE.process_ID;
 			//console.log(process_id);
 			
-			var end_flg = false;
-			var current_flg = false;
-			
-			// 完了チェック
-			for (const end of end_status) {
-				if(PROCESS_STATUS_TABLE.status==end){
-					end_flg = true;
-				}
-			}
-			if(end_flg){
-				// 完了アイコン表示
-				$('#cm'+PROCESS.get(process_id)[0]).show();
-				PROCESS.get(process_id)[4] = true;
-			}else{
-				$('#cm'+PROCESS.get(process_id)[0]).hide();
-				PROCESS.get(process_id)[4] = false;
-			}
-			
-			var args2 = "?BATCH_ID="+batch_id+
-						"&PROCESS_ID="+process_id;
-			
-			// 作業グループステータス取得
-			$.ajax({
-			type: "GET", 
-			url: '/rest/workgroupstatus/select'+args2,
-			}).done(function(data2, dataType) {
-			
-				var usage_arr2 = JSON.parse(data2);
-				var diviation_flg = false;
-				$.each(usage_arr2.list,function(j,WORK_GROUP_STATUS_TABLE){
-					if(WORK_GROUP_STATUS_TABLE.status==wgrp_diviation_status){
-						diviation_flg = true;
-					}
-				});
+			if(process_id!='IS'){	// 指図工程は工程フロー図に存在しないため除外
 				
-				if(diviation_flg){
-				// 作業グループステータスに１つ以上逸脱があれば逸脱アイコン表示
-					$('#ex'+PROCESS.get(process_id)[0]).show();
-				}else{
-					$('#ex'+PROCESS.get(process_id)[0]).hide();
+				var end_flg = false;
+				
+				// 完了チェック
+				for (const end of end_status) {
+					if(PROCESS_STATUS_TABLE.status==end){
+						end_flg = true;
+					}
 				}
-			
-			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-				console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
-			});
+				if(end_flg){
+					// 完了アイコン表示
+					$('#cm'+PROCESS.get(process_id)[0]).show();
+					PROCESS.get(process_id)[4] = true;
+				}else{
+					$('#cm'+PROCESS.get(process_id)[0]).hide();
+					PROCESS.get(process_id)[4] = false;
+				}
+				
+				var args2 = "?BATCH_ID="+batch_id+
+							"&PROCESS_ID="+process_id;
+				
+				// 作業グループステータス取得
+				$.ajax({
+				type: "GET", 
+				url: '/rest/workgroupstatus/select'+args2,
+				}).done(function(data2, dataType) {
+				
+					var usage_arr2 = JSON.parse(data2);
+					var diviation_flg = false;
+					$.each(usage_arr2.list,function(j,WORK_GROUP_STATUS_TABLE){
+						if(WORK_GROUP_STATUS_TABLE.status==wgrp_diviation_status){
+							diviation_flg = true;
+						}
+					});
+					
+					if(diviation_flg){
+					// 作業グループステータスに１つ以上逸脱があれば逸脱アイコン表示
+						$('#ex'+PROCESS.get(process_id)[0]).show();
+					}else{
+						$('#ex'+PROCESS.get(process_id)[0]).hide();
+					}
+				
+				}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+					console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+				});
+			}
 			
 		});
 		

@@ -23,6 +23,7 @@ public class PropertiesBean {
 	private String PRE_BATCH_OVERVIEW_PATH;
 	
 	private String USER_LOT_NO_FILE;
+	private String BATCH_ID_NO_FILE;
 	private String STORAGE_FILE;
 	private String SEQUENCE_FILE;
 	private String MONITORING_DATA_FILE;
