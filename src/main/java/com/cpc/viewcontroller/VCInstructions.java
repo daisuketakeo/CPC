@@ -23,8 +23,8 @@ public class VCInstructions extends VCCommon{
     }
     
     @RequestMapping(value = "/instructions", method = {RequestMethod.GET,RequestMethod.POST})
-    public String displaynew(
-    		@RequestParam(name="BATCH_ID", required = false) String batch_id,
+    public String instructions(
+    		@RequestParam(name=param_batch_id, required = false) String batch_id,
     		Model model) {
         if(!super.loginCheck()) return disp_login;
         
@@ -60,6 +60,7 @@ public class VCInstructions extends VCCommon{
     public String manufacturing(
     		@RequestParam(name=param_batch_id) String BATCH_ID,
     		@RequestParam(name=param_process_id) String PROCESS_ID,
+    		@RequestParam(name=param_return_url) String RETURN_URL,
     		Model model) {
         if(!super.loginCheck()) return disp_login;
         
@@ -76,6 +77,7 @@ public class VCInstructions extends VCCommon{
     	
     	model.addAttribute(param_batch_id, BATCH_ID);
     	model.addAttribute(param_process_id, PROCESS_ID);
+    	model.addAttribute(param_return_url, RETURN_URL);
     	
 		return disp_main;
     }
@@ -84,6 +86,7 @@ public class VCInstructions extends VCCommon{
     public String qualitycontrol(
     		@RequestParam(name=param_batch_id) String BATCH_ID,
     		@RequestParam(name=param_process_id) String PROCESS_ID,
+    		@RequestParam(name=param_return_url) String RETURN_URL,
     		Model model) {
         if(!super.loginCheck()) return disp_login;
         
@@ -100,6 +103,7 @@ public class VCInstructions extends VCCommon{
     	
     	model.addAttribute(param_batch_id, BATCH_ID);
     	model.addAttribute(param_process_id, PROCESS_ID);
+    	model.addAttribute(param_return_url, RETURN_URL);
     	
 		return disp_main;
     }
@@ -107,7 +111,7 @@ public class VCInstructions extends VCCommon{
     @RequestMapping(value = "/batchrelease", method = RequestMethod.POST)
     public String batchrelease(
     		@RequestParam(name=param_batch_id) String BATCH_ID,
-    		@RequestParam(name=param_process_id) String PROCESS_ID,
+    		@RequestParam(name=param_return_url, required = false) String RETURN_URL,
     		Model model) {
         if(!super.loginCheck()) return disp_login;
         
@@ -115,7 +119,7 @@ public class VCInstructions extends VCCommon{
         model.addAttribute(disp_body, "/batchrelease/batchrelease");
     	
     	// 画面パラメータ生成
-    	Map<String, DisplayParameter> map = getWorkGroupList(PROCESS_ID);
+    	Map<String, DisplayParameter> map = getWorkGroupList(br);
     	String json = getParamJson(map);
     	
     	// 	作業グループ情報
@@ -123,7 +127,7 @@ public class VCInstructions extends VCCommon{
     	model.addAttribute(param_work_group_map, map);
     	
     	model.addAttribute(param_batch_id, BATCH_ID);
-    	model.addAttribute(param_process_id, PROCESS_ID);
+    	model.addAttribute(param_return_url, RETURN_URL==null ? "/instructions" : RETURN_URL);
     	
 		return disp_main;
     }

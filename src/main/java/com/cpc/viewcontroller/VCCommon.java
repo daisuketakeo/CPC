@@ -79,6 +79,7 @@ public class VCCommon {
 	public static final String param_work_group_map   = "WORK_GROUP_MAP";	// 画面へ渡す作業グループ情報(MAP)
 	public static final String param_status_list      = "STATUS_LIST";		// 画面へ渡すステータスリスト
 	public static final String param_disp_flg      = "DISP_FLG";		// 画面へ渡すステータスリスト
+	public static final String param_return_url      = "RETURN_URL";		// 遷移元URL
 	
 	/*
 	 * REST URL
@@ -677,7 +678,59 @@ public class VCCommon {
      * Batch ID 採番
      */
     public String getBatchID() {
-    	return "BATCH"+getTimeStamp();
+    	
+    	String newno = "";
+    	String fix = property.getBATCH_ID_FIX_STRING();
+    	String dir = property.getCONFIG_PATH();
+    	String file = property.getBATCH_ID_NO_FILE();
+    	
+        try {
+            //フォルダがなければ作成
+        	if (!Files.isDirectory(Paths.get(dir))) {
+            	Files.createDirectories(Paths.get(property.getCONFIG_PATH()));
+            }
+        	
+            //ファイルがなければ作成
+        	if (!Files.exists(Paths.get(dir, file))) {
+        		Files.createFile(Paths.get(dir, file));
+            }
+            
+            // ファイル読み込み
+            List<String> lines = 
+            		Files.lines(Paths.get(dir, file), 
+            				StandardCharsets.UTF_8).collect(Collectors.toList());
+            
+            Calendar cl = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+            String date = sdf.format(cl.getTime());
+            String write_data = "";
+            // 採番
+            if(lines.size()==0) {
+            	newno = fix + date + "_" + "001";
+            	write_data = date+",001";
+            }else {
+            	String[] currentno = lines.get(0).split(",");
+            	if(currentno[0].equals(date)) {
+            		int nextno = Integer.valueOf(currentno[1]) + 1;
+            		if(nextno>999) {
+            			nextno = 1;
+            		}
+            		newno = fix + date + "_" + String.format("%03d",nextno);
+            		write_data = date+","+String.format("%03d",nextno);
+            	}else {
+            		newno = fix + date + "_" + "001";
+            		write_data = date+",001";
+            	}
+            }
+            
+            Files.write(Paths.get(dir, file), new ArrayList<String>(Arrays.asList(write_data)),
+                    Charset.forName("UTF-8"), StandardOpenOption.WRITE);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return newno;
     }
 
 }

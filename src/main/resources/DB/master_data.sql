@@ -104,6 +104,7 @@ insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values
 insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('BR','BR01','001','','QA01');
 
 delete from PROCESS_MASTER;
+insert into PROCESS_MASTER (PROCESS_ID,PROCESS_NAME) values('IS','Manufacturing order');
 insert into PROCESS_MASTER (PROCESS_ID,PROCESS_NAME) values('EP1','Kitting for the preculture');
 insert into PROCESS_MASTER (PROCESS_ID,PROCESS_NAME) values('EP2','preculture');
 insert into PROCESS_MASTER (PROCESS_ID,PROCESS_NAME) values('EP3','Kitting for the expansion');

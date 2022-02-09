@@ -28,15 +28,12 @@ $(function(){
 	
 	// キャンセルボタンクリック
 	$("#closebtn").click(function(){
-		/*
-		$('<form/>', {action: "/instructions", method: 'post'})
+		sessionStorage.removeItem('BR_PROCESS_ID');
+		sessionStorage.removeItem('BR_WORK_GROUP');
+		$('<form/>', {action: $("#RETURN_URL").val(), method: 'post'})
 		  .append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: $("#BATCH_ID").val()}))
 		  .appendTo(document.body)
 		  .submit();
-		*/
-		sessionStorage.removeItem('BR_PROCESS_ID');
-		sessionStorage.removeItem('BR_WORK_GROUP');
-		history.back();
 	});
 	
 	// Previewボタンクリック
@@ -358,50 +355,65 @@ function search(){
 	    		
 	    		// Process ID
 	    		tr_is.append($('<td/>').text(WORK_GROUP_MASTER.process_ID));
-	    		// Process Name
-	    		tr_is.append($('<td/>').text('Manufacturing order'));
 	    		
-	    		// 指図作成日時取得
-			 	var args = 
-					"?WORK_GROUP=IS01"+
-					"&ID="+$("#BATCH_ID").val();
+	    		// 工程フロー図の工程名称取得
 				$.ajax({
-				type: "GET", 
-				url: '/rest/workresult/select'+args,
-				}).done(function(workresult_is1, dataType) {
-					
-					var json_is1 = JSON.parse(workresult_is1);
-				    $.each(json_is1.list,function(i,WORK_RESULT_TABLE_IS01){
-				    	tr_is.append($('<td/>').text(WORK_RESULT_TABLE_IS01.work_USERNAME));	// Performed by	
-			    		tr_is.append($('<td/>').text(WORK_RESULT_TABLE_IS01.work_DATE));		// Performed Date
-			    		
-			    		tr_is.append($('<td/>').text('-'));		// Confirmed by	
-			    		tr_is.append($('<td/>').text('-'));		// Confirmed Date	
-			    		
-			    		// 指図リリース日時取得
-			    		var args = 
-							"?WORK_GROUP=IS02"+
+				    type: "GET", 
+				    url: '/rest/processmst/select?PROCESS_ID='+WORK_GROUP_MASTER.process_ID,
+				}).done(function(data2, dataType) {
+				    var usage_arr2 = JSON.parse(data2); 
+				    $.each(usage_arr2.list,function(i,PROCESS_MASTER){
+				    	
+				    	// Process Name
+						tr_is.append($('<td/>').text(PROCESS_MASTER.process_NAME));
+						
+						// 指図作成日時取得
+					 	var args = 
+							"?WORK_GROUP=IS01"+
 							"&ID="+$("#BATCH_ID").val();
 						$.ajax({
 						type: "GET", 
 						url: '/rest/workresult/select'+args,
-						}).done(function(workresult_is2, dataType) {
+						}).done(function(workresult_is1, dataType) {
 							
-							var json_is2 = JSON.parse(workresult_is2);
-						    $.each(json_is2.list,function(i,WORK_RESULT_TABLE_IS02){
-						    	tr_is.append($('<td/>').text(WORK_RESULT_TABLE_IS02.work_USERNAME));	// Approved by	
-					    		tr_is.append($('<td/>').text(WORK_RESULT_TABLE_IS02.work_DATE));		// Approved Date	
+							var json_is1 = JSON.parse(workresult_is1);
+						    $.each(json_is1.list,function(i,WORK_RESULT_TABLE_IS01){
+						    	tr_is.append($('<td/>').text(WORK_RESULT_TABLE_IS01.work_USERNAME));	// Performed by	
+					    		tr_is.append($('<td/>').text(WORK_RESULT_TABLE_IS01.work_DATE));		// Performed Date
+					    		
+					    		tr_is.append($('<td/>').text('-'));		// Confirmed by	
+					    		tr_is.append($('<td/>').text('-'));		// Confirmed Date	
+					    		
+					    		// 指図リリース日時取得
+					    		var args = 
+									"?WORK_GROUP=IS02"+
+									"&ID="+$("#BATCH_ID").val();
+								$.ajax({
+								type: "GET", 
+								url: '/rest/workresult/select'+args,
+								}).done(function(workresult_is2, dataType) {
+									
+									var json_is2 = JSON.parse(workresult_is2);
+								    $.each(json_is2.list,function(i,WORK_RESULT_TABLE_IS02){
+								    	tr_is.append($('<td/>').text(WORK_RESULT_TABLE_IS02.work_USERNAME));	// Approved by	
+							    		tr_is.append($('<td/>').text(WORK_RESULT_TABLE_IS02.work_DATE));		// Approved Date	
+									});
+							 	    
+								}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+									console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+								});
+								
 							});
 					 	    
 						}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 							console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 						});
-						
-					});
-			 	    
+				    	
+				    });
 				}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-					console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+				  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 				});
+	    		
 	    	}
 	    	
 	    	// 作業実績取得
@@ -621,6 +633,7 @@ function select_row2(process_id, wgrp){
 	$('<form/>', {action: PROCESS.get(process_id)[2], method: 'post'})
 	.append($('<input/>', {type: 'hidden', name: 'PROCESS_ID', value: process_id}))
 	.append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: $("#BATCH_ID").val()}))
+	.append($('<input/>', {type: 'hidden', name: 'RETURN_URL', value: "/batchrelease"}))
 	.appendTo(document.body)
 	.submit();
 	
@@ -670,6 +683,7 @@ function confirm_batch_release(wgrp, wid, CHECK_RESULT, CHECK_REASON){
 <!-- コンテンツ -->
 <input type="hidden" id="WORK_GROUP_JSON" th:value="${WORK_GROUP_JSON}">
 <input type="hidden" id="BATCH_ID" th:value="${BATCH_ID}">
+<input type="hidden" id="RETURN_URL" th:value="${RETURN_URL}">
 <input type="hidden" id="PRE_BATCH_OV" value="0">
 <div class="panel_ebr" style="height: 150px;">
 

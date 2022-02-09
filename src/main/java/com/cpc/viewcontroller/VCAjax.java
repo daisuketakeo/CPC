@@ -866,6 +866,7 @@ public class VCAjax extends VCCommon{
 	 		 	List<PROCESS_MASTER> list2 = getRest(url, PROCESS_MASTER.class);
 	 		 	for(PROCESS_MASTER pm : list2) {
 	 		 		String init_status = "";
+	 		 		if(pm.getPROCESS_ID().indexOf("IS")>=0) continue;
 	 		 		if(pm.getPROCESS_ID().indexOf("EP")>=0) {
 	 		 			init_status = "P01";
 	 		 		}

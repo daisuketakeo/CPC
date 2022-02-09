@@ -26,14 +26,11 @@ $(function(){
 	
 	// キャンセルボタンクリック
 	$("#closebtn").click(function(){
-		/*
-		$('<form/>', {action: "/instructions", method: 'post'})
+		sessionStorage.removeItem('BR_WORK_GROUP');
+		$('<form/>', {action: $("#RETURN_URL").val(), method: 'post'})
 		  .append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: $("#BATCH_ID").val()}))
 		  .appendTo(document.body)
 		  .submit();
-		*/
-		sessionStorage.removeItem('BR_WORK_GROUP');
-		history.back();
 	});
 	
 	// 指図詳細Closeボタンクリック
@@ -304,6 +301,7 @@ function confirm_manufacturing(
 <input type="hidden" id="WORK_GROUP_JSON" th:value="${WORK_GROUP_JSON}">
 <input type="hidden" id="BATCH_ID" th:value="${BATCH_ID}">
 <input type="hidden" id="PROCESS_ID" th:value="${PROCESS_ID}">
+<input type="hidden" id="RETURN_URL" th:value="${RETURN_URL}">
 <input type="hidden" id="PRE_BATCH_OV" value="0">
 
 <div class="panel_ebr">
