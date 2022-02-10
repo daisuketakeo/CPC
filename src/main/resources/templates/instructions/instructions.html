@@ -3,7 +3,9 @@
 
 var disp_flg = sessionStorage.getItem(['DISP_FLG']);
 var create_status = /*[[${CREATE_STATUS}]]*/ '';
-
+const pmjson = JSON.parse($("#PROCESS_MASTER_json").val());
+const wgrpjson = JSON.parse($("#WORK_GROUP_MASTER_json").val());
+const wmjson = JSON.parse($("#WORK_MASTER_json").val());
 /***********************************
 画面初期処理
 ***********************************/
@@ -46,7 +48,7 @@ $(function(){
 	// 指図リリースボタンクリック
 	$("#releasebtn").click(function(){
 	  if($("#batch_id").val()==''){
-		  alertdialog("Please select batch.");
+		  alertdialog(MESSAGE.W013);
 	  }else{
 		  
 		  var tbodys = $("#tbl1 tbody");//全行を取得
@@ -64,11 +66,10 @@ $(function(){
 			}	
 			
 		  if(created){
-			  $('#release_confirmdialog_label').text(
-		    		  "Release instructions?\nBatch ID["+$("#batch_id").val()+"]");
+			  $('#release_confirmdialog_label').text(MESSAGE.I003);
 	  	  	  $("#release_confirmdialog").dialog("open");
 		  }else{
-			  alertdialog("This batch ["+$("#batch_id").val()+"] released.");
+			  alertdialog(MESSAGE.W014.replace('$$', $("#batch_id").val()));
 		  }
 	  }
 	});
@@ -94,10 +95,9 @@ $(function(){
 				class:"btn custombtn",
 				click: function() {
 					if($('[name=cmbitemlist]').val()==''){
-						alertdialog("Please select item.");
+						alertdialog(MESSAGE.W012);
 					}else{
-						$('#create_confirmdialog_label').text(
-							"Create instructions?\n["+$('[name=cmbitemlist] option:selected').text()+"]");
+						$('#create_confirmdialog_label').text(MESSAGE.I002);
 						$("#create_confirmdialog").dialog("open");
 					}
 					$(this).dialog("close");
@@ -246,7 +246,7 @@ $(function(){
 			
 			if(status==create_status){
 				// ステータスが指図作成済の場合操作不可
-				alertdialog('Please relese.');
+				alertdialog(MESSAGE.W011);
 			}else{
 				if(disp_flg==value[1]){
 					// 作業手順の画面へ遷移				
@@ -258,7 +258,7 @@ $(function(){
 					  .submit();
 				}else{
 					// 対象工程以外は操作不可
-					alertdialog(errmsg);
+					alertdialog(MESSAGE.W010);
 				}
 			}
 		});
@@ -280,7 +280,7 @@ $(function(){
 	// 製造指図メニュークリック
 	$("#hamberger_menu1").click(function() {
 		if($("#batch_id").val()==''){
-			alertdialog("Please select batch.");
+			alertdialog(MESSAGE.W013);
 		}else{
 			$("#detail").tabs(
 				{ active: 0 } //タブの初期値指定
@@ -294,7 +294,7 @@ $(function(){
 	// 工程別製造指図メニュークリック
 	$("#hamberger_menu2").click(function() {
 		if($("#batch_id").val()==''){
-			alertdialog("Please select batch.");
+			alertdialog(MESSAGE.W013);
 		}else{
 			$("#detail").tabs(
 				{ active: 1 } //タブの初期値指定

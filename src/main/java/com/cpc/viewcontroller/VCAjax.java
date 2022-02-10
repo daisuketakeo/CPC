@@ -1040,16 +1040,10 @@ public class VCAjax extends VCCommon{
 			ByteArrayOutputStream baOutStr = new ByteArrayOutputStream();
 			PdfWriter writer = PdfWriter.getInstance(doc, baOutStr);
 			
-			String ttf = BaseFont.COURIER;
-			String encording = BaseFont.WINANSI;
-			if(checkExist(super.getProperties().getCONFIG_PATH(),
-					super.getProperties().getCOA_PDF_FONT_FILE())){
-				ttf = super.getProperties().getCONFIG_PATH()+super.getProperties().getCOA_PDF_FONT_FILE();
-				encording = BaseFont.IDENTITY_H;
-			}
+			String ttf = "src/main/resources/public/fonts/yumin.ttf";
 			
 			//setting font family, color
-			BaseFont bf = BaseFont.createFont(ttf,encording,false);
+			BaseFont bf = BaseFont.createFont(ttf,BaseFont.IDENTITY_H,false);
 			Font font12 = new Font(bf, 12, Font.NORMAL);
 			Font font12_underline = new Font(bf, 12, Font.UNDERLINE);
 			Font font20_header = new Font(bf, 20, Font.BOLD);

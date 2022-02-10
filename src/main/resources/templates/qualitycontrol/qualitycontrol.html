@@ -2,9 +2,9 @@
 <script th:inline="javascript">
 
 var disp_flg = sessionStorage.getItem(['DISP_FLG']);
-
-var wgrp_diviation_status = 'W99';		// 作業グループの逸脱ステータス
-
+const pmjson = JSON.parse($("#PROCESS_MASTER_json").val());
+const wgrpjson = JSON.parse($("#WORK_GROUP_MASTER_json").val());
+const wmjson = JSON.parse($("#WORK_MASTER_json").val());
 /***********************************
 画面初期処理
 ***********************************/

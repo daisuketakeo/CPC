@@ -21,6 +21,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONArray;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -255,6 +257,9 @@ public class VCCommon {
     			? "("+authority.get(user.getAUTHORITY())+")" : "";
     	model.addAttribute("user_name", user_name);
         model.addAttribute("system_name", property.getSYSTEM_NAME());
+        model.addAttribute("PROCESS_MASTER_json", getRest(rest_processmst+"select"));
+        model.addAttribute("WORK_GROUP_MASTER_json", getRest(rest_workgroupmst+"select"));
+        model.addAttribute("WORK_MASTER_json", getRest(rest_workmst+"select"));
     }
     
     /*
@@ -277,6 +282,21 @@ public class VCCommon {
     	}catch(Exception e) {
     		e.printStackTrace();
     		return null;
+    	}
+    }
+    
+    /*
+     * Get RESTリクエスト
+     * 戻り値：オブジェクト配列
+     */
+    public String getRest(String url) {
+    	try {
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<JsonNode> res = restTemplate.getForEntity(property.getREST_URL() + url,JsonNode.class);
+            return res.getBody().toString();
+    	}catch(Exception e) {
+    		e.printStackTrace();
+    		return "";
     	}
     }
     

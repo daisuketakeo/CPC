@@ -103,11 +103,11 @@ $(function() {
 		if($(fail).prop('checked')) result='0';
 		
 		if(result==''){
-			alertdialog('Please check Pass or Fail.');
+			alertdialog(MESSAGE.W017);
 			return;
 		}
 		if(result=='0' && $(comment).val()==''){
-			alertdialog('Please input comment.');
+			alertdialog(MESSAGE.W021);
 			return;
 		}
 		confirm_approval(wgrp,'001',result,$(comment).val());

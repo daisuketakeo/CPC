@@ -139,7 +139,7 @@ $(function() {
 	})
 	$(okbtn+'008').click(function() {
 		if($('#countvalue').val()==''){
-			alertdialog('Please input Count value.');
+			alertdialog(MESSAGE.W020);
 			return;
 		}
 		confirm_manufacturing(wgrp, '008', null, $('#countvalue').val());

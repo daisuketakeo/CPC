@@ -223,7 +223,7 @@ $(function() {
 		if($(reject).prop('checked')) QA_APP_STATUS='0';
 		
 		if(QA_APP_STATUS==''){
-			alertdialog('Please check Accept or Reject.');
+			alertdialog(MESSAGE.W009);
 			return;
 		}
 		

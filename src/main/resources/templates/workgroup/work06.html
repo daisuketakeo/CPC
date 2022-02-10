@@ -259,7 +259,7 @@ $(function() {
 	$(okbtn+'001').click(function() {	// 手順1　OKボタン
 		// キットラベル出力チェック
 		if($(kitlabel).val()==''){
-			alertdialog('Please output Kit label.');
+			alertdialog(MESSAGE.W015);
 			return;
 		}
 		confirm_manufacturing(wgrp,'001',$(kitlabel).val(),null);
@@ -295,7 +295,7 @@ $(function() {
 	$(okbtn+'003').click(function() {	// 手順3　OKボタン
 		// 有効期限ラベル出力チェック
 		if($(expdlabel).val()==''){
-			alertdialog('Please output Exp.date label.');
+			alertdialog(MESSAGE.W016);
 			return;
 		}
 		confirm_manufacturing(wgrp,'003',$(expdlabel).val(),null);

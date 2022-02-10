@@ -2,7 +2,9 @@
 <script th:inline="javascript">
 
 var disp_flg = sessionStorage.getItem(['DISP_FLG']);
-
+const pmjson = JSON.parse($("#PROCESS_MASTER_json").val());
+const wgrpjson = JSON.parse($("#WORK_GROUP_MASTER_json").val());
+const wmjson = JSON.parse($("#WORK_MASTER_json").val());
 /***********************************
 画面初期処理
 ***********************************/
@@ -96,7 +98,7 @@ $(function(){
 	// 製造指図メニュークリック
 	$("#hamberger_menu1").click(function() {
 		if($("#BATCH_ID").val()==''){
-			alertdialog("Please select batch.");
+			alertdialog(MESSAGE.W013);
 		}else{
 			$("#detail").tabs(
 				{ active: 0 } //タブの初期値指定
@@ -110,7 +112,7 @@ $(function(){
 	// 工程別製造指図メニュークリック
 	$("#hamberger_menu2").click(function() {
 		if($("#BATCH_ID").val()==''){
-			alertdialog("Please select batch.");
+			alertdialog(MESSAGE.W013);
 		}else{
 			$("#detail").tabs(
 				{ active: 1 } //タブの初期値指定

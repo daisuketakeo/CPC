@@ -2,6 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 	<head th:replace="common/head :: head_fragment(title = 'dummy', scripts = ~{::script}, links = ~{::link})"></head>
 	<body>
+	<input type="hidden" id="PROCESS_MASTER_json" name="PROCESS_MASTER_json" th:value="${PROCESS_MASTER_json}">
+	<input type="hidden" id="WORK_GROUP_MASTER_json" name="WORK_GROUP_MASTER_json" th:value="${WORK_GROUP_MASTER_json}">
+	<input type="hidden" id="WORK_MASTER_json" name="WORK_MASTER_json" th:value="${WORK_MASTER_json}">
 	  	<div id="navigation" th:replace="~{common/navigation :: navigation}"></div>
 	  	<div id="body" th:replace="${body}"></div>
 		<!-- ダイアログ -->

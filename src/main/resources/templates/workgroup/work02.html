@@ -225,35 +225,35 @@ $(function() {
 		// 入力チェック
 		// Lot #
 		if($(lotno).val()==''){
-			alertdialog('Please input Lot #.');
+			alertdialog(MESSAGE.W001);
 			return;
 		}
 		// 消費期限
 		if($(expdate).val()==''){
-			alertdialog('Please input Exp Date.');
+			alertdialog(MESSAGE.W002);
 			return;
 		}
 		// Visually check
 		if(CHECK_RESULT==''){
-			alertdialog('Please check PASS or FAIL.(Visually check)');
+			alertdialog(MESSAGE.W003);
 			return;
 		}
 		if(CHECK_RESULT=='0' && $(checkreason).val()==''){
-			alertdialog('Please input reason.(Visually check)');
+			alertdialog(MESSAGE.W004);
 			return;
 		}
 		// COA
 		if(CHECK_COA==''){
-			alertdialog('Please check PASS or FAIL.(COA)');
+			alertdialog(MESSAGE.W005);
 			return;
 		}
 		if(CHECK_COA=='0' && $(coareason).val()==''){
-			alertdialog('Please input reason.(COA)');
+			alertdialog(MESSAGE.W006);
 			return;
 		}
 		// 添付ファイル
 		if($(downfile_text).val()==''){
-			alertdialog('Please attach file.');
+			alertdialog(MESSAGE.W007);
 			return;
 		}
 		
