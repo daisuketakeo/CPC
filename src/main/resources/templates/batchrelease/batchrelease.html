@@ -190,6 +190,7 @@ $(function(){
 	});
 	
 	var wgrp1 = "BR01";
+	var previewbtn = '#previewbtn';
 	var okbtn1 = '#okbtn'+wgrp1;
 	var release1 = '#release'+wgrp1;
 	var reject1 = '#reject'+wgrp1;
@@ -238,11 +239,13 @@ $(function(){
 			setDisabled(release1, true);
 			setDisabled(reject1, true);
 			setDisabled(reason1, true);
+			setDisabled(previewbtn, true);
 		}else{
 			setDisabled(okbtn1, false);
 			setDisabled(release1, false);
 			setDisabled(reject1, false);
 			setDisabled(reason1, false);
+			setDisabled(previewbtn, false);
 		}
 	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 		console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
@@ -250,21 +253,22 @@ $(function(){
 	
     // 作業実績取得
 	$.ajax({
-		type: "GET", 
-		url: '/rest/workresult/select'+args,
-		}).done(function(data, dataType) {
-			var usage_arr = JSON.parse(data);
-	 	    if(usage_arr.list.length>0){
-	 	    	// 作業実績が存在する場合
-	 		    var WORK_RESULT_TABLE = usage_arr.list[0];
-	 	    	// チェックリストのデータ設定
-	 			setTextBox(reason1, WORK_RESULT_TABLE.check_REASON);
-	 			setCheckBoxPassFail(release1, reject1, WORK_RESULT_TABLE.check_RESULT);
-	 	    }
-	 	    
-		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-			console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
-		});
+	type: "GET", 
+	url: '/rest/workresult/select'+args,
+	}).done(function(data, dataType) {
+		var usage_arr = JSON.parse(data);
+ 	    if(usage_arr.list.length>0){
+ 	    	// 作業実績が存在する場合
+ 		    var WORK_RESULT_TABLE = usage_arr.list[0];
+ 	    	// チェックリストのデータ設定
+ 			setTextBox(reason1, WORK_RESULT_TABLE.check_REASON);
+ 			setCheckBoxPassFail(release1, reject1, WORK_RESULT_TABLE.check_RESULT);
+ 			setDisabled(previewbtn, false);
+ 	    }
+ 	    
+	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+		console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+	});
 	
 });
 
@@ -423,7 +427,6 @@ function search(){
 
 			// Deviation
 			var td_deviation = $('<td/>');
-	        
 	        // 逸脱チェック
 	     	// 作業グループステータス取得
 			var args = 
@@ -436,9 +439,13 @@ function search(){
 			
 				var wgrp_arr = JSON.parse(wgrpdata);
 				var diviation_flg = false;
+				var no_relaese = false;
 				$.each(wgrp_arr.list,function(j,WORK_GROUP_STATUS_TABLE){
 					if(WORK_GROUP_STATUS_TABLE.status==wgrp_diviation_status){
 						diviation_flg = true;
+						if(WORK_GROUP_STATUS_TABLE.batch_RELEASE=='0'){
+							no_relaese = true;
+						}
 					}
 				});
 				
@@ -450,13 +457,23 @@ function search(){
 			        	  addClass: "aicon",
 			        	}));
 					td_deviation.css({'text-align':'center'});
-					tr.css({'background':deviation_color,'cursor':'pointer'});
+					
+					var div_color = no_relaese ? deviation_no_relaese_color : deviation_color;
+					tr.css({'background':div_color,'cursor':'pointer'});
 					tr.click(function() {
 						select_row(WORK_GROUP_MASTER.process_ID);
 		            });
 				}else{
 					td_deviation.text('');
-					tr.css({'background':no_deviation_color});
+					tr.css({'background':no_deviation_color,'cursor':'pointer'});
+					tr.click(function() {
+						sessionStorage.removeItem('BR_PROCESS_ID');
+						sessionStorage.removeItem('BR_WORK_GROUP');
+						$('<form/>', {action: $("#RETURN_URL").val(), method: 'post'})
+						  .append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: $("#BATCH_ID").val()}))
+						  .appendTo(document.body)
+						  .submit();
+		            });
 				}
 			
 			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
@@ -502,21 +519,52 @@ function search(){
 		});
 		
 	});
-    
-    var BR_PROCESS_ID = sessionStorage.getItem(['BR_PROCESS_ID']);
-	if(BR_PROCESS_ID!=null && BR_PROCESS_ID!=''){
-		select_row(BR_PROCESS_ID);
-	}
 	
 }
+$(window).on('load', function() {
+    var BR_PROCESS_ID = sessionStorage.getItem(['BR_PROCESS_ID']);
+	if(BR_PROCESS_ID!=null && BR_PROCESS_ID!=''){
+		
+		select_row(BR_PROCESS_ID);
+	}
+});
 
 /***********************************
 Batch record,QC Test recordの行クリック
 ***********************************/
 function select_row(process_id){
 	
-	// tbodyをクリア
-	$("#tbl3 > tbody").html("");
+	// 選択行の背景色取得
+	var bgcolor = "";
+	
+	// Batch record
+	var tbodys1 = $("#tbl2 tbody");
+	for( var i=0,l=tbodys1.length;i<l;i++ ){
+		var childtr = tbodys1.eq(i).children();
+		var childtd = $(childtr).children();
+		var pid = $(childtd.eq(1)).text();
+		console.log(pid+":"+childtr.css('background'));
+		if(pid==process_id){
+			bgcolor = childtr.css('background');
+		}
+	}
+	
+	// QC Test record
+	var tbodys2 = $("#tbl3 tbody")
+	for( var i=0,l=tbodys2.length;i<l;i++ ){
+		var childtr = tbodys2.eq(i).children();
+		var childtd = $(childtr).children();
+		var pid = $(childtd.eq(1)).text();
+		console.log(pid+":"+childtr.css('background'));
+		if(pid==process_id){
+			bgcolor = childtr.css('background');
+		}
+	}
+	
+	console.log('bgcolor:'+bgcolor);
+	
+	// Deviation Reportのtbodyをクリア
+	$("#tbl4 > tbody").html("");
 
 	// 作業グループステータス取得
 	var args = 
@@ -534,7 +582,7 @@ function select_row(process_id){
 				
 				var tbody = $('<tbody />');
 				var tr = $('<tr />');
-				tr.css({'background':deviation_color,'cursor':'pointer'});
+				tr.css({'background':bgcolor,'cursor':'pointer'});
 				
 				tr.click(function() {
 					select_row2(
@@ -553,7 +601,7 @@ function select_row(process_id){
 				
 				tbody.append(tr);
 				
-				$('#tbl3').append(tbody);				
+				$('#tbl4').append(tbody);				
 			}
 
 		});
@@ -708,7 +756,7 @@ function confirm_batch_release(wgrp, wid, CHECK_RESULT, CHECK_REASON){
 		<td>
 		</td>
 		<td>
-			<table id="tbl2" class="table_ebr">
+			<table id="tbl3" class="table_ebr">
 				<thead>
 					<tr>
 						<th class="th_ebr" style="min-width:100px">Deviation</th>
@@ -754,7 +802,7 @@ function confirm_batch_release(wgrp, wid, CHECK_RESULT, CHECK_REASON){
 		<td>
 		</td>
 		<td>
-			<table id="tbl3" class="table_ebr">
+			<table id="tbl4" class="table_ebr">
 				<thead>
 					<tr>
 						<th class="th_ebr" style="min-width:120px">Deviation #</th>

@@ -985,14 +985,6 @@ public class VCAjax extends VCCommon{
     }
     
     /*
-     * PDF Viewer（印刷、ダウンロード不可）
-     */
-    @GetMapping("/viewer")
-    public String viewer() {
-    	return "redirect:/instructions/js/pdfjs/web/viewer";
-    }
-    
-    /*
      * COA PDF出力
      */
 	@GetMapping("/preview_coa")
