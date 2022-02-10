@@ -38,76 +38,67 @@ $(function() {
  	// 一覧行クリック時の処理
 	$(setbtn).click(function() {
 		// 作業手順取得
-		var args = "?WORK_GROUP="+wgrp;
-		$.ajax({
-		    type: "GET", 
-		    url: '/rest/workmst/select'+args,
-		}).done(function(data, dataType) {
-		    var usage_arr = JSON.parse(data);
-		    $.each(usage_arr.list,function(i,WORK_MASTER){
-	 			// ステータスチェック
-	 			var args = 
-	 				"?WORK_GROUP="+wgrp+
-	 				"&WORK_ID="+WORK_MASTER.work_ID+
-	 				"&ID="+batch_id;
-	 			$.ajax({
-	 			type: "GET", 
-	 			url: '/ajax/check_status'+args,
-	 			}).done(function(data, dataType) {
-	 				if(data==false){
-	 					setDisabled(okbtn,true);
-	 					setDisabled(continue_check,true);
-	 					setDisabled(suspension_check,true);
-	 					setDisabled(comment,true);
-	 				}else{
-	 					open_work(wgrp, true);	// 作業手順表示
-	 					setDisabled(okbtn,false);
-	 					setDisabled(continue_check,false);
-	 					setDisabled(suspension_check,false);
-	 					setDisabled(comment,false);
-	 				}
-	 			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-	 				console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
-	 			});
-	 			
-	 			// 作業実績取得
-	 		 	var args = 
-	 				"?WORK_GROUP="+wgrp+
-	 				"&BATCH_ID="+batch_id;
-	 			$.ajax({
-	 			type: "GET", 
-	 			url: '/ajax/get_applist'+args,
-	 			}).done(function(data, dataType) {
-	 				if(data.length>=1){
-	 					WORK_RESULT_TABLE = data[0];
-	 		 		    $(PerformedName).text(WORK_RESULT_TABLE.work_USERNAME);
-	 		 		    $(PerformedDate).text(WORK_RESULT_TABLE.work_DATE);
-	 		 	    }
-	 				if(data.length>=2){
-	 					WORK_RESULT_TABLE = data[1];
-	 		 		    $(ConfirmedName).text(WORK_RESULT_TABLE.work_USERNAME);
-	 		 		    $(ConfirmedDate).text(WORK_RESULT_TABLE.work_DATE);
-	 		 	    }
-	 		 	    if(data.length>=3){
-	 					WORK_RESULT_TABLE = data[2];
-	 		 		    $(ApprovedName).text(WORK_RESULT_TABLE.work_USERNAME);
-	 		 		    $(ApprovedDate).text(WORK_RESULT_TABLE.work_DATE);
-	 		 		    
-	 		 		    if(WORK_RESULT_TABLE.check_RESULT=='1'){
-	 			    		$(continue_check).prop('checked', true);
-	 			    	}
-	 			    	if(WORK_RESULT_TABLE.check_RESULT=='0'){
-	 			    		$(suspension_check).prop('checked', true);
-	 			    	}
-	 		 	    }
-	 			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-	 				console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
-	 			});
-	 			
-		    });
-		    
-		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-		  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+		var wm = wmjson.list.filter((u) => u.work_GROUP == wgrp);
+		Object.keys(wm).forEach(function (key) {
+			var WORK_MASTER = wm[key];
+			// ステータスチェック
+ 			var args = 
+ 				"?WORK_GROUP="+wgrp+
+ 				"&WORK_ID="+WORK_MASTER.work_ID+
+ 				"&ID="+batch_id;
+ 			$.ajax({
+ 			type: "GET", 
+ 			url: '/ajax/check_status'+args,
+ 			}).done(function(data, dataType) {
+ 				if(data==false){
+ 					setDisabled(okbtn,true);
+ 					setDisabled(continue_check,true);
+ 					setDisabled(suspension_check,true);
+ 					setDisabled(comment,true);
+ 				}else{
+ 					open_work(wgrp, true);	// 作業手順表示
+ 					setDisabled(okbtn,false);
+ 					setDisabled(continue_check,false);
+ 					setDisabled(suspension_check,false);
+ 					setDisabled(comment,false);
+ 				}
+ 			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+ 				console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+ 			});
+ 			
+ 			// 作業実績取得
+ 		 	var args = 
+ 				"?WORK_GROUP="+wgrp+
+ 				"&BATCH_ID="+batch_id;
+ 			$.ajax({
+ 			type: "GET", 
+ 			url: '/ajax/get_applist'+args,
+ 			}).done(function(data, dataType) {
+ 				if(data.length>=1){
+ 					WORK_RESULT_TABLE = data[0];
+ 		 		    $(PerformedName).text(WORK_RESULT_TABLE.work_USERNAME);
+ 		 		    $(PerformedDate).text(WORK_RESULT_TABLE.work_DATE);
+ 		 	    }
+ 				if(data.length>=2){
+ 					WORK_RESULT_TABLE = data[1];
+ 		 		    $(ConfirmedName).text(WORK_RESULT_TABLE.work_USERNAME);
+ 		 		    $(ConfirmedDate).text(WORK_RESULT_TABLE.work_DATE);
+ 		 	    }
+ 		 	    if(data.length>=3){
+ 					WORK_RESULT_TABLE = data[2];
+ 		 		    $(ApprovedName).text(WORK_RESULT_TABLE.work_USERNAME);
+ 		 		    $(ApprovedDate).text(WORK_RESULT_TABLE.work_DATE);
+ 		 		    
+ 		 		    if(WORK_RESULT_TABLE.check_RESULT=='1'){
+ 			    		$(continue_check).prop('checked', true);
+ 			    	}
+ 			    	if(WORK_RESULT_TABLE.check_RESULT=='0'){
+ 			    		$(suspension_check).prop('checked', true);
+ 			    	}
+ 		 	    }
+ 			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+ 				console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+ 			});
 		});
 		
 		// 承認者か？

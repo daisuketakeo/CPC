@@ -15,40 +15,28 @@ $(function() {
 	// 要素名
 	var setbtn = '#setbtn'+wgrp;
 	var okbtn = '#okbtn'+wgrp;
-	
 	var tdcheck = '#tdcheck'+wgrp;
 	var tdcoa = '#tdcoa'+wgrp;
 	var td = '#td'+wgrp;
-	
 	var work_id = '#work_id'+wgrp;
-	
 	var checkpass = '#checkpass'+wgrp;
 	var checkfail = '#checkfail'+wgrp;
-	
 	var btnCamera = '#btnCamera'+wgrp;
 	var imgCapture1 = '#imgCapture1'+wgrp;
 	var tblcsv1 = '#tblcsv1'+wgrp;
 	var eximg = '#eximg'+wgrp;
 	
 	// 作業手順取得
-	var args = "?WORK_GROUP="+wgrp;
-	$.ajax({
-	    type: "GET", 
-	    url: '/ajax/get_ebrtest'+args,
-	}).done(function(data, dataType) {
-	    if(data.length>0){
- 	    	WORK_MASTER = data[0];
- 		    $(td).text(WORK_MASTER.work);
- 		    $(work_id).val(WORK_MASTER.work_ID);
- 		    $(imgCapture1).attr("src", "data:image/;base64,"+WORK_MASTER.capture1);
-			if(WORK_MASTER.csv1!==null){
-				csvfile1 = WORK_MASTER.csv1.split("\r\n");
-				createdata(csvfile1, tblcsv1);
-			}
- 	    }
-	    
-	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+	var wm = wmjson.list.filter((u) => u.work_GROUP == wgrp);
+	Object.keys(wm).forEach(function (key) {
+		var WORK_MASTER = wm[key];
+		$(td).text(WORK_MASTER.work);
+		    $(work_id).val(WORK_MASTER.work_ID);
+		    $(imgCapture1).attr("src", "data:image/;base64,"+WORK_MASTER.capture1);
+		if(WORK_MASTER.csv1!==null){
+			csvfile1 = WORK_MASTER.csv1.split("\r\n");
+			createdata(csvfile1, tblcsv1);
+		}
 	});
 	
 	// チェックボックスの設定

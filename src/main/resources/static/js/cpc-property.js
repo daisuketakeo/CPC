@@ -66,6 +66,7 @@ const MESSAGE = {
 	W021: 'Please input comment.',
 	W022: 'Please check Continue or Suspension.',
 	W023: 'Please select material.',
+	W024: 'Different materials checked.',
 	E001: '',
 	E002: '',
 	E003: '',

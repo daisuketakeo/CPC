@@ -28,45 +28,35 @@ $(function() {
 	$(setbtn).click(function() {
 		
 		// 作業手順取得
-		var args = "?WORK_GROUP="+wgrp;
-		$.ajax({
-		    type: "GET", 
-		    url: '/rest/workmst/select'+args,
-		}).done(function(data, dataType) {
-		    var usage_arr = JSON.parse(data);
-		    $.each(usage_arr.list,function(i,WORK_MASTER){
-		    	
-	 		    $(td+WORK_MASTER.work_ID).text(WORK_MASTER.work);
-	 		    
-	 			// ステータスチェック
-	 			var args = 
-	 				"?WORK_GROUP="+wgrp+
-	 				"&WORK_ID="+WORK_MASTER.work_ID+
-	 				"&ID="+batch_id;
-	 			$.ajax({
-	 			type: "GET", 
-	 			url: '/ajax/check_status'+args,
-	 			}).done(function(data, dataType) {
-	 				if(data==false){
-	 					setDisabled(okbtn+WORK_MASTER.work_ID,true);
-	 					if(WORK_MASTER.work_ID=='002'){
-							setDisabled(startbtn,true);
-	 					}
-	 				}else{
-	 					open_work(wgrp, true);	// 作業手順表示
-	 					setDisabled(okbtn+WORK_MASTER.work_ID,false);
-						if(WORK_MASTER.work_ID=='002'){
-							setDisabled(startbtn,false);
-	 					}
-	 				}
-	 			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-	 				console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
-	 			});
-	 			
-		    });
-		    
-		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-		  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+		var wm = wmjson.list.filter((u) => u.work_GROUP == wgrp);
+		Object.keys(wm).forEach(function (key) {
+			var WORK_MASTER = wm[key];
+			$(td+WORK_MASTER.work_ID).text(WORK_MASTER.work);
+ 		    
+ 			// ステータスチェック
+ 			var args = 
+ 				"?WORK_GROUP="+wgrp+
+ 				"&WORK_ID="+WORK_MASTER.work_ID+
+ 				"&ID="+batch_id;
+ 			$.ajax({
+ 			type: "GET", 
+ 			url: '/ajax/check_status'+args,
+ 			}).done(function(data, dataType) {
+ 				if(data==false){
+ 					setDisabled(okbtn+WORK_MASTER.work_ID,true);
+ 					if(WORK_MASTER.work_ID=='002'){
+						setDisabled(startbtn,true);
+ 					}
+ 				}else{
+ 					open_work(wgrp, true);	// 作業手順表示
+ 					setDisabled(okbtn+WORK_MASTER.work_ID,false);
+					if(WORK_MASTER.work_ID=='002'){
+						setDisabled(startbtn,false);
+ 					}
+ 				}
+ 			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+ 				console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+ 			});
 		});
 		
 		// 逸脱アイコン非表示
