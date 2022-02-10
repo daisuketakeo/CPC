@@ -10,13 +10,10 @@ $(function() {
 	// 要素名
 	var setbtn = '#setbtn'+wgrp;
 	var okbtn = '#okbtn'+wgrp;
-	
 	var tdcheck = '#tdcheck'+wgrp;
 	var tdcoa = '#tdcoa'+wgrp;
 	var td = '#td'+wgrp;
-	
 	var work_id = '#work_id'+wgrp;
-	
 	var checkpass = '#checkpass'+wgrp;
 	var checkfail = '#checkfail'+wgrp;
 	var checkreason = '#checkreason'+wgrp;
@@ -24,9 +21,7 @@ $(function() {
 	var coafail = '#coafail'+wgrp;
 	var coareason = '#coareason'+wgrp;
 	var downfile_text = '#downfile_text'+wgrp;
-	
 	var storage = '#storage'+wgrp;
-	
 	var accept = '#accept'+wgrp;
 	var reject = '#reject'+wgrp;
 	var PerformedName = '#PerformedName'+wgrp;
@@ -35,19 +30,11 @@ $(function() {
 	var ApprovedDate = '#ApprovedDate'+wgrp;
 	
 	// 作業手順取得
-	var args = "?WORK_GROUP="+wgrp;
-	$.ajax({
-	    type: "GET", 
-	    url: '/rest/workmst/select'+args,
-	}).done(function(data, dataType) {
-	    var usage_arr = JSON.parse(data);
-	    if(usage_arr.list.length>0){
- 	    	WORK_MASTER = usage_arr.list[0];
- 		    $(td).text(WORK_MASTER.work);
- 		    $(work_id).val(WORK_MASTER.work_ID);
- 	    }
-	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+	var wm = wmjson.list.filter((u) => u.work_GROUP == wgrp);
+	Object.keys(wm).forEach(function (key) {
+    	var WORK_MASTER = wm[key];
+    	$(td).text(WORK_MASTER.work);
+	    $(work_id).val(WORK_MASTER.work_ID);
 	});
 	
 	// チェックリストの手順名取得
@@ -86,65 +73,53 @@ $(function() {
 		$(reject).prop('checked', false);
 		
 		// 作業グループマスタ取得
-		var args = 
-	 		"?WORK_GROUP="+wgrp;
-		
-	 	$.ajax({
-	 	    type: "GET", 
-	 	    url: '/rest/workgroupmst/select'+args,
-	 	}).done(function(data) {
-	 		
-	 	    var usage_arr = JSON.parse(data);
-	 	    if(usage_arr.list.length>0){
-	 	    	
-	          var WORK_GROUP_MASTER = usage_arr.list[0];
-	 	    	
-	          // 前作業グループの作業実績取得（WORK_ID指定なし）
-	 	      args = 
-	 		 		"?WORK_GROUP="+WORK_GROUP_MASTER.before_WORK_GROUP+
-	 		 		"&ID="+id;
-	 		   
-	 		  $.ajax({
-	 		 	    type: "GET", 
-	 		 	    url: '/rest/workresult/select'+args,
-	 		 	}).done(function(data) {
-	 		 		
-	 		 	    var usage_arr = JSON.parse(data);
-	 		 	    if(usage_arr.list.length>0){
-	 		 	    	// 作業実績が存在する場合
-	 		 		    var WORK_RESULT_TABLE = usage_arr.list[0];
-	 		 			setTextBox(checkreason, WORK_RESULT_TABLE.check_REASON);
-	 		 			setTextBox(coareason, WORK_RESULT_TABLE.check_COA_REASON);
-	 		 			setCheckBoxPassFail(checkpass, checkfail, WORK_RESULT_TABLE.check_RESULT);
-	 		 			setCheckBoxPassFail(coapass, coafail, WORK_RESULT_TABLE.check_COA);
-	 		 			$(downfile_text).text(WORK_RESULT_TABLE.check_FILE_NAME);
-	 		 	 		$(downfile_text).attr("href", WORK_RESULT_TABLE.check_FILE_BASE64);
-	 		 	 		$(downfile_text).attr("download", WORK_RESULT_TABLE.check_FILE_NAME);
-	 		 	 		
-	 		 	 		$(PerformedName).text(WORK_RESULT_TABLE.work_USERNAME);
-	 		 	 		$(PerformedDate).text(WORK_RESULT_TABLE.work_DATE);
-	 		 			
-	 		 	    }
-	 		 	    else{
-	 		 	    	// 作業実績が存在しない場合
-	 		 			setTextBox(checkreason, '');
-	 		 			setTextBox(coareason, '');
-	 		 			setCheckBoxPassFail(checkpass, checkfail, '');
-	 		 			setCheckBoxPassFail(coapass, coafail, '');
-	 		 			$(downfile_text).text('');
-	 		 	 		$(downfile_text).attr("href", '');
-	 		 	 		$(downfile_text).attr("download", '');
-	 		 	 		
-	 		 	 		$(PerformedName).text('');
-	 		 	 		$(PerformedDate).text('');
-	 		 	    }
-	 		 	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-	 		 	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
-	 		 	});
-	 	    }
-	 	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-	 	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
-	 	});
+		var wgrpfilter = wgrpjson.list.filter((u) => u.work_GROUP == wgrp);
+		Object.keys(wgrpfilter).forEach(function (key) {
+	      var WORK_GROUP_MASTER = wgrpfilter[key];
+	      
+	      // 前作業グループの作業実績取得（WORK_ID指定なし）
+ 	      var args = 
+ 		 		"?WORK_GROUP="+WORK_GROUP_MASTER.before_WORK_GROUP+
+ 		 		"&ID="+id;
+ 		   
+ 		  $.ajax({
+ 		 	    type: "GET", 
+ 		 	    url: '/rest/workresult/select'+args,
+ 		 	}).done(function(data) {
+ 		 		
+ 		 	    var usage_arr = JSON.parse(data);
+ 		 	    if(usage_arr.list.length>0){
+ 		 	    	// 作業実績が存在する場合
+ 		 		    var WORK_RESULT_TABLE = usage_arr.list[0];
+ 		 			setTextBox(checkreason, WORK_RESULT_TABLE.check_REASON);
+ 		 			setTextBox(coareason, WORK_RESULT_TABLE.check_COA_REASON);
+ 		 			setCheckBoxPassFail(checkpass, checkfail, WORK_RESULT_TABLE.check_RESULT);
+ 		 			setCheckBoxPassFail(coapass, coafail, WORK_RESULT_TABLE.check_COA);
+ 		 			$(downfile_text).text(WORK_RESULT_TABLE.check_FILE_NAME);
+ 		 	 		$(downfile_text).attr("href", WORK_RESULT_TABLE.check_FILE_BASE64);
+ 		 	 		$(downfile_text).attr("download", WORK_RESULT_TABLE.check_FILE_NAME);
+ 		 	 		
+ 		 	 		$(PerformedName).text(WORK_RESULT_TABLE.work_USERNAME);
+ 		 	 		$(PerformedDate).text(WORK_RESULT_TABLE.work_DATE);
+ 		 			
+ 		 	    }
+ 		 	    else{
+ 		 	    	// 作業実績が存在しない場合
+ 		 			setTextBox(checkreason, '');
+ 		 			setTextBox(coareason, '');
+ 		 			setCheckBoxPassFail(checkpass, checkfail, '');
+ 		 			setCheckBoxPassFail(coapass, coafail, '');
+ 		 			$(downfile_text).text('');
+ 		 	 		$(downfile_text).attr("href", '');
+ 		 	 		$(downfile_text).attr("download", '');
+ 		 	 		
+ 		 	 		$(PerformedName).text('');
+ 		 	 		$(PerformedDate).text('');
+ 		 	    }
+ 		 	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+ 		 	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+ 		 	});
+		});
 	 	
 	    // QA承認の作業実績取得
 	 	args = 

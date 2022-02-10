@@ -1,6 +1,10 @@
 <div th:fragment="body">
 <script th:inline="javascript">
 
+const pmjson = JSON.parse($("#PROCESS_MASTER_json").val());
+const wgrpjson = JSON.parse($("#WORK_GROUP_MASTER_json").val());
+const wmjson = JSON.parse($("#WORK_MASTER_json").val());
+
 // 受入情報
 var select_ACCEPT_TABLE = 
 {

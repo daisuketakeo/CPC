@@ -21,20 +21,11 @@ $(function() {
 	$(userlotno).prop("disabled",true);
 	
 	// 作業手順マスタ取得
-	var args = "?WORK_GROUP="+wgrp;
-	$.ajax({
-	    type: "GET", 
-	    url: '/rest/workmst/select'+args,
-	}).done(function(data, dataType) {
-	    var usage_arr = JSON.parse(data);
-	    if(usage_arr.list.length>0){
- 	    	WORK_MASTER = usage_arr.list[0];
- 		    $(td).text(WORK_MASTER.work);
- 		    $(work_id).val(WORK_MASTER.work_ID);
- 	    }
-	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-	  // エラーメッセージの表示
-	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+	var wm = wmjson.list.filter((u) => u.work_GROUP == wgrp);
+	Object.keys(wm).forEach(function (key) {
+    	var WORK_MASTER = wm[key];
+    	$(td).text(WORK_MASTER.work);
+	    $(work_id).val(WORK_MASTER.work_ID);
 	});
  	
  	// 一覧行クリック時の処理
