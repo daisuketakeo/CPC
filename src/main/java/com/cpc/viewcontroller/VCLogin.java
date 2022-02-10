@@ -84,9 +84,4 @@ public class VCLogin extends VCCommon{
     	}
     }
     
-//    @RequestMapping("/pdf")
-//    public String pdf(Model model) {
-//        return "/test/pdfjs/web/test2";
-//    }
-	
 }

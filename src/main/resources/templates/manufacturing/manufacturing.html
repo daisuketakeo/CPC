@@ -206,21 +206,8 @@ function search(){
 	        var tr1 = $('<tr/>');
 	        tr1.append($('<td/>').text(INSTRUCTIONS_TABLE.batch_ID));
 	        tr1.append($('<td/>').text(INSTRUCTIONS_TABLE.protocol));
-	        
-	        // 逸脱チェック
-	     	// 作業グループステータス取得
-			args = "?PROCESS_ID="+$("#PROCESS_ID").val();
-			$.ajax({
-			type: "GET", 
-			url: '/rest/processmst/select'+args,
-			}).done(function(wgrpdata, wgrpdataType) {
-				var wgrp_arr = JSON.parse(wgrpdata);
-				$.each(wgrp_arr.list,function(j,PROCESS_MASTER){
-					tr1.append($('<td/>').text(PROCESS_MASTER.process_NAME));
-				});
-			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-				console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
-			});
+	        var pm = pmjson.list.find((u) => u.process_ID == $("#PROCESS_ID").val());
+			tr1.append($('<td/>').text(pm.process_NAME));
 
 	        tbody.append(tr1);
 	        

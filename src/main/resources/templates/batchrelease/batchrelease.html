@@ -309,240 +309,209 @@ function search(){
 	//$("#devreport_header").hide();
 	//$("#devreport_table").hide();
 	
-	// 作業グループマスタ取得
-	$.ajax({
-	type: "GET", 
-	url: '/rest/workgroupmst/select',
-	}).done(function(data, dataType) {
-		
-		var pre_process = '';
-		var pre_wgrp = null;
-		const wgrp_list = [];
-		var usage_arr = JSON.parse(data);
-		// 各工程最後の手順取得
-	    $.each(usage_arr.list,function(i,WORK_GROUP_MASTER){
-	    	if( pre_process!='' && pre_process!=WORK_GROUP_MASTER.process_ID){
-	    		wgrp_list.push(pre_wgrp);
-	    	}
-	    	pre_process = WORK_GROUP_MASTER.process_ID;
-	    	pre_wgrp = WORK_GROUP_MASTER;
-		});
-	    
-	    //console.log(wgrp_list);
-	    
-	    $.each(wgrp_list,function(i,WORK_GROUP_MASTER){
-	    	
-	    	if(WORK_GROUP_MASTER.process_ID=='IS'){
-	    		var tr_is = $('#br_row1');
-	    		$(tr_is).empty();
-	    		
-	    		// Deviation
-	    		tr_is.append($('<td/>').text(''));
-	    		tr_is.css({'background':no_deviation_color});
-	    		
-	    		// Process ID
-	    		tr_is.append($('<td/>').text(WORK_GROUP_MASTER.process_ID));
-	    		
-	    		// 工程フロー図の工程名称取得
-				$.ajax({
-				    type: "GET", 
-				    url: '/rest/processmst/select?PROCESS_ID='+WORK_GROUP_MASTER.process_ID,
-				}).done(function(data2, dataType) {
-				    var usage_arr2 = JSON.parse(data2); 
-				    $.each(usage_arr2.list,function(i,PROCESS_MASTER){
-				    	
-				    	// Process Name
-						tr_is.append($('<td/>').text(PROCESS_MASTER.process_NAME));
-						
-						// 指図作成日時取得
-					 	var args = 
-							"?WORK_GROUP=IS01"+
-							"&ID="+$("#BATCH_ID").val();
-						$.ajax({
-						type: "GET", 
-						url: '/rest/workresult/select'+args,
-						}).done(function(workresult_is1, dataType) {
-							
-							var json_is1 = JSON.parse(workresult_is1);
-						    $.each(json_is1.list,function(i,WORK_RESULT_TABLE_IS01){
-						    	tr_is.append($('<td/>').text(WORK_RESULT_TABLE_IS01.work_USERNAME));	// Performed by	
-					    		tr_is.append($('<td/>').text(WORK_RESULT_TABLE_IS01.work_DATE));		// Performed Date
-					    		
-					    		tr_is.append($('<td/>').text('-'));		// Confirmed by	
-					    		tr_is.append($('<td/>').text('-'));		// Confirmed Date	
-					    		
-					    		// 指図リリース日時取得
-					    		var args = 
-									"?WORK_GROUP=IS02"+
-									"&ID="+$("#BATCH_ID").val();
-								$.ajax({
-								type: "GET", 
-								url: '/rest/workresult/select'+args,
-								}).done(function(workresult_is2, dataType) {
-									
-									var json_is2 = JSON.parse(workresult_is2);
-								    $.each(json_is2.list,function(i,WORK_RESULT_TABLE_IS02){
-								    	tr_is.append($('<td/>').text(WORK_RESULT_TABLE_IS02.work_USERNAME));	// Approved by	
-							    		tr_is.append($('<td/>').text(WORK_RESULT_TABLE_IS02.work_DATE));		// Approved Date	
-									});
-							 	    
-								}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-									console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
-								});
-								
-							});
-					 	    
-						}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-							console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
-						});
-				    	
-				    });
-				}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-				  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
-				});
-	    		
-	    	}
-	    	
-	    	// 作業実績取得
+	/*
+	Object.keys(wgrpjson.list).forEach(function (WORK_GROUP_MASTER) {
+        console.log([key] + ": " + wgrpjson.list[key]);
+    });
+	*/
+	var pre_process = '';
+	var pre_wgrp = null;
+	const wgrp_list = [];
+	// 各工程最後の手順取得
+    Object.keys(wgrpjson.list).forEach(function (key) {
+    	var WORK_GROUP_MASTER = wgrpjson.list[key];
+    	if( pre_process!='' && pre_process!=WORK_GROUP_MASTER.process_ID){
+    		wgrp_list.push(pre_wgrp);
+    	}
+    	pre_process = WORK_GROUP_MASTER.process_ID;
+    	pre_wgrp = WORK_GROUP_MASTER;
+	});
+	
+    $.each(wgrp_list,function(i,WORK_GROUP_MASTER){
+    	
+    	if(WORK_GROUP_MASTER.process_ID=='IS'){
+    		var tr_is = $('#br_row1');
+    		$(tr_is).empty();
+    		
+    		// Deviation
+    		tr_is.append($('<td/>').text(''));
+    		tr_is.css({'background':no_deviation_color});
+    		
+    		// Process ID
+    		tr_is.append($('<td/>').text(WORK_GROUP_MASTER.process_ID));
+    		
+    		// Process Name
+    		var pm = pmjson.list.find((u) => u.process_ID == WORK_GROUP_MASTER.process_ID);
+			tr_is.append($('<td/>').text(pm.process_NAME));
+			
+			// 指図作成日時取得
 		 	var args = 
-				"?WORK_GROUP="+WORK_GROUP_MASTER.work_GROUP+
-				"&BATCH_ID="+$("#BATCH_ID").val();
+				"?WORK_GROUP=IS01"+
+				"&ID="+$("#BATCH_ID").val();
 			$.ajax({
 			type: "GET", 
-			url: '/ajax/get_applist'+args,
-			}).done(function(data, dataType) {
+			url: '/rest/workresult/select'+args,
+			}).done(function(workresult_is1, dataType) {
 				
-				var tr = $('<tr/>');
-				if(WORK_GROUP_MASTER.process_ID=='EP1'){
-		    		tr = $('#br_row2');
-		    	}
-				if(WORK_GROUP_MASTER.process_ID=='EP2'){
-		    		tr = $('#br_row3');
-		    	}
-				if(WORK_GROUP_MASTER.process_ID=='ET1'){
-		    		tr = $('#br_row4');
-		    	}
-				if(WORK_GROUP_MASTER.process_ID=='EP3'){
-		    		tr = $('#br_row5');
-		    	}
-				if(WORK_GROUP_MASTER.process_ID=='EP4'){
-		    		tr = $('#br_row6');
-		    	}
-				
-				if(WORK_GROUP_MASTER.process_ID=='ET2'){
-		    		tr = $('#qc_row1');
-		    	}
-				if(WORK_GROUP_MASTER.process_ID=='ET3'){
-		    		tr = $('#qc_row2');
-		    	}
-				if(WORK_GROUP_MASTER.process_ID=='ET4'){
-		    		tr = $('#qc_row3');
-		    	}
-				
-				tr.empty();
-
-				// Deviation
-				var td_deviation = $('<td/>');
-		        
-		        // 逸脱チェック
-		     	// 作業グループステータス取得
-				var args = 
-						"?BATCH_ID="+$("#BATCH_ID").val()+
-						"&PROCESS_ID="+WORK_GROUP_MASTER.process_ID;
-				$.ajax({
-				type: "GET", 
-				url: '/rest/workgroupstatus/select'+args,
-				}).done(function(wgrpdata, wgrpdataType) {
-				
-					var wgrp_arr = JSON.parse(wgrpdata);
-					var diviation_flg = false;
-					$.each(wgrp_arr.list,function(j,WORK_GROUP_STATUS_TABLE){
-						if(WORK_GROUP_STATUS_TABLE.status==wgrp_diviation_status){
-							diviation_flg = true;
-						}
+				var json_is1 = JSON.parse(workresult_is1);
+			    $.each(json_is1.list,function(i,WORK_RESULT_TABLE_IS01){
+			    	tr_is.append($('<td/>').text(WORK_RESULT_TABLE_IS01.work_USERNAME));	// Performed by	
+		    		tr_is.append($('<td/>').text(WORK_RESULT_TABLE_IS01.work_DATE));		// Performed Date
+		    		
+		    		tr_is.append($('<td/>').text('-'));		// Confirmed by	
+		    		tr_is.append($('<td/>').text('-'));		// Confirmed Date	
+		    		
+		    		// 指図リリース日時取得
+		    		var args = 
+						"?WORK_GROUP=IS02"+
+						"&ID="+$("#BATCH_ID").val();
+					$.ajax({
+					type: "GET", 
+					url: '/rest/workresult/select'+args,
+					}).done(function(workresult_is2, dataType) {
+						
+						var json_is2 = JSON.parse(workresult_is2);
+					    $.each(json_is2.list,function(i,WORK_RESULT_TABLE_IS02){
+					    	tr_is.append($('<td/>').text(WORK_RESULT_TABLE_IS02.work_USERNAME));	// Approved by	
+				    		tr_is.append($('<td/>').text(WORK_RESULT_TABLE_IS02.work_DATE));		// Approved Date	
+						});
+				 	    
+					}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+						console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 					});
 					
-					if(diviation_flg){
-						// 作業グループステータスに１つ以上逸脱があれば
-						// 逸脱アイコン表示
-						td_deviation.append($("<img></img>", {
-				        	  src: "/images/deviation.png",
-				        	  addClass: "aicon",
-				        	}));
-						td_deviation.css({'text-align':'center'});
-						tr.css({'background':deviation_color,'cursor':'pointer'});
-						tr.click(function() {
-							select_row(WORK_GROUP_MASTER.process_ID);
-			            });
-					}else{
-						td_deviation.text('');
-						tr.css({'background':no_deviation_color});
-					}
-				
-				}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-					console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 				});
-			   
-	        	tr.append(td_deviation);
-	        	
-				// Process ID
-				tr.append($('<td/>').text(WORK_GROUP_MASTER.process_ID));
-				
-				// 工程フロー図の工程名称取得
-				$.ajax({
-				    type: "GET", 
-				    url: '/rest/processmst/select?PROCESS_ID='+WORK_GROUP_MASTER.process_ID,
-				}).done(function(data2, dataType) {
-				    var usage_arr2 = JSON.parse(data2); 
-				    $.each(usage_arr2.list,function(i,PROCESS_MASTER){
-				    	
-				    	// Process Name
-						tr.append($('<td/>').text(PROCESS_MASTER.process_NAME));
-						
-						if(data.length>=1){
-							WORK_RESULT_TABLE = data[0];
-				 		    tr.append($('<td/>').text(WORK_RESULT_TABLE.work_USERNAME));	// Performed by	
-				 		    tr.append($('<td/>').text(WORK_RESULT_TABLE.work_DATE));		// Performed Date	
-				 	    }else{
-				 	    	tr.append($('<td/>').text(''));
-				 		    tr.append($('<td/>').text(''));
-				 	    }
-						if(data.length>=2){
-							WORK_RESULT_TABLE = data[1];
-							tr.append($('<td/>').text(WORK_RESULT_TABLE.work_USERNAME));	// Confirmed by	
-				 		    tr.append($('<td/>').text(WORK_RESULT_TABLE.work_DATE));		// Confirmed Date	
-				 	    }else{
-				 	    	tr.append($('<td/>').text(''));
-				 		    tr.append($('<td/>').text(''));
-				 	    }
-				 	    if(data.length>=3){
-							WORK_RESULT_TABLE = data[2];
-							tr.append($('<td/>').text(WORK_RESULT_TABLE.work_USERNAME));	// Approved by	
-				 		    tr.append($('<td/>').text(WORK_RESULT_TABLE.work_DATE));		// Approved Date
-				 	    }else{
-				 	    	tr.append($('<td/>').text(''));
-				 		    tr.append($('<td/>').text(''));
-				 	    }
-				    	
-				    });
-				}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-				  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
-				});
-				
+		 	    
 			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 				console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 			});
+    		
+    	}
+    	
+    	// 作業実績取得
+	 	var args = 
+			"?WORK_GROUP="+WORK_GROUP_MASTER.work_GROUP+
+			"&BATCH_ID="+$("#BATCH_ID").val();
+		$.ajax({
+		type: "GET", 
+		url: '/ajax/get_applist'+args,
+		}).done(function(data, dataType) {
 			
+			var tr = $('<tr/>');
+			if(WORK_GROUP_MASTER.process_ID=='EP1'){
+	    		tr = $('#br_row2');
+	    	}
+			if(WORK_GROUP_MASTER.process_ID=='EP2'){
+	    		tr = $('#br_row3');
+	    	}
+			if(WORK_GROUP_MASTER.process_ID=='ET1'){
+	    		tr = $('#br_row4');
+	    	}
+			if(WORK_GROUP_MASTER.process_ID=='EP3'){
+	    		tr = $('#br_row5');
+	    	}
+			if(WORK_GROUP_MASTER.process_ID=='EP4'){
+	    		tr = $('#br_row6');
+	    	}
+			
+			if(WORK_GROUP_MASTER.process_ID=='ET2'){
+	    		tr = $('#qc_row1');
+	    	}
+			if(WORK_GROUP_MASTER.process_ID=='ET3'){
+	    		tr = $('#qc_row2');
+	    	}
+			if(WORK_GROUP_MASTER.process_ID=='ET4'){
+	    		tr = $('#qc_row3');
+	    	}
+			
+			tr.empty();
+
+			// Deviation
+			var td_deviation = $('<td/>');
+	        
+	        // 逸脱チェック
+	     	// 作業グループステータス取得
+			var args = 
+					"?BATCH_ID="+$("#BATCH_ID").val()+
+					"&PROCESS_ID="+WORK_GROUP_MASTER.process_ID;
+			$.ajax({
+			type: "GET", 
+			url: '/rest/workgroupstatus/select'+args,
+			}).done(function(wgrpdata, wgrpdataType) {
+			
+				var wgrp_arr = JSON.parse(wgrpdata);
+				var diviation_flg = false;
+				$.each(wgrp_arr.list,function(j,WORK_GROUP_STATUS_TABLE){
+					if(WORK_GROUP_STATUS_TABLE.status==wgrp_diviation_status){
+						diviation_flg = true;
+					}
+				});
+				
+				if(diviation_flg){
+					// 作業グループステータスに１つ以上逸脱があれば
+					// 逸脱アイコン表示
+					td_deviation.append($("<img></img>", {
+			        	  src: "/images/deviation.png",
+			        	  addClass: "aicon",
+			        	}));
+					td_deviation.css({'text-align':'center'});
+					tr.css({'background':deviation_color,'cursor':'pointer'});
+					tr.click(function() {
+						select_row(WORK_GROUP_MASTER.process_ID);
+		            });
+				}else{
+					td_deviation.text('');
+					tr.css({'background':no_deviation_color});
+				}
+			
+			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+				console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+			});
+		   
+        	tr.append(td_deviation);
+        	
+			// Process ID
+			tr.append($('<td/>').text(WORK_GROUP_MASTER.process_ID));
+			
+			// Process Name
+			var pm = pmjson.list.find((u) => u.process_ID == WORK_GROUP_MASTER.process_ID);
+			tr.append($('<td/>').text(pm.process_NAME));
+			
+			if(data.length>=1){
+				WORK_RESULT_TABLE = data[0];
+	 		    tr.append($('<td/>').text(WORK_RESULT_TABLE.work_USERNAME));	// Performed by	
+	 		    tr.append($('<td/>').text(WORK_RESULT_TABLE.work_DATE));		// Performed Date	
+	 	    }else{
+	 	    	tr.append($('<td/>').text(''));
+	 		    tr.append($('<td/>').text(''));
+	 	    }
+			if(data.length>=2){
+				WORK_RESULT_TABLE = data[1];
+				tr.append($('<td/>').text(WORK_RESULT_TABLE.work_USERNAME));	// Confirmed by	
+	 		    tr.append($('<td/>').text(WORK_RESULT_TABLE.work_DATE));		// Confirmed Date	
+	 	    }else{
+	 	    	tr.append($('<td/>').text(''));
+	 		    tr.append($('<td/>').text(''));
+	 	    }
+	 	    if(data.length>=3){
+				WORK_RESULT_TABLE = data[2];
+				tr.append($('<td/>').text(WORK_RESULT_TABLE.work_USERNAME));	// Approved by	
+	 		    tr.append($('<td/>').text(WORK_RESULT_TABLE.work_DATE));		// Approved Date
+	 	    }else{
+	 	    	tr.append($('<td/>').text(''));
+	 		    tr.append($('<td/>').text(''));
+	 	    }
+			
+		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+			console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 		});
- 	    
-	    var BR_PROCESS_ID = sessionStorage.getItem(['BR_PROCESS_ID']);
-		if(BR_PROCESS_ID!=null && BR_PROCESS_ID!=''){
-			select_row(BR_PROCESS_ID);
-		}
 		
-	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-		console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 	});
+    
+    var BR_PROCESS_ID = sessionStorage.getItem(['BR_PROCESS_ID']);
+	if(BR_PROCESS_ID!=null && BR_PROCESS_ID!=''){
+		select_row(BR_PROCESS_ID);
+	}
 	
 }
 

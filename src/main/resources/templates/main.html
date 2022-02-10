@@ -9,7 +9,7 @@
 	  	<div id="body" th:replace="${body}"></div>
 		<!-- ダイアログ -->
 		<div id="confirmdialog" style="display:none;">
-			<p id="confirmdialog_p">Complete the work?</p>
+			<p id="confirmdialog_p">confirm</p>
 			<span class="ui-helper-hidden-accessible"><input type="image"/></span>
 		</div>
 		<div id="errordialog" style="display:none;">
@@ -20,5 +20,10 @@
 			<p id="alertdialog_p">alert</p>
 			<span class="ui-helper-hidden-accessible"><input type="image"/></span>
 		</div>
+		<script>
+		$(function(){
+			$('#confirmdialog_p').text(MESSAGE.I001);
+		});
+		</script>
 	</body>
 </html>
