@@ -8,7 +8,41 @@ $(function(){
 	var btnBatchprogress = '#btnBatchprogress'+wgrp;
 	var btnPostbatch = '#btnPostbatch'+wgrp;
 	
-	if(CELLQUALIA_TOP_AUTOTRANS!==null){
+	var Cellqualia_top_autrans = "";	// 自動遷移間隔
+	var imgPath = "";					// 画像パス
+
+    // Cellqualia top情報取得
+	$.ajax({
+	    type: "GET", 
+	    url: '/ajax/get_cellqualia_top',
+	}).done(function(data, dataType) {
+	    Cellqualia_top_autrans = data.CELLQUALIA_TOP_AUTOTRANS;
+	    imgPath = data.CELLQUALIA_TOP_PATH;
+
+		// 画像設定
+	    $("#imgCQtop_logo"+wgrp).attr("src", "data:image/;base64,"+imgPath+data.CELLQUALIA_TOP_LOGO);
+
+	    $("imgCQtop_1_1"+wgrp).attr("src", "data:image/;base64,"+imgPath+data.CELLQUALIA_TOP_MACHINE_STATUS_SUMMARY);
+	    $("imgCQtop_1_2"+wgrp).attr("src", "data:image/;base64,"+imgPath+data.CELLQUALIA_TOP_TOP);
+	    $("imgCQtop_1_3"+wgrp).attr("src", "data:image/;base64,"+imgPath+data.CELLQUALIA_TOP_FINISHED);
+	    $("imgCQtop_1_4"+wgrp).attr("src", "data:image/;base64,"+imgPath+data.CELLQUALIA_TOP_ALARMS);
+	    $("imgCQtop_1_5"+wgrp).attr("src", "data:image/;base64,"+imgPath+data.CELLQUALIA_TOP_MAINTENANCE);
+
+	    $("imgCQtop_2_1"+wgrp).attr("src", "data:image/;base64,"+imgPath+data.CELLQUALIA_TOP_PRE_BATCH);
+	    $("imgCQtop_2_2"+wgrp).attr("src", "data:image/;base64,"+imgPath+data.CELLQUALIA_TOP_BATCH_PROGRESS);
+	    $("imgCQtop_2_3"+wgrp).attr("src", "data:image/;base64,"+imgPath+data.CELLQUALIA_TOP_POST_BATCH_STANDALONE);
+	    $("imgCQtop_2_4"+wgrp).attr("src", "data:image/;base64,"+imgPath+data.CELLQUALIA_TOP_POST_BATCH_ENTERPRISE);
+
+	    $("imgCQtop_3_1"+wgrp).attr("src", "data:image/;base64,"+imgPath+data.CELLQUALIA_TOP_BATCH_LIST);
+	    $("imgCQtop_3_2"+wgrp).attr("src", "data:image/;base64,"+imgPath+data.CELLQUALIA_TOP_DELIVERY);
+	    $("imgCQtop_3_3"+wgrp).attr("src", "data:image/;base64,"+imgPath+data.CELLQUALIA_TOP_COSTS);
+	    $("imgCQtop_3_4"+wgrp).attr("src", "data:image/;base64,"+imgPath+data.CELLQUALIA_TOP_LOG_ANALYSIS);
+
+	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+	});
+	
+	if(Cellqualia_top_autrans!==""){
 		// 自動遷移間隔が設定されている場合
 		setTimeout(function(){
 			// 設定時間待機後に自動遷移する
@@ -16,7 +50,7 @@ $(function(){
 			// 遷移先はパラメータで判定？
 			
 			// 自分を閉じる？
-          }, CELLQUALIA_TOP_AUTOTRANS*1000);
+          }, Cellqualia_top_autrans*1000);
 	}else{
 		// 自動遷移間隔が設定されていない場合
 		// 遷移先はパラメータで判定？hrefを全部設定してよい？
@@ -27,7 +61,7 @@ $(function(){
 	
 	// Prebatchクリック時の処理
 	$(btnPrebatch).click(function() {
-		if(CELLQUALIA_TOP_AUTOTRANS==null){
+		if(Cellqualia_top_autrans==""){
 			// Pre-batch overview画面に遷移する
 			alertdialog('Pre-batch overview画面に遷移する');
 			// 何かパラメータを設定する？
@@ -37,7 +71,7 @@ $(function(){
 	
 	// Batchprogressクリック時の処理
 	$(btnBatchprogress).click(function() {
-		if(CELLQUALIA_TOP_AUTOTRANS==null){
+		if(Cellqualia_top_autrans==""){
 			// Batch progress overview画面に遷移する
 			alertdialog('Batch progress overview画面に遷移する');
 			// 何かパラメータを設定する？
@@ -47,7 +81,7 @@ $(function(){
 	
 	// Postbatchクリック時の処理
 	$(btnPostbatch).click(function() {
-		if(CELLQUALIA_TOP_AUTOTRANS==null){
+		if(Cellqualia_top_autrans==""){
 			// Post-batch overview画面に遷移する
 			alertdialog('Post-batch overview画面に遷移する');
 			// 何かパラメータを設定する？
@@ -62,27 +96,27 @@ $(function(){
 
 <table>
 <tr>
-	<td colspan="3"><img alt="LOGO" class="aicon" src=CELLQUALIA_TOP_PATH+CELLQUALIA_TOP_LOGO style="width:100%; height: 100%"></td>
+	<td colspan="3"><img th:id="'imgCQtop_logo'+${wgrp}" alt="LOGO" class="aicon" style="width:100%; height: 100%"></td>
 </tr>
 <tr>
 	<td>
-	<img alt="MACHINE_STATUS_SUMMARY" class="aicon" src=CELLQUALIA_TOP_PATH+CELLQUALIA_TOP_MACHINE_STATUS_SUMMARY style="width:100%; height: 100%">
-	<img alt="TOP" class="aicon" src=CELLQUALIA_TOP_PATH+CELLQUALIA_TOP_TOP style="width:100%; height: 100%">
-	<img alt="FINISHED" class="aicon" src=CELLQUALIA_TOP_PATH+CELLQUALIA_TOP_FINISHED style="width:100%; height: 100%">
-	<img alt="ALARMS" class="aicon" src=CELLQUALIA_TOP_PATH+CELLQUALIA_TOP_ALARMS style="width:100%; height: 100%">
-	<img alt="MAINTENANCE" class="aicon" src=CELLQUALIA_TOP_PATH+CELLQUALIA_TOP_MAINTENANCE style="width:100%; height: 100%">
+	<img th:id="'imgCQtop_1_1'+${wgrp}" alt="MACHINE_STATUS_SUMMARY" class="aicon" style="width:100%; height: 100%">
+	<img th:id="'imgCQtop_1_2'+${wgrp}" alt="TOP" class="aicon" style="width:100%; height: 100%">
+	<img th:id="'imgCQtop_1_3'+${wgrp}" alt="FINISHED" class="aicon" style="width:100%; height: 100%">
+	<img th:id="'imgCQtop_1_4'+${wgrp}" alt="ALARMS" class="aicon" style="width:100%; height: 100%">
+	<img th:id="'imgCQtop_1_5'+${wgrp}" alt="MAINTENANCE" class="aicon" style="width:100%; height: 100%">
 	</td>
 	<td>
-	<a href="#" th:id="'btnPrebatch'+${wgrp}"><img alt="PRE_BATCH" class="aicon" src=CELLQUALIA_TOP_PATH+CELLQUALIA_TOP_PRE_BATCH style="width:100%; height: 100%"></a>
-	<a href="#" th:id="'btnBatchprogress'+${wgrp}"><img alt="BATCH_PROGRESS" class="aicon" src=CELLQUALIA_TOP_PATH+CELLQUALIA_TOP_BATCH_PROGRESS style="width:100%; height: 100%"></a>
-	<a href="#" th:id="'btnPostbatch'+${wgrp}"><img alt="POST_BATCH_STANDALONE" class="aicon" src=CELLQUALIA_TOP_PATH+CELLQUALIA_TOP_POST_BATCH_STANDALONE style="width:100%; height: 100%"></a>
-	<img alt="POST_BATCH_ENTERPRISE" class="aicon" src=CELLQUALIA_TOP_PATH+CELLQUALIA_TOP_POST_BATCH_ENTERPRISE style="width:100%; height: 100%">
+	<a href="#" th:id="'btnPrebatch'+${wgrp}"><img th:id="'imgCQtop_2_1'+${wgrp}" alt="PRE_BATCH" class="aicon" style="width:100%; height: 100%"></a>
+	<a href="#" th:id="'btnBatchprogress'+${wgrp}"><img th:id="'imgCQtop_2_2'+${wgrp}" alt="BATCH_PROGRESS" class="aicon" style="width:100%; height: 100%"></a>
+	<a href="#" th:id="'btnPostbatch'+${wgrp}"><img th:id="'imgCQtop_2_3'+${wgrp}" alt="POST_BATCH_STANDALONE" class="aicon" style="width:100%; height: 100%"></a>
+	<img th:id="'imgCQtop_2_4'+${wgrp}" alt="POST_BATCH_ENTERPRISE" class="aicon" style="width:100%; height: 100%">
 	</td>
 	<td>
-	<img alt="BATCH_LIST" class="aicon" src=CELLQUALIA_TOP_PATH+CELLQUALIA_TOP_BATCH_LIST style="width:100%; height: 100%">
-	<img alt="DELIVERY" class="aicon" src=CELLQUALIA_TOP_PATH+CELLQUALIA_TOP_DELIVERY style="width:100%; height: 100%">
-	<img alt="COSTS" class="aicon" src=CELLQUALIA_TOP_PATH+CELLQUALIA_TOP_COSTS style="width:100%; height: 100%">
-	<img alt="LOG_ANALYSIS" class="aicon" src=CELLQUALIA_TOP_PATH+CELLQUALIA_TOP_LOG_ANALYSIS style="width:100%; height: 100%">
+	<img th:id="'imgCQtop_3_1'+${wgrp}" alt="BATCH_LIST" class="aicon" style="width:100%; height: 100%">
+	<img th:id="'imgCQtop_3_2'+${wgrp}" alt="DELIVERY" class="aicon" style="width:100%; height: 100%">
+	<img th:id="'imgCQtop_3_3'+${wgrp}" alt="COSTS" class="aicon" style="width:100%; height: 100%">
+	<img th:id="'imgCQtop_3_4'+${wgrp}" alt="LOG_ANALYSIS" class="aicon" style="width:100%; height: 100%">
 	</td>
 </tr>
 </table>
