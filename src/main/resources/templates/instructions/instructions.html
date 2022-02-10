@@ -304,6 +304,18 @@ $(function(){
         	$('#setbtnProcInsructions').trigger('click');
 		}
 	});
+	
+	// 工程フロー図の工程名称取得
+	Object.keys(pmjson.list).forEach(function (key) {
+    	var PROCESS_MASTER = pmjson.list[key];
+    	// 工程フロー図の工程名称セット
+    	for (let [key, value] of PROCESS) {
+    		if(PROCESS_MASTER.process_ID==key){
+	    		$('#lbl'+value[0]).text(PROCESS_MASTER.process_NAME);
+	    	}
+    	}
+	});
+	
 });
 
 /***********************************
@@ -424,23 +436,6 @@ function search(){
 	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 	});
 	
-	// 工程フロー図の工程名称取得
-	$.ajax({
-	    type: "GET", 
-	    url: '/rest/processmst/select',
-	}).done(function(data, dataType) {
-	    var usage_arr = JSON.parse(data); 
-	    $.each(usage_arr.list,function(i,PROCESS_MASTER){
-	    	// 工程フロー図の工程名称セット
-	    	for (let [key, value] of PROCESS) {
-	    		if(PROCESS_MASTER.process_ID==key){
-		    		$('#lbl'+value[0]).text(PROCESS_MASTER.process_NAME);
-		    	}
-	    	}
-	    });
-	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
-	});
 }
 
 /***********************************
