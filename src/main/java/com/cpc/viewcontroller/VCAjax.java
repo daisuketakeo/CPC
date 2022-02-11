@@ -212,6 +212,237 @@ public class VCAjax extends VCCommon{
     }
     
     /*
+     * Batch progressのCSVファイル内容／画像ファイル取得
+     */
+    @GetMapping("/ajax/get_progress_batch")
+    public INSTRUCTIONS_MASTER get_progress_batch(
+    		@RequestParam(param_batch_id) String batch_id) {
+    	
+    	String csvdir = super.getProperties().getBATCH_PROGRESS_CSV_PATH();
+    	String url = "";
+    	
+ 		url = rest_instructions+"select?BATCH_ID="+batch_id;
+	 	List<INSTRUCTIONS_TABLE> list = getRest(url, INSTRUCTIONS_TABLE.class);
+	 	if(list.size()>0) {
+	 		url = rest_instructionsmst+"select?IM_ID="+list.get(0).getIM_ID();
+		 	List<INSTRUCTIONS_MASTER> list2 = getRest(url, INSTRUCTIONS_MASTER.class);
+		 	if(list2.size()>0) {
+		 		INSTRUCTIONS_MASTER im = list2.get(0);
+		 		
+		 		// 各種CSVファイル取得
+		 		if(im.getBP_ALERM()!=null && !im.getBP_ALERM().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_ALERM());
+		 			im.setBP_ALERM(csv);
+	        	}
+		 		if(im.getBP_WARNING()!=null && !im.getBP_WARNING().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_WARNING());
+		 			im.setBP_WARNING(csv);
+	        	}
+	        	if(im.getBP_HEADER()!=null && !im.getBP_HEADER().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_HEADER());
+		 			im.setBP_HEADER(csv);
+	        	}
+	        	if(im.getBP_PH_OVER_TIME()!=null && !im.getBP_PH_OVER_TIME().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_PH_OVER_TIME());
+		 			im.setBP_PH_OVER_TIME(csv);
+	        	}
+	        	if(im.getBP_GLUCOSE_OVER_TIME()!=null && !im.getBP_GLUCOSE_OVER_TIME().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_GLUCOSE_OVER_TIME());
+		 			im.setBP_GLUCOSE_OVER_TIME(csv);
+	        	}
+	        	if(im.getBP_LACTATE_OVER_TIME()!=null && !im.getBP_LACTATE_OVER_TIME().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_LACTATE_OVER_TIME());
+		 			im.setBP_LACTATE_OVER_TIME(csv);
+	        	}
+	        	if(im.getBP_GROWTH_RATE_OVER_TIME()!=null && !im.getBP_GROWTH_RATE_OVER_TIME().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_GROWTH_RATE_OVER_TIME());
+		 			im.setBP_GROWTH_RATE_OVER_TIME(csv);
+	        	}
+	        	if(im.getBP_ORVER_VIEW()!=null && !im.getBP_ORVER_VIEW().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_ORVER_VIEW());
+		 			im.setBP_ORVER_VIEW(csv);
+	        	}
+	        	if(im.getBP_IDENTIFICATION()!=null && !im.getBP_IDENTIFICATION().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_IDENTIFICATION());
+		 			im.setBP_IDENTIFICATION(csv);
+	        	}
+	        	if(im.getBP_CULTURE_CONDITION()!=null && !im.getBP_CULTURE_CONDITION().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_CULTURE_CONDITION());
+		 			im.setBP_CULTURE_CONDITION(csv);
+	        	}
+	        	if(im.getBP_DETAIL()!=null && !im.getBP_DETAIL().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_DETAIL());
+		 			im.setBP_DETAIL(csv);
+	        	}
+	        	
+	        	//　画像ファイル取得
+	        	if(im.getBP_CAMERA_VISION()!=null && !im.getBP_CAMERA_VISION().isEmpty()) {
+		 			String capture = super.getCameaVisionCapture(im.getBP_CAMERA_VISION());
+		 			im.setBP_CAMERA_VISION(capture);
+	        	}
+	        	
+	        	return im;
+		 	}
+	 	}
+        
+    	return new INSTRUCTIONS_MASTER();
+    }
+    
+    /*
+     * Post-batch overviewのCSVファイル内容取得
+     */
+    @GetMapping("/ajax/get_post_batch")
+    public INSTRUCTIONS_MASTER get_post_batch(
+    		@RequestParam(param_batch_id) String batch_id) {
+    	
+    	String csvdir = super.getProperties().getBATCH_PROGRESS_CSV_PATH();
+    	String url = "";
+    	
+ 		url = rest_instructions+"select?BATCH_ID="+batch_id;
+	 	List<INSTRUCTIONS_TABLE> list = getRest(url, INSTRUCTIONS_TABLE.class);
+	 	if(list.size()>0) {
+	 		url = rest_instructionsmst+"select?IM_ID="+list.get(0).getIM_ID();
+		 	List<INSTRUCTIONS_MASTER> list2 = getRest(url, INSTRUCTIONS_MASTER.class);
+		 	if(list2.size()>0) {
+		 		INSTRUCTIONS_MASTER im = list2.get(0);
+		 		
+		 		// 各種CSVファイル取得
+		 		if(im.getBP_ALERM()!=null && !im.getBP_ALERM().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_ALERM());
+		 			im.setBP_ALERM(csv);
+	        	}
+		 		if(im.getBP_WARNING()!=null && !im.getBP_WARNING().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_WARNING());
+		 			im.setBP_WARNING(csv);
+	        	}
+	        	if(im.getBP_HEADER()!=null && !im.getBP_HEADER().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_HEADER());
+		 			im.setBP_HEADER(csv);
+	        	}
+	        	if(im.getBP_PH_OVER_TIME()!=null && !im.getBP_PH_OVER_TIME().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_PH_OVER_TIME());
+		 			im.setBP_PH_OVER_TIME(csv);
+	        	}
+	        	if(im.getBP_GLUCOSE_OVER_TIME()!=null && !im.getBP_GLUCOSE_OVER_TIME().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_GLUCOSE_OVER_TIME());
+		 			im.setBP_GLUCOSE_OVER_TIME(csv);
+	        	}
+	        	if(im.getBP_LACTATE_OVER_TIME()!=null && !im.getBP_LACTATE_OVER_TIME().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_LACTATE_OVER_TIME());
+		 			im.setBP_LACTATE_OVER_TIME(csv);
+	        	}
+	        	if(im.getBP_GROWTH_RATE_OVER_TIME()!=null && !im.getBP_GROWTH_RATE_OVER_TIME().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_GROWTH_RATE_OVER_TIME());
+		 			im.setBP_GROWTH_RATE_OVER_TIME(csv);
+	        	}
+	        	if(im.getBP_ORVER_VIEW()!=null && !im.getBP_ORVER_VIEW().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_ORVER_VIEW());
+		 			im.setBP_ORVER_VIEW(csv);
+	        	}
+	        	if(im.getBP_IDENTIFICATION()!=null && !im.getBP_IDENTIFICATION().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_IDENTIFICATION());
+		 			im.setBP_IDENTIFICATION(csv);
+	        	}
+	        	if(im.getBP_CULTURE_CONDITION()!=null && !im.getBP_CULTURE_CONDITION().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_CULTURE_CONDITION());
+		 			im.setBP_CULTURE_CONDITION(csv);
+	        	}
+	        	if(im.getBP_DETAIL()!=null && !im.getBP_DETAIL().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_DETAIL());
+		 			im.setBP_DETAIL(csv);
+	        	}
+	        	
+	        	//　画像ファイル取得
+	        	if(im.getBP_CAMERA_VISION()!=null && !im.getBP_CAMERA_VISION().isEmpty()) {
+		 			String capture = super.getCameaVisionCapture(im.getBP_CAMERA_VISION());
+		 			im.setBP_CAMERA_VISION(capture);
+	        	}
+	        	
+	        	return im;
+		 	}
+	 	}
+        
+    	return new INSTRUCTIONS_MASTER();
+    }
+    
+    /*
+     * Pre-batch overviewのCSVファイル内容取得
+     */
+    @GetMapping("/ajax/get_pre_batch")
+    public INSTRUCTIONS_MASTER get_pre_batch(
+    		@RequestParam(param_batch_id) String batch_id) {
+    	
+    	String csvdir = super.getProperties().getBATCH_PROGRESS_CSV_PATH();
+    	String url = "";
+    	
+ 		url = rest_instructions+"select?BATCH_ID="+batch_id;
+	 	List<INSTRUCTIONS_TABLE> list = getRest(url, INSTRUCTIONS_TABLE.class);
+	 	if(list.size()>0) {
+	 		url = rest_instructionsmst+"select?IM_ID="+list.get(0).getIM_ID();
+		 	List<INSTRUCTIONS_MASTER> list2 = getRest(url, INSTRUCTIONS_MASTER.class);
+		 	if(list2.size()>0) {
+		 		INSTRUCTIONS_MASTER im = list2.get(0);
+		 		
+		 		// 各種CSVファイル取得
+		 		if(im.getBP_ALERM()!=null && !im.getBP_ALERM().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_ALERM());
+		 			im.setBP_ALERM(csv);
+	        	}
+		 		if(im.getBP_WARNING()!=null && !im.getBP_WARNING().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_WARNING());
+		 			im.setBP_WARNING(csv);
+	        	}
+	        	if(im.getBP_HEADER()!=null && !im.getBP_HEADER().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_HEADER());
+		 			im.setBP_HEADER(csv);
+	        	}
+	        	if(im.getBP_PH_OVER_TIME()!=null && !im.getBP_PH_OVER_TIME().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_PH_OVER_TIME());
+		 			im.setBP_PH_OVER_TIME(csv);
+	        	}
+	        	if(im.getBP_GLUCOSE_OVER_TIME()!=null && !im.getBP_GLUCOSE_OVER_TIME().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_GLUCOSE_OVER_TIME());
+		 			im.setBP_GLUCOSE_OVER_TIME(csv);
+	        	}
+	        	if(im.getBP_LACTATE_OVER_TIME()!=null && !im.getBP_LACTATE_OVER_TIME().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_LACTATE_OVER_TIME());
+		 			im.setBP_LACTATE_OVER_TIME(csv);
+	        	}
+	        	if(im.getBP_GROWTH_RATE_OVER_TIME()!=null && !im.getBP_GROWTH_RATE_OVER_TIME().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_GROWTH_RATE_OVER_TIME());
+		 			im.setBP_GROWTH_RATE_OVER_TIME(csv);
+	        	}
+	        	if(im.getBP_ORVER_VIEW()!=null && !im.getBP_ORVER_VIEW().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_ORVER_VIEW());
+		 			im.setBP_ORVER_VIEW(csv);
+	        	}
+	        	if(im.getBP_IDENTIFICATION()!=null && !im.getBP_IDENTIFICATION().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_IDENTIFICATION());
+		 			im.setBP_IDENTIFICATION(csv);
+	        	}
+	        	if(im.getBP_CULTURE_CONDITION()!=null && !im.getBP_CULTURE_CONDITION().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_CULTURE_CONDITION());
+		 			im.setBP_CULTURE_CONDITION(csv);
+	        	}
+	        	if(im.getBP_DETAIL()!=null && !im.getBP_DETAIL().isEmpty()) {
+		 			String csv = get_csv(csvdir, im.getBP_DETAIL());
+		 			im.setBP_DETAIL(csv);
+	        	}
+	        	
+	        	//　画像ファイル取得
+	        	if(im.getBP_CAMERA_VISION()!=null && !im.getBP_CAMERA_VISION().isEmpty()) {
+		 			String capture = super.getCameaVisionCapture(im.getBP_CAMERA_VISION());
+		 			im.setBP_CAMERA_VISION(capture);
+	        	}
+	        	
+	        	return im;
+		 	}
+	 	}
+        
+    	return new INSTRUCTIONS_MASTER();
+    }
+    
+    /*
      * 操作権限チェック
      */
     @GetMapping("/ajax/check_operation_authority")

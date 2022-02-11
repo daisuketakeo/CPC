@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpSession;
@@ -287,7 +289,7 @@ public class VCCommon {
     
     /*
      * Get RESTリクエスト
-     * 戻り値：オブジェクト配列
+     * 戻り値：Json
      */
     public String getRest(String url) {
     	try {
@@ -686,7 +688,7 @@ public class VCCommon {
             // ファイルがあれば
         	if (Files.exists(Paths.get(dir, filename))) {
                 // ファイル読み込み
-            	return Files.readString(Paths.get(dir, filename));
+            	return Files.readString(Paths.get(dir, filename),Charset.forName("UTF-8"));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -768,5 +770,111 @@ public class VCCommon {
         }
     	return false;
     }
+    
+    /*
+     *Batch proress Camera vision 画像一覧取得
+     */
+    public String getCameaVisionCapture(String file) {
+    	
+    	String csvdir = property.getBATCH_PROGRESS_CSV_PATH();
+    	String capdir = property.getBATCH_PROGRESS_CAPTURE_PATH();
+    	
+        try {
+            //フォルダがなければ処理終了
+        	if (!Files.isDirectory(Paths.get(csvdir))) {
+        		return "";
+            }
+        	
+            //ファイルがなければ処理終了
+        	if (!Files.exists(Paths.get(csvdir, file))) {
+        		return "";
+            }
+            
+            // ファイル読み込み
+            List<String> lines = 
+            		Files.lines(Paths.get(csvdir, file), 
+            				StandardCharsets.UTF_8).collect(Collectors.toList());
+            Map<String,Object> map = new HashMap<String,Object>();
+            int count = 1;
+            Integer row_count = 1;
+            for(String line : lines) {
+            	
+            	String[] row = splitLineWithComma(line);
+            	List<String> row_list = new ArrayList<String>();
+            	for(String cap : row) {
+                    // ファイルがあれば
+                	if (Files.exists(Paths.get(capdir, cap))) {
+                		byte[] capture = 
+                				FileUtils.readFileToByteArray(new File(Paths.get(capdir, cap).toString()));
+                		row_list.add( Base64.getEncoder().encodeToString(capture));
+                    }else {
+                    	row_list.add("");
+                    }
+                	if(count%5==0) {
+                		map.put(row_count.toString(), row_list);
+                		row_list = new ArrayList<String>();
+                		row_count++;
+                	}
+                	count++;
+            	}
+            }
+            
+            return getJson(map);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return "";
+    }
 
+    /** 
+     * カンマ区切りで行を分割し、文字列配列を返す。
+     * 
+     * ※下記について、アンエスケープ後の文字列を返す。
+     * 1. 値にカンマ(,)を含む場合は,値の前後をダブルクオート(")で囲う
+     * 2. ダブルクオート(")は，2つのダブルクオートに置換する("")
+     * 
+     * */
+    /** 後ろに偶数個の「"」が現れる「,」にマッチする正規表現 */
+    static final String REGEX_CSV_COMMA = ",(?=(([^\"]*\"){2})*[^\"]*$)";  
+         
+    /** 最初と最後の「"」にマッチする正規表現*/
+    static final String REGEX_SURROUND_DOUBLEQUATATION = "^\"|\"$";  
+     
+    /** 「""」にマッチする正規表現 */
+    static final String REGEX_DOUBLEQUOATATION = "\"\""; 
+    public String[] splitLineWithComma(String line) {
+        // 分割後の文字列配列
+        String[] arr = null;
+ 
+        try {
+            // １、「"」で囲まれていない「,」で行を分割する。
+            Pattern cPattern = Pattern.compile(REGEX_CSV_COMMA); 
+            String[] cols = cPattern.split(line, -1);  
+             
+            arr = new String[cols.length];  
+            for (int i = 0, len = cols.length; i < len; i++) {  
+                String col = cols[i].trim();  
+                 
+                // ２、最初と最後に「"」があれば削除する。
+                Pattern sdqPattern = 
+                    Pattern.compile(REGEX_SURROUND_DOUBLEQUATATION); 
+                Matcher matcher = sdqPattern.matcher(col);  
+                col = matcher.replaceAll("");  
+      
+                // ３、エスケープされた「"」を戻す。 
+                Pattern dqPattern = 
+                    Pattern.compile(REGEX_DOUBLEQUOATATION); 
+                matcher = dqPattern.matcher(col);  
+                col = matcher.replaceAll("\"");  
+                 
+                arr[i] = col;  
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } 
+         
+        return arr;  
+    }
 }

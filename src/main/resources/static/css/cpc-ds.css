@@ -752,3 +752,102 @@
 .br_reaoson input[type=text] {
 	width:600px;
 }
+/*********************************
+ Batch progress
+*********************************/
+/* グラフタイトル */
+.chart_title {
+  position: absolute;
+  top:0px;
+  left:0px;
+}
+/* グラフX軸凡例 */
+.chart_xlable {
+  position: absolute;
+  top:270px;
+  left:250px;
+}
+/* グラフY軸凡例 */
+.chart_ylable {
+  position: absolute;
+  left:0px;
+  writing-mode: vertical-lr;
+  transform: rotate(-180deg);
+}
+
+/* テーブル(横線のみ) */
+.batchprogresstable {
+  border-collapse: collapse;         /* 境界線結合 */
+  border         : 1px solid #c0c0c0;
+}
+.batchprogresstable th {
+  text-align    : left;
+  border-width: 1px 0px; /* 上下だけ引く */
+  border-style: solid;   /* 線種：実線 */
+  border-color: #c0c0c0;   /* 線色： */
+  padding: 0.3em;        /* セル内側の余白 */
+  font-size      : 10pt;
+}
+.batchprogresstable td {
+  text-align    : left;
+  border-width: 1px 0px; /* 上下だけ引く */
+  border-style: solid;   /* 線種：実線 */
+  border-color: #c0c0c0;   /* 線色： */
+  padding: 0.3em;        /* セル内側の余白 */
+  font-size      : 9pt;
+}
+.batchprogresstable a {
+  text-decoration: underline;
+}
+
+/* テーブル(縦線のみ) */
+.batchprogresstable2 {
+  border-collapse: collapse;         /* 境界線結合 */
+  border         : 1px solid #c0c0c0;
+}
+.batchprogresstable2 th {
+  text-align    : left;
+  border-width: 0px 1px; /* 上下だけ引く */
+  border-style: solid;   /* 線種：実線 */
+  border-color: #c0c0c0;   /* 線色： */
+  padding: 0.3em;        /* セル内側の余白 */
+  font-size      : 10pt;
+}
+.batchprogresstable2 td {
+  text-align    : left;
+  border-width: 0px 1px; /* 上下だけ引く */
+  border-style: solid;   /* 線種：実線 */
+  border-color: #c0c0c0;   /* 線色： */
+  padding: 0.3em;        /* セル内側の余白 */
+  font-size      : 14pt;
+}
+
+/* テーブル(Camera vision) */
+.batchprogresstable3 {
+  border-collapse: collapse;         /* 境界線結合 */
+  border         : 1px solid #c0c0c0;
+}
+.batchprogresstable3 th {
+  text-align    : center;
+  border-width: 1px 0px; /* 上下だけ引く */
+  border-style: solid;   /* 線種：実線 */
+  border-color: #c0c0c0;   /* 線色： */
+  padding: 0.3em;        /* セル内側の余白 */
+  font-size      : 10pt;
+}
+.batchprogresstable3 td {
+  border-width: 1px 0px; /* 上下だけ引く */
+  border-style: solid;   /* 線種：実線 */
+  border-color: #c0c0c0;   /* 線色： */
+  padding: 0.3em;        /* セル内側の余白 */
+  font-size      : 9pt;
+}
+
+/* テーブルの外枠 */
+.batchprogressdiv {
+  border-collapse: collapse;         /* 境界線結合 */
+  border         : 1px solid #c0c0c0;
+}
+.batchprogressdiv label {
+  font-size      : 10pt;
+}

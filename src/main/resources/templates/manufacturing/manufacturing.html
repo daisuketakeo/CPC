@@ -97,49 +97,47 @@ $(function(){
 	
 	// 製造指図メニュークリック
 	$("#hamberger_menu1").click(function() {
-		if($("#BATCH_ID").val()==''){
-			alertdialog(MESSAGE.W013);
-		}else{
-			$("#detail").tabs(
-				{ active: 0 } //タブの初期値指定
-			);
-			$('#detail_dialog').dialog("open");
-			sessionStorage.setItem(['BATCH_ID'],[$("#BATCH_ID").val()]);
-        	$('#setbtnInsructionsDetail').trigger('click');
-		}
+		$("#detail").tabs(
+			{ active: 0 } //タブの初期値指定
+		);
+		sessionStorage.setItem(['BATCH_ID'],[$("#BATCH_ID").val()]);
+		$('#detail_dialog').dialog("open");
+       	$('#setbtnInsructionsDetail').trigger('click');
 	});
 	
 	// 工程別製造指図メニュークリック
 	$("#hamberger_menu2").click(function() {
-		if($("#BATCH_ID").val()==''){
-			alertdialog(MESSAGE.W013);
-		}else{
-			$("#detail").tabs(
-				{ active: 1 } //タブの初期値指定
-			);
-			$('#detail_dialog').dialog("open");
-			sessionStorage.setItem(['BATCH_ID'],[$("#BATCH_ID").val()]);
-        	$('#setbtnProcInsructions').trigger('click');
-		}
+		$("#detail").tabs(
+			{ active: 1 } //タブの初期値指定
+		);
+		sessionStorage.setItem(['BATCH_ID'],[$("#BATCH_ID").val()]);
+		$('#detail_dialog').dialog("open");
+       	$('#setbtnProcInsructions').trigger('click');
 	});
 	
 	// Pre-batch overview
 	$("#hamberger_menu3").click(function() {
 		if($("#PRE_BATCH_OV").val()=='0'){
-			alertdialog("Pre-batch overview cannot be selected.");
+			alertdialog(MESSAGE.W025);
 		}else{
+			sessionStorage.setItem(['BATCH_ID'],[$("#BATCH_ID").val()]);
 			$('#pre_batch_dialog').dialog("open");
+			$('#setbtnPreBatchOverview').trigger('click');
 		}
 
 	});
 	// Batch progress
 	$("#hamberger_menu4").click(function() {
+		sessionStorage.setItem(['BATCH_ID'],[$("#BATCH_ID").val()]);
 		$('#batch_progress_dialog').dialog("open");
+		$('#setbtnBatchProgress').trigger('click');
 	});
 	$("#hamberger_menu4_li").hide();
 	// Post-batch overview
 	$("#hamberger_menu5").click(function() {
+		sessionStorage.setItem(['BATCH_ID'],[$("#BATCH_ID").val()]);
 		$('#post_batch_dialog').dialog("open");
+		$('#setbtnPostBatchOverview').trigger('click');
 	});
 	$("#hamberger_menu5_li").hide();
 	

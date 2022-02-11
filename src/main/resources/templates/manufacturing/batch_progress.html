@@ -3,35 +3,406 @@
 $(function(){
 	
 	// BatchIDクリック時の処理
-	$("#setbtnBatchProgress").click(function(event, id, wgrp) {
-		console.log(id);
-		console.log(wgrp);
+	$("#setbtnBatchProgress").click(function(e) {
+		
+		var BATCH_ID = sessionStorage.getItem(['BATCH_ID']);
+		console.log(BATCH_ID);
+		
 	    // シーケンス取得
 		$.ajax({
 		    type: "GET", 
-		    url: '/ajax/get_sequence',
+		    url: '/ajax/get_progress_batch?BATCH_ID='+BATCH_ID,
 		}).done(function(data, dataType) {
+			//console.log(data);
+			createdata(data.bp_ALERM, "#tdl_alarm");
+			createdata(data.bp_WARNING, "#tdl_warning");
+			createdata(data.bp_HEADER, "#tdl_header");
 			
-			setTimeout(function(){
-				var okbtn = '#okbtn'+wgrp+'002';
-				if($(okbtn).length){
-			 		setDisabled(okbtn,false);
-			 	}
-				
-				if($("#batch_progress_dialog").length){
-			 		$("#batch_progress_dialog").dialog("close");
-			 	}
-              }, 3*1000);
-
+			createchart(data.bp_PH_OVER_TIME, "#chart1", "65,105,225");
+			createchart(data.bp_GLUCOSE_OVER_TIME, "#chart2", "255,0,0");
+			createchart(data.bp_LACTATE_OVER_TIME, "#chart3", "199,21,133");
+			createchart(data.bp_GROWTH_RATE_OVER_TIME, "#chart4", "0,100,0");
+			
+			createcapture(data.bp_CAMERA_VISION, "#tdl_camera_vision");
+			
+			createdata(data.bp_ORVER_VIEW, "#tdl_overview");
+			createdata(data.bp_IDENTIFICATION, "#tdl_identification");
+			createdata(data.bp_CULTURE_CONDITION, "#tdl_culture_conditions");
+			createdata(data.bp_DETAIL, "#tdl_detail");
+			
 		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 		  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 		});
 	});
     
 });
+function createdata(csvfile, tbl){
+	
+	if(csvfile == ""){
+		return false;
+	}
+	
+	// tbodyをクリア
+	$(tbl+" > tbody").html("");
+	
+	 var csvlist = csvfile.split("\r\n");
+	
+    //データをテーブル形式にする 
+    $.each(csvlist,function(i,csvstr){
+		if(csvstr!=''){
+	    	var tbody = $('<tbody />');
+			var tr = $('<tr/>');
+			csvstr = csvstr.slice( 1 ) ;	// 先頭の["]を削除
+			csvstr = csvstr.slice( 0, -1 ) ;	// 末尾の["]を削除
+	    	var csv_arry = csvstr.split("\",\"");	// 区切り文字：[","]
+	    	$.each(csv_arry,function(j,data){
+	    		tr.append($('<td/>').text(data));
+	    	});
+	        tbody.append(tr);
+	        
+	        $(tbl).append(tbody);
+		}
+    });
+}
+function createcapture(capture_json, tbl){
+	
+	if(capture_json == ""){
+		return false;
+	}
+	
+	// tbodyをクリア
+	$(tbl+" > tbody").html("");
+	
+    var jspn = JSON.parse(capture_json);
+    
+    //データをテーブル形式にする 
+    $.each(jspn,function(i,capture_list){
+    	
+   		//console.log(capture_list);
+    	var tbody = $('<tbody />');
+		var tr = $('<tr/>');
+		tr.append($('<td/>').text('Day'+i));
+    	$.each(capture_list,function(j,capture){
+			
+    		if(capture!=null && capture!=''){
+        		var td = $('<td/>');
+            	td.append($("<img></img>", {src: "data:image/;base64,"+capture}));
+            	tr.append(td);
+    		}else{
+    			tr.append($('<td/>').text(''));
+    		}
+
+        });
+        tbody.append(tr);
+        $(tbl).append(tbody);
+        
+    });
+
+}
+
+function createchart(csvfile, chartname, bcolor){
+	 //console.log(csvfile);
+	 var csvlist = csvfile.split("\r\n");
+	 const x = [];
+	 const y = [];
+    $.each(csvlist,function(i,csvstr){
+		csvstr = csvstr.slice( 1 ) ;	// 先頭の["]を削除
+		csvstr = csvstr.slice( 0, -1 ) ;	// 末尾の["]を削除
+    	var csv_arry = csvstr.split("\",\"");	// 区切り文字：[","]
+    	if(csv_arry.length>0){
+    		x.push(csv_arry[0]);
+    		if(csv_arry.length>1){
+        		y.push(csv_arry[1]);
+        	}
+    	}
+        
+    });
+    
+    var myChart = new Chart($(chartname), {
+        type: 'line',
+        data: {
+		    labels : x,
+		    datasets : [
+		        {
+		        lineTension: 0,
+		        data : y,
+		        backgroundColor: [
+	                'rgba('+bcolor+', 0.1)',
+	            ],
+	            borderColor: [
+	                'rgba('+bcolor+', 1)',
+	            ],
+	            borderWidth: 1
+		        }
+		    ]
+		},
+		options: {
+			plugins: {
+               legend : {// 凡例の非表示
+                    display : false,
+               },
+	         },
+	         layout: {
+	               padding: 30,
+		     },
+	    }
+    });
+
+}
 </script>
 <input type="button" id="setbtnBatchProgress" style="display:none;">
-
-<img alt="" class="aicon" src="/images/batch_progress.png" style="width:100%; height: 100%">
-
+<!-- リンク -->
+<div style="position:relative;width:100%;height:80px;">
+<table class="batchprogresstable" style="position: absolute;top:10px;left:10px;">
+<tr>
+	<td><a href="javascript:void(0);">Top page</a></td>
+	<td><div style="width:20px"></div></td>
+	<td><a href="javascript:void(0);">Machine status</a></td>
+	<td><div style="width:20px"></div></td>
+	<td><a href="javascript:void(0);">Batch progress</a></td>
+	<td><div style="width:20px"></div></td>
+	<td><a href="javascript:void(0);">Compare batches (graph)</a></td>
+	<td><div style="width:20px"></div></td>
+	<td><a href="javascript:void(0);">Compare batches (table)</a></td>
+	<td><div style="width:20px"></div></td>
+	<td><a href="javascript:void(0);">Post batch overview</a></td>
+	<td><div style="width:20px"></div></td>
+	<td><a href="javascript:void(0);">Alarm & Warnings</a></td>
+	<td><div style="width:20px"></div></td>
+	<td><a href="javascript:void(0);">Maintenance</a></td>
+	<td><div style="width:20px"></div></td>
+	<td><a href="javascript:void(0);">Inventory</a></td>
+	<td><div style="width:20px"></div></td>
+	<td><a href="javascript:void(0);">Delivery tracking</a></td>
+	<td><div style="width:20px"></div></td>
+	<td><a href="javascript:void(0);">Web</a></td>
+	<td><div style="width:20px"></div></td>
+	<td><a href="javascript:void(0);">Costs</a></td>
+</tr>
+</table>
+</div>
+<!-- Alarm -->
+<div style="position:relative;width:100%;background:#ff6347;height:80px;">
+<table id="tdl_alarm" class="batchprogresstable" style="position: absolute;color: white;top:10px;left:10px;">
+<thead>
+	<tr>
+		<th>Type</th>
+		<th>Code</th>
+		<th>Text(en)</th>
+		<th>Text(ja)</th>
+		<th>Category</th>
+	</tr>
+</thead>
+</table>
+</div>
+<div style="width:100%;height:20px;"></div>
+<div style="position:relative;width:100%;background:#ffd700;height:80px;">
+<!-- Warning -->
+<table id="tdl_warning" class="batchprogresstable" style="position: absolute;top:10px;left:10px;">
+<thead>
+	<tr>
+		<th>Type</th>
+		<th>Code</th>
+		<th>Text(en)</th>
+		<th>Text(ja)</th>
+		<th>Category</th>
+	</tr>
+</thead>
+</table>
+</div>
+<div style="width:100%;height:10px;"></div>
+<!-- header -->
+<table id="tdl_header" class="batchprogresstable2">
+<thead>
+	<tr>
+		<th>Cell type</th>
+		<th>Machine state</th>
+		<th>Process state</th>
+		<th>Growth rate</th>
+		<th>Temperature</th>
+		<th>CO2</th>
+		<th>D-Glucose</th>
+		<th>L-Lactate</th>
+		<th>pH</th>
+		<th>2AAA</th>
+		<th>Kynurenine</th>
+		<th>Cell</th>
+		<th>Progress</th>
+	</tr>
+</thead>
+</table>
+<div style="width:100%;height:10px;"></div>
+<!-- graph -->
+<table id="tdl_graph">
+	<tr>
+		<td style="position: relative;">
+		<div class="batchprogressdiv" style="width:550px;height:300px">
+			<canvas id="chart1" width="550" height="300"></canvas>
+			<label class="chart_title">pH over time</label>
+			<label class="chart_xlable">Hours</label>
+			<label class="chart_ylable" style="top:120px;">pH[1]</label>
+		</div>
+		</td>
+		<td style="position: relative;">
+		<div class="batchprogressdiv" style="width:550px;height:300px">
+			<canvas id="chart2" width="550" height="300"></canvas>
+			<label class="chart_title">Glucose over time</label>
+			<label class="chart_xlable">Hours</label>
+			<label class="chart_ylable" style="top:90px;">Glucose[mM]</label>
+		</div>
+		</td>
+	</tr>
+	<tr>
+		<td style="position: relative;">
+		<div class="batchprogressdiv" style="width:550px;height:300px">
+			<canvas id="chart3" width="550" height="300"></canvas>
+			<label class="chart_title">Lactate over time</label>
+			<label class="chart_xlable">Hours</label>
+			<label class="chart_ylable" style="top:90px;">Lactate[mM]</label>
+		</div>
+		</td>
+		<td style="position: relative;">
+		<div class="batchprogressdiv" style="width:550px;height:300px">
+			<canvas id="chart4" width="550" height="300"></canvas>
+			<label class="chart_title">Growth rate over time</label>
+			<label class="chart_xlable">Hours</label>
+			<label class="chart_ylable" style="top:80px;">Growth rate[%]</label>
+		</div>
+		</td>
+	</tr>
+</table>
+<!-- Camera vision -->
+<table id="tdl_camera_vision" class="batchprogresstable3">
+<thead>
+	<tr>
+		<th></th>
+		<th>Position1</th>
+		<th>Position2</th>
+		<th>Position3</th>
+		<th>Position4</th>
+		<th>Position5</th>
+	</tr>
+</thead>
+</table>
+<table>
+<tr>
+	<td>
+		<!-- Overview -->
+		<div class="batchprogressdiv" style="width:150px;height:350px">
+			<label>Overview</label>
+			<table>
+				<tr>
+					<td>
+						<div style="width:10px;"></div>
+					</td>
+					<td>
+						<table id="tdl_overview" class="batchprogresstable">
+						<thead>
+							<tr>
+								<th style="width:60px;">Item</th>
+								<th style="width:60px;">Details</th>
+							</tr>
+						</thead>
+						</table>
+					</td>
+					<td>
+						<div style="width:10px;"></div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</td>
+	<td>
+		<!-- Identification -->
+		<div class="batchprogressdiv" style="width:700px;height:350px">
+			<label>Identification</label>
+			<table>
+				<tr>
+					<td>
+						<div style="width:10px;"></div>
+					</td>
+					<td>
+						<table id="tdl_identification" class="batchprogresstable">
+						<thead>
+							<tr>
+								<th style="width:80px;">Material type</th>
+								<th style="width:100px;">Manufacturer</th>
+								<th style="width:80px;">Type</th>
+								<th style="width:80px;">Name</th>
+								<th style="width:120px;">Manufacturing date</th>
+								<th style="width:80px;">Serial</th>
+								<th style="width:80px;">Expiry date</th>
+								<th style="width:120px;">Lot number</th>
+							</tr>
+						</thead>
+						</table>
+					</td>
+					<td>
+						<div style="width:10px;"></div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</td>
+	<td>
+		<!-- Culture conditions -->
+		<div class="batchprogressdiv" style="width:250px;height:350px">
+			<label>Culture conditions</label>
+			<table>
+				<tr>
+					<td>
+						<div style="width:10px;"></div>
+					</td>
+					<td>
+						<table id="tdl_culture_conditions" class="batchprogresstable">
+						<thead>
+							<tr>
+								<th style="width:75px;">Item</th>
+								<th style="width:75px;">Settings</th>
+								<th style="width:75px;">Units</th>
+							</tr>
+						</thead>
+						</table>
+					</td>
+					<td>
+						<div style="width:10px;"></div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</td>
+</tr>
+</table>
+<!-- detail -->
+<div class="batchprogressdiv" style="height:350px">
+	<table>
+	<tr><td><div style="height:10px;"></div><td></tr>
+		<tr>
+			<td>
+				<div style="width:10px;"></div>
+			</td>
+			<td>
+				<table id="tdl_detail" class="batchprogresstable">
+				<thead>
+					<tr>
+						<th style="width:100px;">Datetime</th>
+						<th style="width:100px;">Machine ID</th>
+						<th style="width:100px;">Batch ID</th>
+						<th style="width:80px;">Batch elapsed time[days]</th>
+						<th style="width:100px;">State</th>
+						<th style="width:80px;">Type</th>
+						<th style="width:80px;">Code</th>
+						<th style="width:150px;">Text(en)</th>
+						<th style="width:150px;">Text(ja)</th>
+						<th style="width:100px;">Category</th>
+					</tr>
+				</thead>
+				</table>
+			</td>
+			<td>
+				<div style="width:10px;"></div>
+			</td>
+		</tr>
+	</table>
+</div>
 </div>

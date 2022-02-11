@@ -67,6 +67,7 @@ const MESSAGE = {
 	W022: 'Please check Continue or Suspension.',
 	W023: 'Please select material.',
 	W024: 'Different materials checked.',
+	W025: 'Pre-batch overview cannot be selected.',
 	E001: '',
 	E002: '',
 	E003: '',
