@@ -1,6 +1,8 @@
 package com.cpc.viewcontroller;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -19,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
@@ -876,5 +879,25 @@ public class VCCommon {
         } 
          
         return arr;  
+    }
+    
+    /*
+     *ファイルダウンロード
+     */
+    public void download(String dir, String file, HttpServletResponse response) {
+    	
+        try (OutputStream os = response.getOutputStream();) {
+        	
+            byte[] fb1 = 
+            		FileUtils.readFileToByteArray(new File(Paths.get(dir, file).toString()));
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-Disposition", "attachment; filename="+file);
+            response.setContentLength(fb1.length);
+            os.write(fb1);
+            os.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return;
     }
 }

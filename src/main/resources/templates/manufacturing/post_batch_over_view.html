@@ -2,10 +2,412 @@
 <script>
 $(function(){
     
+	// BatchIDクリック時の処理
+	$("#setbtnPostBatchOverView").click(function(e) {
+		
+		var BATCH_ID = sessionStorage.getItem(['BATCH_ID']);
+		//console.log(BATCH_ID);
+		$("#pob_batch_id").val(BATCH_ID);
+		
+	    // シーケンス取得
+		$.ajax({
+		    type: "GET", 
+		    url: '/ajax/get_post_batch?BATCH_ID='+BATCH_ID,
+		}).done(function(data, dataType) {
+			//console.log(data);
+			createdata2(data.pob_ICP);
+			createdata(data.pob_ICP_SUMMARY, "#tdl_pob_summary");
+			createdata(data.pob_ICP_MICROBIOLOGICAL_STERILITY, "#tdl_pob_microbiologocal");
+			createdata(data.pob_ICP_KARYOTYPE_RESULTS, "#tdl_pob_karyotype");
+			createdata(data.pob_ICP_PTENCY, "#tdl_pob_potency");
+			createdata(data.pob_ICP_MATERIAL_OVERVIEW, "#tdl_pob_overview");
+			createdata(data.pob_ICP_MATERIAL_IDENTIFICATION, "#tdl_pob_identification");
+			createdata(data.pob_ICP_CULTURE_CONDITION, "#tdl_pob_culture_condition");
+			
+		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+		  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+		});
+	    
+
+		
+	});
+	
+	// PDFダウンロードクリック
+	$("#pdf_download").click(function() {
+		window.open("/ajax/postbopdf_download?BATCH_ID="+$("#pob_batch_id").val());
+	});
+	
+	// Videoダウンロードクリック
+	$("#video_download").click(function() {
+		window.open("/ajax/postbovideo_download?BATCH_ID="+$("#pob_batch_id").val());
+	});
+	
 });
+function createdata(csvfile, tbl){
+	
+	try{
+		if(csvfile == ""){
+			return false;
+		}
+		
+		// tbodyをクリア
+		$(tbl+" > tbody").html("");
+		
+		 var csvlist = csvfile.split("\r\n");
+		
+	    //データをテーブル形式にする 
+	    $.each(csvlist,function(i,csvstr){
+			if(csvstr!=''){
+		    	var tbody = $('<tbody />');
+				var tr = $('<tr/>');
+				csvstr = csvstr.slice( 1 ) ;	// 先頭の["]を削除
+				csvstr = csvstr.slice( 0, -1 ) ;	// 末尾の["]を削除
+		    	var csv_arry = csvstr.split("\",\"");	// 区切り文字：[","]
+		    	$.each(csv_arry,function(j,data){
+		    		tr.append($('<td/>').text(data));
+		    	});
+		        tbody.append(tr);
+		        
+		        $(tbl).append(tbody);
+			}
+	    });
+	}catch(e){
+		console.log(e);
+	}
+}
+function createdata2(csvfile){
+	
+	try{
+		if(csvfile == ""){
+			return false;
+		}
+		
+		// 工程情報
+		var map = new Map([
+		    [0, '#state'],
+		    [1, '#identity_test'],
+		    [2, '#number_harvested'],
+		    [3, '#viability']
+		]);
+		
+		 var csvlist = csvfile.split("\r\n");
+		
+	    //データをテーブル形式にする 
+	    $.each(csvlist,function(i,csvstr){
+			if(csvstr!=''){
+				
+				csvstr = csvstr.slice( 1 ) ;	// 先頭の["]を削除
+				csvstr = csvstr.slice( 0, -1 ) ;	// 末尾の["]を削除
+		        $(map.get(i)).text(csvstr);
+			}
+	    });
+	}catch(e){
+		console.log(e);
+	}
+}
 </script>
 <input type="button" id="setbtnPostBatchOverView" style="display:none;">
+<input type="hidden" id="pob_batch_id">
+<table>
+<tr>
+	<td rowspan="2">
+		<!-- Overview -->
+		<div class="postbatchdiv" style="width:180px;height:400px">
+			<label>ICP-State(single batch,completed)</label>
+			&nbsp;&nbsp;<label style="font-size:14pt;">Summary</label>
+			<table>
+				<tr>
+					<td>
+						<div style="width:10px;"></div>
+					</td>
+					<td>
+						<table id="tdl_pob_summary" class="batchprogresstable">
+						<thead>
+							<tr>
+								<th style="width:60px;">Item</th>
+								<th style="width:60px;">Value</th>
+							</tr>
+						</thead>
+						</table>
+					</td>
+					<td>
+						<div style="width:10px;"></div>
+					</td>
+				</tr>
+			</table>
+			<div style="height:20px;"></div>
+			&nbsp;&nbsp;<label style="font-size:14pt;">State</label>
+			<div style="height:1px;"></div>
+			&nbsp;&nbsp;<label id="state" style="font-size:18pt;color:gray;"></label>
+		</div>
+	</td>
+	<td rowspan="2">
+		<!-- Identification -->
+		<div class="postbatchdiv" style="width:120px;height:400px">
+			<label>ICP-Identity test &..</label>
+			<table>
+			<tr>
+				<td><div style="width:5px;"></div></td>
+				<td>
+					<label style="font-size:14pt;">Idnetity test</label>
+					<div style="height:1px;"></div>
+					<label id="identity_test" style="font-size:18pt;color:gray;"></label>
+					<div style="height:20px;"></div>
+					<label style="font-size:14pt;">Number of harvested cells</label>
+					<div style="height:1px;"></div>
+					<label id="number_harvested" style="font-size:18pt;color:gray;"></label>
+				</td>
+				<td><div style="width:5px;"></div></td>
+			</tr>
+			</table>
+		</div>
+	</td>
+	<td rowspan="2">
+		<!-- Culture conditions -->
+		<div class="postbatchdiv" style="width:200px;height:400px">
+			<label>ICP-Microbiological sterility</label>
+			<div style="height:1px;"></div>
+			&nbsp;&nbsp;<label style="font-size:14pt;">Microbiological sterility</label>
+			<table>
+				<tr>
+					<td>
+						<div style="width:10px;"></div>
+					</td>
+					<td>
+						<div style="height:340px; overflow-y:auto;">
+						<table id="tdl_pob_microbiologocal" class="batchprogresstable">
+						<thead>
+							<tr>
+								<th style="width:80px;">Item</th>
+								<th style="width:80px;">Result</th>
+							</tr>
+						</thead>
+						</table>
+						</div>
+					</td>
+					<td>
+						<div style="width:10px;"></div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</td>
+	<td rowspan="2">
+		<!-- Culture conditions -->
+		<div class="postbatchdiv" style="width:220px;height:400px">
+			<label>ICP-Genetic fidelity & stability</label>
+			<div style="height:1px;"></div>
+			&nbsp;&nbsp;<label style="font-size:14pt;">Karyotype results</label>
+			<table>
+				<tr>
+					<td>
+						<div style="width:10px;"></div>
+					</td>
+					<td>
+						<div style="height:340px; overflow-y:auto;">
+						<table id="tdl_pob_karyotype" class="batchprogresstable">
+						<thead>
+							<tr>
+								<th style="width:90px;">Item</th>
+								<th style="width:90px;">Result</th>
+							</tr>
+						</thead>
+						</table>
+						</div>
+					</td>
+					<td>
+						<div style="width:10px;"></div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</td>
+	<td>
+		<!-- Culture conditions -->
+		<div class="postbatchdiv" style="width:350px;height:300px">
+			<label>ICP-Potency</label>
+			<div style="height:1px;"></div>
+			&nbsp;&nbsp;<label style="font-size:14pt;">Potency</label>
+			<table>
+				<tr>
+					<td>
+						<div style="width:10px;"></div>
+					</td>
+					<td>
+						<div style="height:240px; overflow-y:auto;">
+						<table id="tdl_pob_potency" class="batchprogresstable">
+						<thead>
+							<tr>
+								<th style="width:60px;">Sample name</th>
+								<th style="width:60px;">Self-renewal</th>
+								<th style="width:60px;">Ectoderm</th>
+								<th style="width:60px;">Mesoderm</th>
+								<th style="width:60px;">Endod</th>
+							</tr>
+						</thead>
+						</table>
+						</div>
+					</td>
+					<td>
+						<div style="width:10px;"></div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</td>
+</tr>
+<tr>
+	<td>
+		<!-- Overview -->
+		<div class="postbatchdiv" style="height:100px">
+			<label>ICP-Viability</label>
+			<div style="height:1px;"></div>
+			&nbsp;&nbsp;<label style="font-size:14pt;">Viability</label>
+			<div style="height:1px;"></div>
+			&nbsp;&nbsp;<label id="viability" style="font-size:18pt;color:gray;"></label>
+		</div>
+	</td>
+</tr>
+</table>
 
-<img alt="" class="aicon" src="/images/post_batch_over_view.png" style="width:100%; height: 100%">
+<table>
+<tr>
+	<td>
+		<!-- Overview -->
+		<div class="postbatchdiv" style="width:650px;height:300px">
+			<label>ICP-Material(single batch, completed)</label>
+			<div style="height:1px;"></div>
+			&nbsp;&nbsp;<label style="font-size:10pt;">Overview</label>
+			<table>
+				<tr>
+					<td>
+						<div style="width:10px;"></div>
+					</td>
+					<td>
+						<div style="height:240px; overflow-y:auto;">
+						<table id="tdl_pob_overview" class="batchprogresstable">
+						<thead>
+							<tr>
+								<th style="width:150px;">Item</th>
+								<th style="width:300px;">Details</th>
+							</tr>
+						</thead>
+						</table>
+						</div>
+					</td>
+					<td>
+						<div style="width:10px;"></div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</td>
+	<td rowspan="2">
+		<!-- Identification -->
+		<div class="postbatchdiv" style="width:180px;height:600px">
+			<label>ICP-Link to EBR file(PDF)</label>
+			<div style="height:1px;"></div>
+			<table>
+			<tr>
+				<td><div style="width:10px;"></div></td>
+				<td>
+					<label style="font-size:14pt;">
+						Electoronic Batch Record
+					</label>
+					<div style="height:1px;"></div>
+					<label style="font-size:10pt;color:gray;">
+						<a id="pdf_download" href="javascript:void(0);">
+							Click here</a> for the EBR file(PDF) related to this completed batch.
+					</label>
+					<div style="height:1px;"></div>
+					<img src="/images/pdf.png">
+					<div style="height:20px;"></div>
+					<label style="font-size:14pt;">
+						Cell qrowth video
+					</label>
+					<div style="height:1px;"></div>
+					<label style="font-size:10pt;color:gray;">
+						<a id="video_download" href="javascript:void(0);">
+							Click here</a> for the video showing the cell growth during the batch manufacturing.
+					</label>
+					<div style="height:1px;"></div>
+					<img src="/images/mp3.png">
+				</td>
+				<td><div style="width:10px;"></div></td>
+			</tr>
+			</table>
+		</div>
+	</td>
+	<td rowspan="2">
+		<!-- Culture conditions -->
+		<div class="postbatchdiv" style="width:250px;height:600px">
+			<label>ICP-Culture conditions(single batch)</label>
+			<div style="height:1px;"></div>
+			&nbsp;&nbsp;<label style="font-size:10pt;">Culture conditions</label>
+			<table>
+				<tr>
+					<td>
+						<div style="width:10px;"></div>
+					</td>
+					<td>
+						<div style="height:540px; overflow-y:auto;">
+						<table id="tdl_pob_culture_condition" class="batchprogresstable">
+						<thead>
+							<tr>
+								<th style="width:75px;">Item</th>
+								<th style="width:75px;">Settings</th>
+								<th style="width:75px;">Units</th>
+							</tr>
+						</thead>
+						</table>
+						</div>
+					</td>
+					<td>
+						<div style="width:10px;"></div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</td>
+</tr>
+<tr>
+	<td>
+		<!-- Overview -->
+		<div class="postbatchdiv" style="width:650px;height:300px">
+			<label></label>
+			<div style="height:1px;"></div>
+			&nbsp;&nbsp;<label style="font-size:10pt;">Identification</label>
+			<table>
+				<tr>
+					<td>
+						<div style="width:10px;"></div>
+					</td>
+					<td>
+						<div style="height:240px; overflow-y:auto;">
+						<table id="tdl_pob_identification" class="batchprogresstable">
+						<thead>
+							<tr>
+								<th style="width:80px;">Material type</th>
+								<th style="width:125px;">Manufacturer</th>
+								<th style="width:80px;">Type</th>
+								<th style="width:80px;">Name</th>
+								<th style="width:135px;">Manufacturing<br>date</th>
+								<th style="width:80px;">Serial</th>
+								<th style="width:90px;">Expiry<br>date</th>
+								<th style="width:120px;">Lot number</th>
+							</tr>
+						</thead>
+						</table>
+						</div>
+					</td>
+					<td>
+						<div style="width:10px;"></div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</td>
+</tr>
+</table>
 
 </div>

@@ -14,21 +14,21 @@ $(function(){
 		    url: '/ajax/get_progress_batch?BATCH_ID='+BATCH_ID,
 		}).done(function(data, dataType) {
 			//console.log(data);
-			createdata(data.bp_ALERM, "#tdl_alarm");
-			createdata(data.bp_WARNING, "#tdl_warning");
-			createdata(data.bp_HEADER, "#tdl_header");
+			createdata(data.bp_ALERM, "#tdl_bp_alarm");
+			createdata(data.bp_WARNING, "#tdl_bp_warning");
+			createdata(data.bp_HEADER, "#tdl_bp_header");
 			
 			createchart(data.bp_PH_OVER_TIME, "#chart1", "65,105,225");
 			createchart(data.bp_GLUCOSE_OVER_TIME, "#chart2", "255,0,0");
 			createchart(data.bp_LACTATE_OVER_TIME, "#chart3", "199,21,133");
 			createchart(data.bp_GROWTH_RATE_OVER_TIME, "#chart4", "0,100,0");
 			
-			createcapture(data.bp_CAMERA_VISION, "#tdl_camera_vision");
+			createcapture(data.bp_CAMERA_VISION, "#tdl_bp_camera_vision");
 			
-			createdata(data.bp_ORVER_VIEW, "#tdl_overview");
-			createdata(data.bp_IDENTIFICATION, "#tdl_identification");
-			createdata(data.bp_CULTURE_CONDITION, "#tdl_culture_conditions");
-			createdata(data.bp_DETAIL, "#tdl_detail");
+			createdata(data.bp_ORVER_VIEW, "#tdl_bp_overview");
+			createdata(data.bp_IDENTIFICATION, "#tdl_bp_identification");
+			createdata(data.bp_CULTURE_CONDITION, "#tdl_bp_culture_conditions");
+			createdata(data.bp_DETAIL, "#tdl_bp_detail");
 			
 		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 		  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
@@ -183,7 +183,7 @@ function createchart(csvfile, chartname, bcolor){
 </div>
 <!-- Alarm -->
 <div style="position:relative;width:100%;background:#ff6347;height:80px;">
-<table id="tdl_alarm" class="batchprogresstable" style="position: absolute;color: white;top:10px;left:10px;">
+<table id="tdl_bp_alarm" class="batchprogresstable" style="position: absolute;color: white;top:10px;left:10px;">
 <thead>
 	<tr>
 		<th>Type</th>
@@ -198,7 +198,7 @@ function createchart(csvfile, chartname, bcolor){
 <div style="width:100%;height:20px;"></div>
 <div style="position:relative;width:100%;background:#ffd700;height:80px;">
 <!-- Warning -->
-<table id="tdl_warning" class="batchprogresstable" style="position: absolute;top:10px;left:10px;">
+<table id="tdl_bp_warning" class="batchprogresstable" style="position: absolute;top:10px;left:10px;">
 <thead>
 	<tr>
 		<th>Type</th>
@@ -212,7 +212,7 @@ function createchart(csvfile, chartname, bcolor){
 </div>
 <div style="width:100%;height:10px;"></div>
 <!-- header -->
-<table id="tdl_header" class="batchprogresstable2">
+<table id="tdl_bp_header" class="batchprogresstable2">
 <thead>
 	<tr>
 		<th>Cell type</th>
@@ -233,7 +233,7 @@ function createchart(csvfile, chartname, bcolor){
 </table>
 <div style="width:100%;height:10px;"></div>
 <!-- graph -->
-<table id="tdl_graph">
+<table id="tdl_bp_graph">
 	<tr>
 		<td style="position: relative;">
 		<div class="batchprogressdiv" style="width:550px;height:300px">
@@ -272,7 +272,7 @@ function createchart(csvfile, chartname, bcolor){
 	</tr>
 </table>
 <!-- Camera vision -->
-<table id="tdl_camera_vision" class="batchprogresstable3">
+<table id="tdl_bp_camera_vision" class="batchprogresstable3">
 <thead>
 	<tr>
 		<th></th>
@@ -296,7 +296,8 @@ function createchart(csvfile, chartname, bcolor){
 						<div style="width:10px;"></div>
 					</td>
 					<td>
-						<table id="tdl_overview" class="batchprogresstable">
+						<div style="height:320px; overflow-y:auto;">
+						<table id="tdl_bp_overview" class="batchprogresstable">
 						<thead>
 							<tr>
 								<th style="width:60px;">Item</th>
@@ -304,6 +305,7 @@ function createchart(csvfile, chartname, bcolor){
 							</tr>
 						</thead>
 						</table>
+						</div>
 					</td>
 					<td>
 						<div style="width:10px;"></div>
@@ -322,20 +324,22 @@ function createchart(csvfile, chartname, bcolor){
 						<div style="width:10px;"></div>
 					</td>
 					<td>
-						<table id="tdl_identification" class="batchprogresstable">
+						<div style="height:320px; overflow-y:auto;">
+						<table id="tdl_bp_identification" class="batchprogresstable">
 						<thead>
 							<tr>
-								<th style="width:80px;">Material type</th>
-								<th style="width:100px;">Manufacturer</th>
-								<th style="width:80px;">Type</th>
-								<th style="width:80px;">Name</th>
+								<th style="width:110px;">Material type</th>
+								<th style="width:120px;">Manufacturer</th>
+								<th style="width:70px;">Type</th>
+								<th style="width:70px;">Name</th>
 								<th style="width:120px;">Manufacturing date</th>
 								<th style="width:80px;">Serial</th>
-								<th style="width:80px;">Expiry date</th>
+								<th style="width:100px;">Expiry date</th>
 								<th style="width:120px;">Lot number</th>
 							</tr>
 						</thead>
 						</table>
+						</div>
 					</td>
 					<td>
 						<div style="width:10px;"></div>
@@ -354,7 +358,8 @@ function createchart(csvfile, chartname, bcolor){
 						<div style="width:10px;"></div>
 					</td>
 					<td>
-						<table id="tdl_culture_conditions" class="batchprogresstable">
+						<div style="height:320px; overflow-y:auto;">
+						<table id="tdl_bp_culture_conditions" class="batchprogresstable">
 						<thead>
 							<tr>
 								<th style="width:75px;">Item</th>
@@ -363,6 +368,7 @@ function createchart(csvfile, chartname, bcolor){
 							</tr>
 						</thead>
 						</table>
+						</div>
 					</td>
 					<td>
 						<div style="width:10px;"></div>
@@ -382,22 +388,24 @@ function createchart(csvfile, chartname, bcolor){
 				<div style="width:10px;"></div>
 			</td>
 			<td>
-				<table id="tdl_detail" class="batchprogresstable">
+				<div style="height:320px; overflow-y:auto;">
+				<table id="tdl_bp_detail" class="batchprogresstable">
 				<thead>
 					<tr>
 						<th style="width:100px;">Datetime</th>
 						<th style="width:100px;">Machine ID</th>
 						<th style="width:100px;">Batch ID</th>
-						<th style="width:80px;">Batch elapsed time[days]</th>
+						<th style="width:100px;">Batch elapsed time[days]</th>
 						<th style="width:100px;">State</th>
 						<th style="width:80px;">Type</th>
 						<th style="width:80px;">Code</th>
-						<th style="width:150px;">Text(en)</th>
-						<th style="width:150px;">Text(ja)</th>
+						<th style="width:160px;">Text(en)</th>
+						<th style="width:160px;">Text(ja)</th>
 						<th style="width:100px;">Category</th>
 					</tr>
 				</thead>
 				</table>
+				</div>
 			</td>
 			<td>
 				<div style="width:10px;"></div>
