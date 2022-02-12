@@ -1,4 +1,4 @@
-<div th:fragment="paramset(wgrp)" th:remove="tag">
+<div th:fragment="post_batch_over_view" th:remove="tag">
 <script>
 $(function(){
     
@@ -15,21 +15,19 @@ $(function(){
 		    url: '/ajax/get_post_batch?BATCH_ID='+BATCH_ID,
 		}).done(function(data, dataType) {
 			//console.log(data);
-			createdata2(data.pob_ICP);
-			createdata(data.pob_ICP_SUMMARY, "#tdl_pob_summary");
-			createdata(data.pob_ICP_MICROBIOLOGICAL_STERILITY, "#tdl_pob_microbiologocal");
-			createdata(data.pob_ICP_KARYOTYPE_RESULTS, "#tdl_pob_karyotype");
-			createdata(data.pob_ICP_PTENCY, "#tdl_pob_potency");
-			createdata(data.pob_ICP_MATERIAL_OVERVIEW, "#tdl_pob_overview");
-			createdata(data.pob_ICP_MATERIAL_IDENTIFICATION, "#tdl_pob_identification");
-			createdata(data.pob_ICP_CULTURE_CONDITION, "#tdl_pob_culture_condition");
+			pob_create_table2(data.pob_ICP);
+			pob_create_table(data.pob_ICP_SUMMARY, "#tdl_pob_summary");
+			pob_create_table(data.pob_ICP_MICROBIOLOGICAL_STERILITY, "#tdl_pob_microbiologocal");
+			pob_create_table(data.pob_ICP_KARYOTYPE_RESULTS, "#tdl_pob_karyotype");
+			pob_create_table(data.pob_ICP_PTENCY, "#tdl_pob_potency");
+			pob_create_table(data.pob_ICP_MATERIAL_OVERVIEW, "#tdl_pob_overview");
+			pob_create_table(data.pob_ICP_MATERIAL_IDENTIFICATION, "#tdl_pob_identification");
+			pob_create_table(data.pob_ICP_CULTURE_CONDITION, "#tdl_pob_culture_condition");
 			
 		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 		  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 		});
 	    
-
-		
 	});
 	
 	// PDFダウンロードクリック
@@ -43,7 +41,7 @@ $(function(){
 	});
 	
 });
-function createdata(csvfile, tbl){
+function pob_create_table(csvfile, tbl){
 	
 	try{
 		if(csvfile == ""){
@@ -75,7 +73,7 @@ function createdata(csvfile, tbl){
 		console.log(e);
 	}
 }
-function createdata2(csvfile){
+function pob_create_table2(csvfile){
 	
 	try{
 		if(csvfile == ""){

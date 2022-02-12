@@ -1,4 +1,4 @@
-<div th:fragment="paramset(wgrp)" th:remove="tag">
+<div th:fragment="pre_batch_over_view" th:remove="tag">
 <script>
 $(function(){
     
@@ -15,11 +15,11 @@ $(function(){
 		    url: '/ajax/get_pre_batch?BATCH_ID='+BATCH_ID,
 		}).done(function(data, dataType) {
 			//console.log(data);
-			createdata(data.prb_ICP_MATERIAL_OVERVIEW, "#tdl_prb_overview");
-			createdata(data.prb_ICP_MATERIAL_IDENTIFICATION, "#tdl_prb_identification");
-			createdata(data.prb_ICP_CULTURE_CONDITION, "#tdl_prb_culture_condition");
-			createdata(data.prb_ICP_ALERM, "#tdl_prb_alarm");
-			createdata(data.prb_ICP_WARNINGS, "#tdl_prb_warnings");
+			prb_create_table(data.prb_ICP_MATERIAL_OVERVIEW, "#tdl_prb_overview");
+			prb_create_table(data.prb_ICP_MATERIAL_IDENTIFICATION, "#tdl_prb_identification");
+			prb_create_table(data.prb_ICP_CULTURE_CONDITION, "#tdl_prb_culture_condition");
+			prb_create_table(data.prb_ICP_ALERM, "#tdl_prb_alarm");
+			prb_create_table(data.prb_ICP_WARNINGS, "#tdl_prb_warnings");
 			
 		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 		  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
@@ -27,7 +27,7 @@ $(function(){
 	    
 	});
 });
-function createdata(csvfile, tbl){
+function prb_create_table(csvfile, tbl){
 	
 	try{
 		if(csvfile == ""){

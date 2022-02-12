@@ -1,4 +1,4 @@
-<div th:fragment="paramset(wgrp)" th:remove="tag">
+<div th:fragment="batch_progress" th:remove="tag">
 <script>
 $(function(){
 	
@@ -6,7 +6,8 @@ $(function(){
 	$("#setbtnBatchProgress").click(function(e) {
 		
 		var BATCH_ID = sessionStorage.getItem(['BATCH_ID']);
-		console.log(BATCH_ID);
+		var OK_BUTTON = sessionStorage.getItem(['OK_BUTTON']);
+		//console.log(BATCH_ID);
 		$("#pb_batch_id").val(BATCH_ID);
 		
 	    // シーケンス取得
@@ -15,25 +16,31 @@ $(function(){
 		    url: '/ajax/get_progress_batch?BATCH_ID='+BATCH_ID,
 		}).done(function(data, dataType) {
 			//console.log(data);
-			createdata(data.bp_ALERM, "#tdl_bp_alarm");
-			createdata(data.bp_WARNING, "#tdl_bp_warning");
-			createdata(data.bp_HEADER, "#tdl_bp_header");
+			bp_create_table(data.bp_ALERM, "#tdl_bp_alarm");
+			bp_create_table(data.bp_WARNING, "#tdl_bp_warning");
+			bp_create_table(data.bp_HEADER, "#tdl_bp_header");
 			
-			createchart(data.bp_PH_OVER_TIME, "#chart1", "65,105,225");
-			createchart(data.bp_GLUCOSE_OVER_TIME, "#chart2", "255,0,0");
-			createchart(data.bp_LACTATE_OVER_TIME, "#chart3", "199,21,133");
-			createchart(data.bp_GROWTH_RATE_OVER_TIME, "#chart4", "0,100,0");
+			bp_create_chart(data.bp_PH_OVER_TIME, "#chart1", "65,105,225");
+			bp_create_chart(data.bp_GLUCOSE_OVER_TIME, "#chart2", "255,0,0");
+			bp_create_chart(data.bp_LACTATE_OVER_TIME, "#chart3", "199,21,133");
+			bp_create_chart(data.bp_GROWTH_RATE_OVER_TIME, "#chart4", "0,100,0");
 			
-			createcapture(data.bp_CAMERA_VISION, "#tdl_bp_camera_vision");
+			bp_create_capture_table(data.bp_CAMERA_VISION, "#tdl_bp_camera_vision");
 			
-			createdata(data.bp_ORVER_VIEW, "#tdl_bp_overview");
-			createdata(data.bp_IDENTIFICATION, "#tdl_bp_identification");
-			createdata(data.bp_CULTURE_CONDITION, "#tdl_bp_culture_conditions");
-			createdata(data.bp_DETAIL, "#tdl_bp_detail");
+			bp_create_table(data.bp_ORVER_VIEW, "#tdl_bp_overview");
+			bp_create_table(data.bp_IDENTIFICATION, "#tdl_bp_identification");
+			bp_create_table(data.bp_CULTURE_CONDITION, "#tdl_bp_culture_conditions");
+			bp_create_table(data.bp_DETAIL, "#tdl_bp_detail");
+			
+			if(OK_BUTTON!=null && OK_BUTTON!=''){
+				setDisabled(OK_BUTTON,false);
+			}
 			
 		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 		  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 		});
+	    
+		sessionStorage.removeItem('CULTURE_START');
 	});
 	
 	// Post-batch overviewリンククリック
@@ -45,7 +52,7 @@ $(function(){
 	});
     
 });
-function createdata(csvfile, tbl){
+function bp_create_table(csvfile, tbl){
 	
 	if(csvfile == ""){
 		return false;
@@ -73,7 +80,7 @@ function createdata(csvfile, tbl){
 		}
     });
 }
-function createcapture(capture_json, tbl){
+function bp_create_capture_table(capture_json, tbl){
 	
 	if(capture_json == ""){
 		return false;
@@ -109,7 +116,7 @@ function createcapture(capture_json, tbl){
 
 }
 
-function createchart(csvfile, chartname, bcolor){
+function bp_create_chart(csvfile, chartname, bcolor){
 	 //console.log(csvfile);
 	 var csvlist = csvfile.split("\r\n");
 	 const x = [];

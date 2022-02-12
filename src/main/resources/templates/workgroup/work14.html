@@ -20,12 +20,19 @@ $(function() {
 	var eximg = '#eximg'+wgrp;
 	
 	// 作業手順取得
-	var wm = wmjson.list.filter((u) => u.work_GROUP == wgrp);
-	Object.keys(wm).forEach(function (key) {
-		var WORK_MASTER = wm[key];
-		$(td).text(WORK_MASTER.work);
- 		$(imgCapture1).attr("src", "data:image/;base64,"+WORK_MASTER.capture1);
-	});
+	$.ajax({
+		type: "GET", 
+		url: '/ajax/get_ebrtest?WORK_GROUP='+wgrp,
+		}).done(function(data, dataType) {
+			if(data.length>0){
+	 		    var WORK_MASTER = data[0];
+	 		    $(td).text(WORK_MASTER.work);
+	 	 		$(imgCapture1).attr("src", "data:image/;base64,"+WORK_MASTER.capture1);
+	 	    }
+		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+		  // エラーメッセージの表示
+		  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+		});
 	
 	// チェックボックスの設定
 	$(checkpass).on("click", function(){

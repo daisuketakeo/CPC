@@ -142,6 +142,7 @@ function execsequence(csvfile, tbl, interval, autointerval){
 	
 	var wgrp = /*[[${wgrp}]]*/ '';
 	var batch_id = $('#BATCH_ID').val();
+	var okbtn = '#okbtn'+wgrp;
 	
 	// テーブルの明細部分(tbody)を生成
 	// tbodyをクリア
@@ -155,7 +156,10 @@ function execsequence(csvfile, tbl, interval, autointerval){
         	if(csvstr === ""){
         		return false;
         	}
-        	var csv_arry = csvstr.split(",");
+        	
+        	csvstr = csvstr.slice( 1 ) ;	// 先頭の["]を削除
+    		csvstr = csvstr.slice( 0, -1 ) ;	// 末尾の["]を削除
+        	var csv_arry = csvstr.split("\",\"");	// 区切り文字：[","]
         	
         	var tbody = $('<tbody />');
         	
@@ -171,14 +175,11 @@ function execsequence(csvfile, tbl, interval, autointerval){
             
             if(i==(csvfile.length-2)){
             	// 最後の文字列表示後、CellQualia Top 画面を表示
-            	$('#cellqualia_top_dialog').dialog("open");
-            	setTimeout(function(){
-                	
-            		$('#cellqualia_top_dialog').dialog("close");
-            		$('#setbtnBatchProgress').trigger('click', [batch_id,wgrp]);
-            		$('#batch_progress_dialog').dialog("open");
-                    
-                  }, autointerval*1000);
+            	sessionStorage.setItem(['BATCH_ID'],[$("#BATCH_ID").val()]);
+				sessionStorage.setItem(['DIALOG_FLG'],['batch_progress']);
+				sessionStorage.setItem(['OK_BUTTON'],[okbtn+'002']);
+				$('#cellqualia_top_dialog').dialog("open");
+				$('#setbtnCellQualiaTop').trigger('click');
             }
             
           }, interval*1000);

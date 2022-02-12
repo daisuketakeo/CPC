@@ -33,7 +33,7 @@ $(function() {
 		    $(work_id).val(WORK_MASTER.work_ID);
 		if(WORK_MASTER.csv1!==null){
 			csvfile1 = WORK_MASTER.csv1.split("\r\n");
-			createdata(csvfile1, tblcsv1);
+			createdata21(csvfile1, tblcsv1);
 		}
 	});
 	
@@ -153,7 +153,7 @@ $(function() {
 	
 });
 
-function createdata(csvfile, tblcsv){
+function createdata21(csvfile, tblcsv){
 	
 	// テーブルの明細部分(tbody)を生成
 	// tbodyをクリア
@@ -164,13 +164,15 @@ function createdata(csvfile, tblcsv){
     	if(csvstr === ""){
     		return false;
     	}
-    	var csv_arry = csvstr.split(",");
+    	csvstr = csvstr.slice( 1 ) ;	// 先頭の["]を削除
+		csvstr = csvstr.slice( 0, -1 ) ;	// 末尾の["]を削除
+    	var csv_arry = csvstr.split("\",\"");	// 区切り文字：[","]
     	
     	var tbody = $('<tbody />');
     	
 		var tr1 = $('<tr/>');
         tr1.append($('<td/>').text(csv_arry[0]));
-        tr1.append($('<td/>').text(csv_arry[1]+" "+csv_arry[2]));
+        tr1.append($('<td/>').text(csv_arry[1]));
         
         tbody.append(tr1);
         
@@ -226,7 +228,7 @@ function createdata(csvfile, tblcsv){
 			<td style="width:100px;">
 				<!-- データ取り込みアイコン -->
 				<!-- https://icooon-mono.com/ -->
-				<a href="#" th:id="'btnDataGet'+${wgrp}"><img src="/images/dataget.png" alt="データ取り込みアイコン"></i></a>
+				<a href="javascript:void(0);" th:id="'btnDataGet'+${wgrp}"><img src="/images/dataget.png" alt="データ取り込みアイコン"></i></a>
 			</td>
 			<td style="width:600px;height:320px;">
 				<table th:id="'tblcsv1'+${wgrp}" class="csvtbl">
