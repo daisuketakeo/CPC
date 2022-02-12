@@ -136,20 +136,28 @@ $(function(){
 	// Pre-batch overview
 	$("#hamberger_menu3").click(function() {
 		if($("#PRE_BATCH_OV").val()=='0'){
-			alertdialog("Pre-batch overview cannot be selected.");
+			alertdialog(MESSAGE.W025);
 		}else{
-			$('#pre_batch_dialog').dialog("open");
+			sessionStorage.setItem(['BATCH_ID'],[$("#BATCH_ID").val()]);
+			sessionStorage.setItem(['DIALOG_FLG'],['pre_batch']);
+			$('#cellqualia_top_dialog').dialog("open");
+			$('#setbtnCellQualiaTop').trigger('click');
 		}
-
 	});
 	// Batch progress
 	$("#hamberger_menu4").click(function() {
-		$('#batch_progress_dialog').dialog("open");
+		sessionStorage.setItem(['BATCH_ID'],[$("#BATCH_ID").val()]);
+		sessionStorage.setItem(['DIALOG_FLG'],['batch_progress']);
+		$('#cellqualia_top_dialog').dialog("open");
+		$('#setbtnCellQualiaTop').trigger('click');
 	});
 	$("#hamberger_menu4_li").hide();
 	// Post-batch overview
 	$("#hamberger_menu5").click(function() {
-		$('#post_batch_dialog').dialog("open");
+		sessionStorage.setItem(['BATCH_ID'],[$("#BATCH_ID").val()]);
+		sessionStorage.setItem(['DIALOG_FLG'],['post_batch']);
+		$('#cellqualia_top_dialog').dialog("open");
+		$('#setbtnCellQualiaTop').trigger('click');
 	});
 	$("#hamberger_menu5_li").hide();
 	

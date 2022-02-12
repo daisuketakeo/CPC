@@ -170,41 +170,42 @@ public class VCAjax extends VCCommon{
     @GetMapping("/ajax/get_cellqualia_top")
     public Map<String,String> get_cellqualia_top() {
     	
-    	String CELLQUALIA_TOP_PATH = super.getProperties().getCELLQUALIA_TOP_PATH();
-    	String CELLQUALIA_TOP_AUTOTRANS = super.getProperties().getCELLQUALIA_TOP_AUTOTRANS();
-    	String CELLQUALIA_TOP_LOGO = super.getProperties().getCELLQUALIA_TOP_LOGO();
-    	String CELLQUALIA_TOP_MACHINE_STATUS_SUMMARY = super.getProperties().getCELLQUALIA_TOP_MACHINE_STATUS_SUMMARY();
-    	String CELLQUALIA_TOP_TOP = super.getProperties().getCELLQUALIA_TOP_TOP();
-    	String CELLQUALIA_TOP_FINISHED = super.getProperties().getCELLQUALIA_TOP_FINISHED();
-    	String CELLQUALIA_TOP_ALARMS = super.getProperties().getCELLQUALIA_TOP_ALARMS();
-    	String CELLQUALIA_TOP_MAINTENANCE = super.getProperties().getCELLQUALIA_TOP_MAINTENANCE();
-    	String CELLQUALIA_TOP_PRE_BATCH = super.getProperties().getCELLQUALIA_TOP_PRE_BATCH();
-    	String CELLQUALIA_TOP_BATCH_PROGRESS = super.getProperties().getCELLQUALIA_TOP_BATCH_PROGRESS();
-    	String CELLQUALIA_TOP_POST_BATCH_STANDALONE = super.getProperties().getCELLQUALIA_TOP_POST_BATCH_STANDALONE();
-    	String CELLQUALIA_TOP_POST_BATCH_ENTERPRISE = super.getProperties().getCELLQUALIA_TOP_POST_BATCH_ENTERPRISE();
-    	String CELLQUALIA_TOP_BATCH_LIST = super.getProperties().getCELLQUALIA_TOP_BATCH_LIST();
-    	String CELLQUALIA_TOP_DELIVERY = super.getProperties().getCELLQUALIA_TOP_DELIVERY();
-    	String CELLQUALIA_TOP_COSTS = super.getProperties().getCELLQUALIA_TOP_COSTS();
-    	String CELLQUALIA_TOP_LOG_ANALYSIS = super.getProperties().getCELLQUALIA_TOP_LOG_ANALYSIS();
+    	String dir = super.getProperties().getCELLQUALIA_TOP_PATH();
+    	
+    	String AUTOTRANS = super.getProperties().getCELLQUALIA_TOP_AUTOTRANS();
+    	
+    	String LOGO = super.getProperties().getCELLQUALIA_TOP_LOGO();
+    	String MACHINE_STATUS_SUMMARY = super.getProperties().getCELLQUALIA_TOP_MACHINE_STATUS_SUMMARY();
+    	String TOP = super.getProperties().getCELLQUALIA_TOP_TOP();
+    	String FINISHED = super.getProperties().getCELLQUALIA_TOP_FINISHED();
+    	String ALARMS = super.getProperties().getCELLQUALIA_TOP_ALARMS();
+    	String MAINTENANCE = super.getProperties().getCELLQUALIA_TOP_MAINTENANCE();
+    	String PRE_BATCH = super.getProperties().getCELLQUALIA_TOP_PRE_BATCH();
+    	String BATCH_PROGRESS = super.getProperties().getCELLQUALIA_TOP_BATCH_PROGRESS();
+    	String POST_BATCH_STANDALONE = super.getProperties().getCELLQUALIA_TOP_POST_BATCH_STANDALONE();
+    	String POST_BATCH_ENTERPRISE = super.getProperties().getCELLQUALIA_TOP_POST_BATCH_ENTERPRISE();
+    	String BATCH_LIST = super.getProperties().getCELLQUALIA_TOP_BATCH_LIST();
+    	String DELIVERY = super.getProperties().getCELLQUALIA_TOP_DELIVERY();
+    	String COSTS = super.getProperties().getCELLQUALIA_TOP_COSTS();
+    	String LOG_ANALYSIS = super.getProperties().getCELLQUALIA_TOP_LOG_ANALYSIS();
 
     	Map<String,String> map = new HashMap<String,String>(){
     		{
-    			put("CELLQUALIA_TOP_PATH", CELLQUALIA_TOP_PATH);
-    			put("CELLQUALIA_TOP_AUTOTRANS", CELLQUALIA_TOP_AUTOTRANS);
-    			put("CELLQUALIA_TOP_LOGO", CELLQUALIA_TOP_LOGO);
-    			put("CELLQUALIA_TOP_MACHINE_STATUS_SUMMARY", CELLQUALIA_TOP_MACHINE_STATUS_SUMMARY);
-    			put("CELLQUALIA_TOP_TOP", CELLQUALIA_TOP_TOP);
-    			put("CELLQUALIA_TOP_FINISHED", CELLQUALIA_TOP_FINISHED);
-    			put("CELLQUALIA_TOP_ALARMS", CELLQUALIA_TOP_ALARMS);
-    			put("CELLQUALIA_TOP_MAINTENANCE", CELLQUALIA_TOP_MAINTENANCE);
-    			put("CELLQUALIA_TOP_PRE_BATCH", CELLQUALIA_TOP_PRE_BATCH);
-    			put("CELLQUALIA_TOP_BATCH_PROGRESS", CELLQUALIA_TOP_BATCH_PROGRESS);
-    			put("CELLQUALIA_TOP_POST_BATCH_STANDALONE", CELLQUALIA_TOP_POST_BATCH_STANDALONE);
-    			put("CELLQUALIA_TOP_POST_BATCH_ENTERPRISE", CELLQUALIA_TOP_POST_BATCH_ENTERPRISE);
-    			put("CELLQUALIA_TOP_BATCH_LIST", CELLQUALIA_TOP_BATCH_LIST);
-    			put("CELLQUALIA_TOP_DELIVERY", CELLQUALIA_TOP_DELIVERY);
-    			put("CELLQUALIA_TOP_COSTS", CELLQUALIA_TOP_COSTS);
-    			put("CELLQUALIA_TOP_LOG_ANALYSIS", CELLQUALIA_TOP_LOG_ANALYSIS);
+    			put("AUTOTRANS"              ,AUTOTRANS );
+    			put("LOGO"                   ,get_base64(dir, LOGO) );
+    			put("MACHINE_STATUS_SUMMARY" ,get_base64(dir, MACHINE_STATUS_SUMMARY) );
+    			put("TOP"                    ,get_base64(dir, TOP) );
+    			put("FINISHED"               ,get_base64(dir, FINISHED) );
+    			put("ALARMS"                 ,get_base64(dir, ALARMS) );
+    			put("MAINTENANCE"            ,get_base64(dir, MAINTENANCE) );
+    			put("PRE_BATCH"              ,get_base64(dir, PRE_BATCH) );
+    			put("BATCH_PROGRESS"         ,get_base64(dir, BATCH_PROGRESS) );
+    			put("POST_BATCH_STANDALONE"  ,get_base64(dir, POST_BATCH_STANDALONE) );
+    			put("POST_BATCH_ENTERPRISE"  ,get_base64(dir, POST_BATCH_ENTERPRISE) );
+    			put("BATCH_LIST"             ,get_base64(dir, BATCH_LIST) );
+    			put("DELIVERY"               ,get_base64(dir, DELIVERY) );
+    			put("COSTS"                  ,get_base64(dir, COSTS) );
+    			put("LOG_ANALYSIS"           ,get_base64(dir, LOG_ANALYSIS) );
     		}
     	};
     	

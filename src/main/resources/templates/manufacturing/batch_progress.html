@@ -7,6 +7,7 @@ $(function(){
 		
 		var BATCH_ID = sessionStorage.getItem(['BATCH_ID']);
 		console.log(BATCH_ID);
+		$("#pb_batch_id").val(BATCH_ID);
 		
 	    // シーケンス取得
 		$.ajax({
@@ -33,6 +34,14 @@ $(function(){
 		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 		  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 		});
+	});
+	
+	// Post-batch overviewリンククリック
+	$("#bp_post_batch_overview_link").click(function() {
+		sessionStorage.setItem(['BATCH_ID'],[$("#pb_batch_id").val()]);
+		$('#post_batch_dialog').dialog("open");
+		$('#setbtnPostBatchOverView').trigger('click');
+		$('#batch_progress_dialog').dialog("close");
 	});
     
 });
@@ -151,6 +160,8 @@ function createchart(csvfile, chartname, bcolor){
 }
 </script>
 <input type="button" id="setbtnBatchProgress" style="display:none;">
+<input type="button" id="setbtnPostBatchOverView" style="display:none;">
+<input type="hidden" id="pb_batch_id">
 <!-- リンク -->
 <div style="position:relative;width:100%;height:80px;">
 <table class="batchprogresstable" style="position: absolute;top:10px;left:10px;">
@@ -165,7 +176,7 @@ function createchart(csvfile, chartname, bcolor){
 	<td><div style="width:20px"></div></td>
 	<td><a href="javascript:void(0);">Compare batches (table)</a></td>
 	<td><div style="width:20px"></div></td>
-	<td><a href="javascript:void(0);">Post batch overview</a></td>
+	<td><a id="bp_post_batch_overview_link" href="javascript:void(0);">Post batch overview</a></td>
 	<td><div style="width:20px"></div></td>
 	<td><a href="javascript:void(0);">Alarm & Warnings</a></td>
 	<td><div style="width:20px"></div></td>

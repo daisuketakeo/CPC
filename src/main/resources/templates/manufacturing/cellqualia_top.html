@@ -2,123 +2,488 @@
 <script>
 $(function(){
 	
-	var wgrp = /*[[${wgrp}]]*/ '';
-	
-	var btnPrebatch = '#btnPrebatch'+wgrp;
-	var btnBatchprogress = '#btnBatchprogress'+wgrp;
-	var btnPostbatch = '#btnPostbatch'+wgrp;
-	
-	var Cellqualia_top_autrans = "";	// 自動遷移間隔
-	var imgPath = "";					// 画像パス
+	var btnPrebatch = '#btnPrebatch';
+	var btnBatchprogress = '#btnBatchprogress';
+	var btnPostbatch = '#btnPostbatch';
 
-    // Cellqualia top情報取得
-	$.ajax({
-	    type: "GET", 
-	    url: '/ajax/get_cellqualia_top',
-	}).done(function(data, dataType) {
-	    Cellqualia_top_autrans = data.CELLQUALIA_TOP_AUTOTRANS;
-	    imgPath = data.CELLQUALIA_TOP_PATH;
+	// クリック時の処理
+	$("#setbtnCellQualiaTop").click(function(e) {
+		
+		var BATCH_ID = sessionStorage.getItem(['BATCH_ID']);
+		var DIALOG_FLG = sessionStorage.getItem(['DIALOG_FLG']);
+		//console.log(BATCH_ID);
+		$("#cqt_batch_id").val(BATCH_ID);
+		
+		// Cellqualia top情報取得
+		$.ajax({
+		    type: "GET", 
+		    url: '/ajax/get_cellqualia_top',
+		}).done(function(data, dataType) {
+			//console.log(data.AUTOTRANS);
+			
+			$("#cqt_logo").attr("src", "data:image/;base64,"+data.LOGO);
+			$("#cqt_top").attr("src", "data:image/;base64,"+data.TOP);
+			$("#cqt_finished").attr("src", "data:image/;base64,"+data.FINISHED);
+			$("#cqt_alarms").attr("src", "data:image/;base64,"+data.ALARMS);
+			$("#cqt_mainte").attr("src", "data:image/;base64,"+data.MAINTENANCE);
+			$("#cqt_pre_batch").attr("src", "data:image/;base64,"+data.PRE_BATCH);
+			$("#cqt_batch_progress").attr("src", "data:image/;base64,"+data.BATCH_PROGRESS);
+			$("#cqt_post_batch_s").attr("src", "data:image/;base64,"+data.POST_BATCH_STANDALONE);
+			$("#cqt_post_batch_e").attr("src", "data:image/;base64,"+data.POST_BATCH_ENTERPRISE);
+			$("#cqt_batch_list").attr("src", "data:image/;base64,"+data.BATCH_LIST);
+			$("#cqt_delivery").attr("src", "data:image/;base64,"+data.DELIVERY);
+			$("#cqt_costs").attr("src", "data:image/;base64,"+data.COSTS);
+			$("#cqt_log_analysis").attr("src", "data:image/;base64,"+data.LOG_ANALYSIS);
+		    
+		    // Prebatchクリック時の処理
+			$(btnPrebatch).click(function() {
+				sessionStorage.setItem(['BATCH_ID'],[BATCH_ID]);
+				$('#pre_batch_dialog').dialog("open");
+				$('#setbtnPreBatchOverview').trigger('click');
+				$('#cellqualia_top_dialog').dialog("close");
+			});
+			
+			// Batchprogressクリック時の処理
+			$(btnBatchprogress).click(function() {
+				sessionStorage.setItem(['BATCH_ID'],[BATCH_ID]);
+				$('#batch_progress_dialog').dialog("open");
+				$('#setbtnBatchProgress').trigger('click');
+				$('#cellqualia_top_dialog').dialog("close");
+			});
+			
+			// Postbatchクリック時の処理
+			$(btnPostbatch).click(function() {
+				sessionStorage.setItem(['BATCH_ID'],[BATCH_ID]);
+				$('#post_batch_dialog').dialog("open");
+				$('#setbtnPostBatchOverView').trigger('click');
+				$('#cellqualia_top_dialog').dialog("close");
+			});
+			
+			if(data.AUTOTRANS!==""){
+				if(DIALOG_FLG=='batch_progress'){
+					setTimeout(function(){
+						sessionStorage.setItem(['BATCH_ID'],[BATCH_ID]);
+						$('#batch_progress_dialog').dialog("open");
+						$('#setbtnBatchProgress').trigger('click');
+						$('#cellqualia_top_dialog').dialog("close");
+			          }, data.AUTOTRANS*1000);
+				}
+				if(DIALOG_FLG=='post_batch'){
+					setTimeout(function(){
+						sessionStorage.setItem(['BATCH_ID'],[BATCH_ID]);
+						$('#post_batch_dialog').dialog("open");
+						$('#setbtnPostBatchOverView').trigger('click');
+						$('#cellqualia_top_dialog').dialog("close");
+			          }, data.AUTOTRANS*1000);
+				}
+				if(DIALOG_FLG=='pre_batch'){
+					setTimeout(function(){
+						sessionStorage.setItem(['BATCH_ID'],[BATCH_ID]);
+						$('#pre_batch_dialog').dialog("open");
+						$('#setbtnPreBatchOverview').trigger('click');
+						$('#cellqualia_top_dialog').dialog("close");
+			          }, data.AUTOTRANS*1000);
+				}
+			}
 
-		// 画像設定
-	    $("#imgCQtop_logo"+wgrp).attr("src", "data:image/;base64,"+imgPath+data.CELLQUALIA_TOP_LOGO);
-
-	    $("imgCQtop_1_1"+wgrp).attr("src", "data:image/;base64,"+imgPath+data.CELLQUALIA_TOP_MACHINE_STATUS_SUMMARY);
-	    $("imgCQtop_1_2"+wgrp).attr("src", "data:image/;base64,"+imgPath+data.CELLQUALIA_TOP_TOP);
-	    $("imgCQtop_1_3"+wgrp).attr("src", "data:image/;base64,"+imgPath+data.CELLQUALIA_TOP_FINISHED);
-	    $("imgCQtop_1_4"+wgrp).attr("src", "data:image/;base64,"+imgPath+data.CELLQUALIA_TOP_ALARMS);
-	    $("imgCQtop_1_5"+wgrp).attr("src", "data:image/;base64,"+imgPath+data.CELLQUALIA_TOP_MAINTENANCE);
-
-	    $("imgCQtop_2_1"+wgrp).attr("src", "data:image/;base64,"+imgPath+data.CELLQUALIA_TOP_PRE_BATCH);
-	    $("imgCQtop_2_2"+wgrp).attr("src", "data:image/;base64,"+imgPath+data.CELLQUALIA_TOP_BATCH_PROGRESS);
-	    $("imgCQtop_2_3"+wgrp).attr("src", "data:image/;base64,"+imgPath+data.CELLQUALIA_TOP_POST_BATCH_STANDALONE);
-	    $("imgCQtop_2_4"+wgrp).attr("src", "data:image/;base64,"+imgPath+data.CELLQUALIA_TOP_POST_BATCH_ENTERPRISE);
-
-	    $("imgCQtop_3_1"+wgrp).attr("src", "data:image/;base64,"+imgPath+data.CELLQUALIA_TOP_BATCH_LIST);
-	    $("imgCQtop_3_2"+wgrp).attr("src", "data:image/;base64,"+imgPath+data.CELLQUALIA_TOP_DELIVERY);
-	    $("imgCQtop_3_3"+wgrp).attr("src", "data:image/;base64,"+imgPath+data.CELLQUALIA_TOP_COSTS);
-	    $("imgCQtop_3_4"+wgrp).attr("src", "data:image/;base64,"+imgPath+data.CELLQUALIA_TOP_LOG_ANALYSIS);
-
-	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+		  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+		});
+		
 	});
-	
-	if(Cellqualia_top_autrans!==""){
-		// 自動遷移間隔が設定されている場合
-		setTimeout(function(){
-			// 設定時間待機後に自動遷移する
-			
-			// 遷移先はパラメータで判定？
-			
-			// 自分を閉じる？
-          }, Cellqualia_top_autrans*1000);
-	}else{
-		// 自動遷移間隔が設定されていない場合
-		// 遷移先はパラメータで判定？hrefを全部設定してよい？
-		$(btnPrebatch).prop("href","/pre_batch_over_view");
-		$(btnBatchprogress).prop("href","/batch_progress");
-		$(btnPostbatch).prop("href","/post_batch_over_view");
-	}
-	
-	// Prebatchクリック時の処理
-	$(btnPrebatch).click(function() {
-		if(Cellqualia_top_autrans==""){
-			// Pre-batch overview画面に遷移する
-			alertdialog('Pre-batch overview画面に遷移する');
-			// 何かパラメータを設定する？
-			//$(btnPrebatch).prop("href","/pre_batch_over_view");
-		}
-	})
-	
-	// Batchprogressクリック時の処理
-	$(btnBatchprogress).click(function() {
-		if(Cellqualia_top_autrans==""){
-			// Batch progress overview画面に遷移する
-			alertdialog('Batch progress overview画面に遷移する');
-			// 何かパラメータを設定する？
-			//$(btnBatchprogress).prop("href","/batch_progress");
-		}
-	})
-	
-	// Postbatchクリック時の処理
-	$(btnPostbatch).click(function() {
-		if(Cellqualia_top_autrans==""){
-			// Post-batch overview画面に遷移する
-			alertdialog('Post-batch overview画面に遷移する');
-			// 何かパラメータを設定する？
-			//$(btnPostbatch).prop("href","/post_batch_over_view");
-		}
-	})
 
 });
 </script>
+<input type="button" id="setbtnCellQualiaTop" style="display:none;">
+<input type="hidden" id="cqt_batch_id">
 
-<img alt="" class="aicon" src="/images/cellqulia_top.png" style="width:100%; height: 100%">
+<!-- Logo & title -->
+<div class="cellqualiadiv">
+	<div style="width:600px;height:100px;">
+		<img id="cqt_logo" style="width:600px;height:100px;">
+	</div>
+	<div style="width:500px;height:100px;background: #3f9939;">
+		&nbsp;
+		<label style="font-size:6pt;">ICP-State(single batch,completed)</label>
+		<div style="height:1px;"></div>
+		&nbsp;&nbsp;
+		<label style="font-size:14pt;color: white;">
+			ICP-Pharma 4.0 Cell Manufacturing System
+		</label>
+		<div style="height:5px;"></div>
+		&nbsp;&nbsp;
+		<label style="font-size:8pt;color: white;">
+			Bringing Manual Cell Culture to Automated Manufacturing,
+			 to deliver a higher level of quality contorol
+		</label>
+	</div>
+</div>
+<!-- 各リンク -->
+<div class="cellqualiadiv">
 
-<table>
-<tr>
-	<td colspan="3"><img th:id="'imgCQtop_logo'+${wgrp}" alt="LOGO" class="aicon" style="width:100%; height: 100%"></td>
-</tr>
-<tr>
-	<td>
-	<img th:id="'imgCQtop_1_1'+${wgrp}" alt="MACHINE_STATUS_SUMMARY" class="aicon" style="width:100%; height: 100%">
-	<img th:id="'imgCQtop_1_2'+${wgrp}" alt="TOP" class="aicon" style="width:100%; height: 100%">
-	<img th:id="'imgCQtop_1_3'+${wgrp}" alt="FINISHED" class="aicon" style="width:100%; height: 100%">
-	<img th:id="'imgCQtop_1_4'+${wgrp}" alt="ALARMS" class="aicon" style="width:100%; height: 100%">
-	<img th:id="'imgCQtop_1_5'+${wgrp}" alt="MAINTENANCE" class="aicon" style="width:100%; height: 100%">
-	</td>
-	<td>
-	<a href="#" th:id="'btnPrebatch'+${wgrp}"><img th:id="'imgCQtop_2_1'+${wgrp}" alt="PRE_BATCH" class="aicon" style="width:100%; height: 100%"></a>
-	<a href="#" th:id="'btnBatchprogress'+${wgrp}"><img th:id="'imgCQtop_2_2'+${wgrp}" alt="BATCH_PROGRESS" class="aicon" style="width:100%; height: 100%"></a>
-	<a href="#" th:id="'btnPostbatch'+${wgrp}"><img th:id="'imgCQtop_2_3'+${wgrp}" alt="POST_BATCH_STANDALONE" class="aicon" style="width:100%; height: 100%"></a>
-	<img th:id="'imgCQtop_2_4'+${wgrp}" alt="POST_BATCH_ENTERPRISE" class="aicon" style="width:100%; height: 100%">
-	</td>
-	<td>
-	<img th:id="'imgCQtop_3_1'+${wgrp}" alt="BATCH_LIST" class="aicon" style="width:100%; height: 100%">
-	<img th:id="'imgCQtop_3_2'+${wgrp}" alt="DELIVERY" class="aicon" style="width:100%; height: 100%">
-	<img th:id="'imgCQtop_3_3'+${wgrp}" alt="COSTS" class="aicon" style="width:100%; height: 100%">
-	<img th:id="'imgCQtop_3_4'+${wgrp}" alt="LOG_ANALYSIS" class="aicon" style="width:100%; height: 100%">
-	</td>
-</tr>
-</table>
+	<!-- 1列目 -->
+	<div style="width:340px;">
+	
+		<!-- ICP-Machine status summary -->
+		<div class="cellqualia_childdiv1" style="height:130px;background: #86d2ed;">
+			&nbsp;
+			<label style="font-size:6pt;">ICP-Machine status summary</label>
+			<label style="font-size:6pt;background: #dcdcdc;">
+				<img src="/images/calender.png" style="width:10px;height:10px;">
+				Last 15 minutes
+			</label>
+			
+			<div style="height:1px;"></div>
+			&nbsp;
+			<label style="font-size:12pt;color:white;">
+				Machine status summary
+			</label>
+			<div style="height:1px;"></div>
+			<table>
+				<tr>
+					<td><div style="width:10px;"></div></td>
+					<td>
+						<table class="cellqualiatable" style="color:white;">
+							<thead>
+								<tr>
+									<th style="width:70px;">Total<br>machines</th>
+									<th style="width:70px;">Running<br>machines</th>
+									<th style="width:70px;">Alerts<br>triggered</th>
+									<th style="width:70px;">Warnings<br>triggered</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>5</td>
+									<td>4</td>
+									<td>1</td>
+									<td>1</td>
+								</tr>
+							</tbody>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</div>
+		
+		<!-- ICP-Top page -->
+		<div class="cellqualia_childdiv1" style="height:100px;background: #ffa500;">
+			&nbsp;
+			<label style="font-size:6pt;">ICP-Top page</label>
+			<label style="font-size:6pt;background: #dcdcdc;">
+				<img src="/images/calender.png" style="width:10px;height:10px;">
+				Last 15 minutes
+			</label>
+			
+			<div style="height:10px;"></div>
+			
+			&nbsp;&nbsp;
+			<a href="javascript:void(0);" style="font-size:12pt;color:white;">
+				Machine status
+			</a>
+			
+			<img id="cqt_top" class="cellqualia_childaicon" 
+				style="height:70px;top:10px;right:30px;">
+			
+		</div>
+		
+		<!-- ICP-Finished products inventor -->
+		<div class="cellqualia_childdiv1" style="height:100px;background: #7acf74;">
+			&nbsp;
+			<label style="font-size:6pt;">ICP-Finished products inventor</label>
+			<label style="font-size:6pt;background: #dcdcdc;">
+				<img src="/images/calender.png" style="width:10px;height:10px;">
+				Last 15 minutes
+			</label>
+			
+			<div style="height:10px;"></div>
+			
+			&nbsp;&nbsp;
+			<a href="javascript:void(0);" style="font-size:12pt;color:white;">
+				Finished products inventory
+			</a>
+			
+			<img id="cqt_finished" class="cellqualia_childaicon" 
+				style="height:70px;top:10px;right:30px;">
+		</div>
+		
+		<!-- ICP-Alarms & warnings -->
+		<div class="cellqualia_childdiv1" style="height:100px;background: #ca5f35;">
+			&nbsp;
+			<label style="font-size:6pt;">ICP-Alarms & warnings</label>
+			<label style="font-size:6pt;background: #dcdcdc;">
+				<img src="/images/calender.png" style="width:10px;height:10px;">
+				Last 15 minutes
+			</label>
+			
+			<div style="height:10px;"></div>
+			
+			&nbsp;&nbsp;
+			<a href="javascript:void(0);" style="font-size:12pt;color:white;">
+				Alarms & Warnings
+			</a>
+			
+			<img id="cqt_alarms" class="cellqualia_childaicon" 
+				style="height:70px;top:10px;right:30px;">
+		</div>
+		
+		<!-- ICP-Maintenance & calibration -->
+		<div class="cellqualia_childdiv1" style="height:100px;background: #4491e7;">
+			&nbsp;
+			<label style="font-size:6pt;">ICP-Maintenance & calibration</label>
+			<label style="font-size:6pt;background: #dcdcdc;">
+				<img src="/images/calender.png" style="width:10px;height:10px;">
+				Last 15 minutes
+			</label>
+			
+			<div style="height:10px;"></div>
+			
+			&nbsp;&nbsp;
+			<a href="javascript:void(0);" style="font-size:12pt;color:white;">
+				Maintenance & Calibration
+			</a>
+			
+			<img id="cqt_mainte" class="cellqualia_childaicon" 
+				style="height:70px;top:10px;right:30px;">
+		</div>
+	
+	</div>
+	
+	<!-- 2列目 -->
+	<div style="width:420px;">
+	
+		<!-- ICP-Pre-batch -->
+		<div class="cellqualia_childdiv2" style="height:125px;background: #fd986f;">
+			&nbsp;
+			<label style="font-size:6pt;">ICP-Pre-batch</label>
+			<label style="font-size:6pt;background: #dcdcdc;">
+				<img src="/images/calender.png" style="width:10px;height:10px;">
+				Last 15 minutes
+			</label>
+			
+			<div style="height:10px;"></div>
+			
+			&nbsp;&nbsp;
+			<a id="btnPrebatch" href="javascript:void(0);" style="font-size:12pt;color:white;">
+				Pre-batch overview
+			</a>
+			
+			<img id="cqt_pre_batch" class="cellqualia_childaicon" 
+				style="height:90px;top:15px;right:30px;">
+		</div>
+		
+		<!-- ICP-Batch progress -->
+		<div class="cellqualia_childdiv2" style="height:125px;background: #4cbce4;">
+			&nbsp;
+			<label style="font-size:6pt;">ICP-Batch progress</label>
+			<label style="font-size:6pt;background: #dcdcdc;">
+				<img src="/images/calender.png" style="width:10px;height:10px;">
+				Last 15 minutes
+			</label>
+			
+			<div style="height:10px;"></div>
+			
+			&nbsp;&nbsp;
+			<a id="btnBatchprogress" href="javascript:void(0);" style="font-size:12pt;color:white;">
+				Batch progress
+			</a>
+			
+			<img id="cqt_batch_progress" class="cellqualia_childaicon" 
+				style="height:90px;top:15px;right:25px;">
+		</div>
+		
+		<!-- ICP-Post batch overview(standalone) -->
+		<div class="cellqualia_childdiv2" style="height:125px;background: #f2bc33;">
+			&nbsp;
+			<label style="font-size:6pt;">ICP-Post batch overview(standalone)</label>
+			<label style="font-size:6pt;background: #dcdcdc;">
+				<img src="/images/calender.png" style="width:10px;height:10px;">
+				Last 15 minutes
+			</label>
+			
+			<div style="height:10px;"></div>
+			
+			&nbsp;&nbsp;
+			<a id="btnPostbatch" href="javascript:void(0);" style="font-size:12pt;color:white;">
+				Post batch overview
+			</a>
+			
+			<div style="height:5px;"></div>
+			
+			&nbsp;&nbsp;
+			<label style="font-size:6pt;color:white;">Standalone</label>
+			
+			<img id="cqt_post_batch_s" class="cellqualia_childaicon" 
+				style="height:90px;top:15px;right:30px;">
+		</div>
+		
+		<!-- ICP-Post batch overview(enterprise) -->
+		<div class="cellqualia_childdiv2" style="height:155px;background: #f2bc33;">
+			&nbsp;
+			<label style="font-size:6pt;">ICP-Post batch overview(enterprise)</label>
+			<label style="font-size:6pt;background: #dcdcdc;">
+				<img src="/images/calender.png" style="width:10px;height:10px;">
+				Last 15 minutes
+			</label>
+			
+			<div style="height:10px;"></div>
+			
+			&nbsp;&nbsp;
+			<label style="font-size:12pt;color:white;">
+				Post batch overview
+			</label>
+			
+			<div style="height:5px;"></div>
+			
+			&nbsp;&nbsp;
+			<label style="font-size:6pt;color:white;">Enterprise</label>
+			
+			<div style="height:10px;"></div>
+			
+			&nbsp;&nbsp;
+			<a href="javascript:void(0);" style="font-size:12pt;color:white;">
+				Dashboard
+			</a>
+			
+			<div style="height:5px;"></div>
+			
+			&nbsp;&nbsp;
+			<a href="javascript:void(0);" style="font-size:12pt;color:white;">
+				Canvas
+			</a>
+			
+			<img id="cqt_post_batch_e" class="cellqualia_childaicon" 
+				style="height:90px;top:30px;right:30px;">
+		</div>
+		
+	</div>
+	
+	<!-- 3列目 -->
+	<div style="width:340px;">
+	
+		<!-- ICP-Batch list -->
+		<div class="cellqualia_childdiv1" style="height:165px;background: #7acf74;">
+			&nbsp;
+			<label style="font-size:6pt;">ICP-Batch list</label>
+			<label style="font-size:6pt;background: #dcdcdc;">
+				<img src="/images/calender.png" style="width:10px;height:10px;">
+				Last 15 minutes
+			</label>
+			
+			<div style="height:5px;"></div>
+			
+			&nbsp;&nbsp;
+			<label style="font-size:12pt;color:white;">
+				Compare batches
+			</label>
+			
+			<div style="height:5px;"></div>
+			
+			&nbsp;&nbsp;
+			<a href="javascript:void(0);" style="font-size:8pt;color:white;">
+				Comparison table #1
+			</a>
+			
+			<div style="height:1px;"></div>
+			
+			&nbsp;&nbsp;
+			<a href="javascript:void(0);" style="font-size:8pt;color:white;">
+				Comparison table #2
+			</a>
+			
+			<div style="height:1px;"></div>
+			
+			&nbsp;&nbsp;
+			<a href="javascript:void(0);" style="font-size:8pt;color:white;">
+				Comparisonrun charts
+			</a>
+			
+			<div style="height:1px;"></div>
+			
+			&nbsp;&nbsp;
+			<a href="javascript:void(0);" style="font-size:8pt;color:white;">
+				Comparisonrun quality
+			</a>
+			
+			<img id="cqt_batch_list" class="cellqualia_childaicon" 
+				style="height:90px;top:50px;right:30px;">
+		</div>
+		
+		<!-- ICP-Delivery tracking -->
+		<div class="cellqualia_childdiv1" style="height:145px;background: #45bdb0;">
+			&nbsp;
+			<label style="font-size:6pt;">ICP-Delivery tracking</label>
+			<label style="font-size:6pt;background: #dcdcdc;">
+				<img src="/images/calender.png" style="width:10px;height:10px;">
+				Last 15 minutes
+			</label>
+			
+			<div style="height:15px;"></div>
+			
+			&nbsp;&nbsp;
+			<label style="font-size:12pt;color:white;">
+				Delivery tracking
+			</label>
+			
+			<div style="height:10px;"></div>
+			
+			&nbsp;&nbsp;
+			<a href="javascript:void(0);" style="font-size:12pt;color:white;">
+				Dashboard
+			</a>
+			
+			<div style="height:5px;"></div>
+			
+			&nbsp;&nbsp;
+			<a href="javascript:void(0);" style="font-size:12pt;color:white;">
+				Canvas
+			</a>
+			
+			<img id="cqt_delivery" class="cellqualia_childaicon" 
+				style="height:90px;top:30px;right:30px;">
+		</div>
+		
+		<!-- ICP-Costs analysis (for menu) -->
+		<div class="cellqualia_childdiv1" style="height:125px;background: #ec77a8;">
+			&nbsp;
+			<label style="font-size:6pt;">ICP-Costs analysis (for menu)</label>
+			<label style="font-size:6pt;background: #dcdcdc;">
+				<img src="/images/calender.png" style="width:10px;height:10px;">
+				Last 15 minutes
+			</label>
+			
+			<div style="height:10px;"></div>
+			
+			&nbsp;&nbsp;
+			<a href="javascript:void(0);" style="font-size:12pt;color:white;">
+				Costs analysis
+			</a>
+			
+			<img id="cqt_costs" class="cellqualia_childaicon" 
+				style="height:90px;top:15px;right:30px;">
+		</div>
+		
+		<!-- ICP-Users access logs analysis -->
+		<div class="cellqualia_childdiv1" style="height:95px;background: #bbbbbb;">
+			&nbsp;
+			<label style="font-size:6pt;">ICP-Users access logs analysis</label>
+			<label style="font-size:6pt;background: #dcdcdc;">
+				<img src="/images/calender.png" style="width:10px;height:10px;">
+				Last 15 minutes
+			</label>
+			
+			<div style="height:10px;"></div>
+			
+			&nbsp;&nbsp;
+			<a href="javascript:void(0);" style="font-size:12pt;color:white;">
+				Users access logs analysis
+			</a>
+			
+			<img id="cqt_log_analysis" class="cellqualia_childaicon" 
+				style="height:60px;top:15px;right:20px;">
+		</div>
+		
+	</div>
+</div>
 
 </div>

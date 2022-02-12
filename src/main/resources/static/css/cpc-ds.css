@@ -867,3 +867,52 @@
 .postbatchdiv a {
   text-decoration: underline;
 }
+
+/*********************************
+ CellQualia Top
+*********************************/
+.cellqualiadiv {
+  display:flex;
+  border: 4px solid #26823f;
+  width:1100px;
+}
+.cellqualiadiv a {
+  text-decoration: underline;
+}
+
+.cellqualia_childdiv1 {
+  border: 3px solid #26823f;
+  width:340px;
+  position: relative;
+}
+.cellqualia_childdiv2 {
+  border: 3px solid #26823f;
+  width:415px;
+  position: relative;
+}
+.cellqualia_childaicon {
+  position: absolute;
+}
+/* テーブル(横線のみ) */
+.cellqualiatable {
+  border-collapse: collapse;         /* 境界線結合 */
+  border         : 1px solid #c0c0c0;
+}
+.cellqualiatable th {
+  text-align    : center;
+  border-width: 1px 0px; /* 上下だけ引く */
+  border-style: solid;   /* 線種：実線 */
+  border-color: #c0c0c0;   /* 線色： */
+  padding: 0.3em;        /* セル内側の余白 */
+  font-size      : 8pt;
+  word-break : break-all;
+}
+.cellqualiatable td {
+  text-align    : left;
+  border-width: 1px 0px; /* 上下だけ引く */
+  border-style: solid;   /* 線種：実線 */
+  border-color: #c0c0c0;   /* 線色： */
+  padding: 0.3em;        /* セル内側の余白 */
+  font-size      : 6pt;
+  word-break : break-all;
+}

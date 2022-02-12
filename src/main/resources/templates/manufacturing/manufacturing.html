@@ -121,23 +121,25 @@ $(function(){
 			alertdialog(MESSAGE.W025);
 		}else{
 			sessionStorage.setItem(['BATCH_ID'],[$("#BATCH_ID").val()]);
-			$('#pre_batch_dialog').dialog("open");
-			$('#setbtnPreBatchOverview').trigger('click');
+			sessionStorage.setItem(['DIALOG_FLG'],['pre_batch']);
+			$('#cellqualia_top_dialog').dialog("open");
+			$('#setbtnCellQualiaTop').trigger('click');
 		}
-
 	});
 	// Batch progress
 	$("#hamberger_menu4").click(function() {
 		sessionStorage.setItem(['BATCH_ID'],[$("#BATCH_ID").val()]);
-		$('#batch_progress_dialog').dialog("open");
-		$('#setbtnBatchProgress').trigger('click');
+		sessionStorage.setItem(['DIALOG_FLG'],['batch_progress']);
+		$('#cellqualia_top_dialog').dialog("open");
+		$('#setbtnCellQualiaTop').trigger('click');
 	});
 	$("#hamberger_menu4_li").hide();
 	// Post-batch overview
 	$("#hamberger_menu5").click(function() {
 		sessionStorage.setItem(['BATCH_ID'],[$("#BATCH_ID").val()]);
-		$('#post_batch_dialog').dialog("open");
-		$('#setbtnPostBatchOverView').trigger('click');
+		sessionStorage.setItem(['DIALOG_FLG'],['post_batch']);
+		$('#cellqualia_top_dialog').dialog("open");
+		$('#setbtnCellQualiaTop').trigger('click');
 	});
 	$("#hamberger_menu5_li").hide();
 	
