@@ -611,7 +611,7 @@ public class VCAjax extends VCCommon{
     	}
     	
     	// batch release の場合
-    	if(work_group.indexOf("BR")>0) {
+    	if(work_group.indexOf("BR")>=0) {
     		
     		// QC-2/QC-3/QC-4のいづれか最後に承認した場合
 			// 作業手順マスタ取得
