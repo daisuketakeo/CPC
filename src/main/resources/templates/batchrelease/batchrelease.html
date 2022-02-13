@@ -187,7 +187,7 @@ function search(){
     		
     		// Process Name
     		var pm = pmjson.list.find((u) => u.process_ID == WORK_GROUP_MASTER.process_ID);
-			tr_is.append($('<td/>').text(pm.process_NAME));
+			tr_is.append($('<td/>').text(pm!=null ? pm.process_NAME : ""));
 			
 			// 指図作成日時取得
 		 	var args = 
@@ -333,7 +333,7 @@ function search(){
 			
 			// Process Name
 			var pm = pmjson.list.find((u) => u.process_ID == WORK_GROUP_MASTER.process_ID);
-			tr.append($('<td/>').text(pm.process_NAME));
+			tr.append($('<td/>').text(pm!=null ? pm.process_NAME : ""));
 			
 			if(data.length>=1){
 				WORK_RESULT_TABLE = data[0];
@@ -370,7 +370,7 @@ function search(){
 $(window).on('load', function() {
     var BR_PROCESS_ID = sessionStorage.getItem(['BR_PROCESS_ID']);
 	if(BR_PROCESS_ID!=null && BR_PROCESS_ID!=''){
-		
+		//console.log('BR_BG_COLOR:'+sessionStorage.getItem(['BR_BG_COLOR']));
 		select_row(BR_PROCESS_ID);
 	}
 });
@@ -389,7 +389,7 @@ function select_row(process_id){
 		var childtr = tbodys1.eq(i).children();
 		var childtd = $(childtr).children();
 		var pid = $(childtd.eq(1)).text();
-		console.log(pid+":"+childtr.css('background'));
+		//console.log(pid+":"+childtr.css('background'));
 		if(pid==process_id){
 			bgcolor = childtr.css('background');
 		}
@@ -401,14 +401,15 @@ function select_row(process_id){
 		var childtr = tbodys2.eq(i).children();
 		var childtd = $(childtr).children();
 		var pid = $(childtd.eq(1)).text();
-		console.log(pid+":"+childtr.css('background'));
+		//console.log(pid+":"+childtr.css('background'));
 		if(pid==process_id){
 			bgcolor = childtr.css('background');
 		}
 	}
 	
-	console.log('bgcolor:'+bgcolor);
-	
+	if(bgcolor==null || bgcolor==''){
+		bgcolor = sessionStorage.getItem(['BR_BG_COLOR']);
+	}
 	// Deviation Reportのtbodyをクリア
 	$("#tbl4 > tbody").html("");
 
@@ -458,6 +459,7 @@ function select_row(process_id){
 		
 		// データ保持
 		sessionStorage.setItem(['BR_PROCESS_ID'],[process_id]);
+		sessionStorage.setItem(['BR_BG_COLOR'],[bgcolor]);
 		
 		$("html,body").animate({scrollTop:$("#devreport_header").offset().top});
 	
