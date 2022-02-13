@@ -1,13 +1,13 @@
-<div th:fragment="pre_batch_over_view" th:remove="tag">
-<script>
+<div th:fragment="paramset(batch_id)" th:remove="tag">
+<script th:inline="javascript">
+var BATCH_ID = /*[[${batch_id}]]*/ '';
 $(function(){
     
 	// BatchIDクリック時の処理
 	$("#setbtnPreBatchOverview").click(function(e) {
 		
-		var BATCH_ID = sessionStorage.getItem(['BATCH_ID']);
+		$("#pre_batch_overview_panel").show();
 		//console.log(BATCH_ID);
-		$("#pob_batch_id").val(BATCH_ID);
 		
 	    // シーケンス取得
 		$.ajax({
@@ -61,7 +61,7 @@ function prb_create_table(csvfile, tbl){
 }
 </script>
 <input type="button" id="setbtnPreBatchOverview" style="display:none;">
-
+<div id="pre_batch_overview_panel" style="display:none;">
 <table>
 <tr>
 	<td>
@@ -212,4 +212,5 @@ function prb_create_table(csvfile, tbl){
 </tr>
 </table>
 
+</div>
 </div>

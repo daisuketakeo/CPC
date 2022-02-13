@@ -131,6 +131,15 @@ public class VCInstructions extends VCCommon{
     	
 		return disp_main;
     }
+    
+    @RequestMapping(value = "/post_batch_over_view_window", method = RequestMethod.GET)
+    public String post_batch_over_view_window(
+    		@RequestParam(name=param_batch_id) String BATCH_ID, Model model) {
+        if(!super.loginCheck()) return disp_login;
+        setHeaderAttr(model);
+        model.addAttribute(param_batch_id, BATCH_ID);
+		return "/manufacturing/post_batch_over_view_window";
+    }
 
 }
 

@@ -105,7 +105,6 @@ $(function(){
 		if($("#PRE_BATCH_OV").val()=='0'){
 			alertdialog(MESSAGE.W025);
 		}else{
-			sessionStorage.setItem(['BATCH_ID'],[batch_id]);
 			sessionStorage.setItem(['DIALOG_FLG'],['pre_batch']);
 			$('#cellqualia_top_dialog').dialog("open");
 			$('#setbtnCellQualiaTop').trigger('click');
@@ -113,7 +112,6 @@ $(function(){
 	});
 	// Batch progress
 	$("#hamberger_menu4").click(function() {
-		sessionStorage.setItem(['BATCH_ID'],[batch_id]);
 		sessionStorage.setItem(['DIALOG_FLG'],['batch_progress']);
 		$('#cellqualia_top_dialog').dialog("open");
 		$('#setbtnCellQualiaTop').trigger('click');
@@ -121,7 +119,6 @@ $(function(){
 	$("#hamberger_menu4_li").hide();
 	// Post-batch overview
 	$("#hamberger_menu5").click(function() {
-		sessionStorage.setItem(['BATCH_ID'],[batch_id]);
 		sessionStorage.setItem(['DIALOG_FLG'],['post_batch']);
 		$('#cellqualia_top_dialog').dialog("open");
 		$('#setbtnCellQualiaTop').trigger('click');
@@ -181,18 +178,18 @@ $(function(){
 	</div>
 	<!-- CellQualia Top　ダイアログ  -->
 	<div id="cellqualia_top_dialog">
-		<div th:insert="/manufacturing/cellqualia_top"></div>
+		<div th:insert="/manufacturing/cellqualia_top::paramset('__${batch_id}__')"></div>
 	</div>
 	<!-- Batch Progress　ダイアログ  -->
 	<div id="batch_progress_dialog">
-		<div th:insert="/manufacturing/batch_progress"></div>
+		<div th:insert="/manufacturing/batch_progress::paramset('__${batch_id}__')"></div>
 	</div>
 	<!-- Pre batch overview　ダイアログ  -->
 	<div id="pre_batch_dialog">
-		<div th:insert="/manufacturing/pre_batch_over_view"></div>
+		<div th:insert="/manufacturing/pre_batch_over_view::paramset('__${batch_id}__')"></div>
 	</div>
 	<!-- Post batch overview　ダイアログ  -->
 	<div id="post_batch_dialog">
-		<div th:insert="/manufacturing/post_batch_over_view"></div>
+		<div th:insert="/manufacturing/post_batch_over_view::paramset('__${batch_id}__')"></div>
 	</div>
 </div>

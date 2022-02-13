@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/head :: head_fragment(title = 'dummy', scripts = ~{::script}, links = ~{::link})"></head>
+<body class="text-center">
+
+  	<!-- コンテンツ -->
+  	<h4 style="width:1000px">Post-batch overview</h4>
+  	<div th:insert="/manufacturing/post_batch_over_view::paramset('__${BATCH_ID}__')"></div>
+  	
+  	<script>
+	$(function(){
+		$('#setbtnPostBatchOverView').trigger('click');
+	});
+	</script>
+
+</body>
+</html>

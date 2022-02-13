@@ -1,13 +1,14 @@
-<div th:fragment="post_batch_over_view" th:remove="tag">
-<script>
+<div th:fragment="paramset(batch_id)" th:remove="tag">
+<script th:inline="javascript">
+var BATCH_ID = /*[[${batch_id}]]*/ '';
 $(function(){
     
 	// BatchIDクリック時の処理
 	$("#setbtnPostBatchOverView").click(function(e) {
 		
-		var BATCH_ID = sessionStorage.getItem(['BATCH_ID']);
-		//console.log(BATCH_ID);
-		$("#pob_batch_id").val(BATCH_ID);
+		$("#post_batch_overview_panel").show();
+		
+		console.log(BATCH_ID);
 		
 	    // シーケンス取得
 		$.ajax({
@@ -32,12 +33,12 @@ $(function(){
 	
 	// PDFダウンロードクリック
 	$("#pdf_download").click(function() {
-		window.open("/ajax/postbopdf_download?BATCH_ID="+$("#pob_batch_id").val());
+		window.open("/ajax/postbopdf_download?BATCH_ID="+BATCH_ID);
 	});
 	
 	// Videoダウンロードクリック
 	$("#video_download").click(function() {
-		window.open("/ajax/postbovideo_download?BATCH_ID="+$("#pob_batch_id").val());
+		window.open("/ajax/postbovideo_download?BATCH_ID="+BATCH_ID);
 	});
 	
 });
@@ -105,7 +106,7 @@ function pob_create_table2(csvfile){
 }
 </script>
 <input type="button" id="setbtnPostBatchOverView" style="display:none;">
-<input type="hidden" id="pob_batch_id">
+<div id="post_batch_overview_panel" style="display:none;">
 <table>
 <tr>
 	<td rowspan="2">
@@ -408,4 +409,5 @@ function pob_create_table2(csvfile){
 </tr>
 </table>
 
+</div>
 </div>

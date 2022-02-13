@@ -1,5 +1,6 @@
-<div th:fragment="cellqualia_top" th:remove="tag">
-<script>
+<div th:fragment="paramset(batch_id)" th:remove="tag">
+<script th:inline="javascript">
+var BATCH_ID = /*[[${batch_id}]]*/ '';
 $(function(){
 	
 	var btnPrebatch = '#btnPrebatch';
@@ -40,16 +41,13 @@ $(function(){
 		$("#cellqualia_logo_title_area").show();
 		$("#cellqualia_link_area").show();
 		
-		var BATCH_ID = sessionStorage.getItem(['BATCH_ID']);
 		var DIALOG_FLG = sessionStorage.getItem(['DIALOG_FLG']);
 		var AUTOTRANS = $("#cqt_autotrans").val();
 		//console.log(BATCH_ID);
-		$("#cqt_batch_id").val(BATCH_ID);
 		
 		if(AUTOTRANS!==""){
 			if(DIALOG_FLG=='batch_progress'){
 				setTimeout(function(){
-					sessionStorage.setItem(['BATCH_ID'],[BATCH_ID]);
 					$('#batch_progress_dialog').dialog("open");
 					$('#setbtnBatchProgress').trigger('click');
 					$('#cellqualia_top_dialog').dialog("close");
@@ -57,7 +55,6 @@ $(function(){
 			}
 			if(DIALOG_FLG=='post_batch'){
 				setTimeout(function(){
-					sessionStorage.setItem(['BATCH_ID'],[BATCH_ID]);
 					$('#post_batch_dialog').dialog("open");
 					$('#setbtnPostBatchOverView').trigger('click');
 					$('#cellqualia_top_dialog').dialog("close");
@@ -65,7 +62,6 @@ $(function(){
 			}
 			if(DIALOG_FLG=='pre_batch'){
 				setTimeout(function(){
-					sessionStorage.setItem(['BATCH_ID'],[BATCH_ID]);
 					$('#pre_batch_dialog').dialog("open");
 					$('#setbtnPreBatchOverview').trigger('click');
 					$('#cellqualia_top_dialog').dialog("close");
@@ -74,7 +70,6 @@ $(function(){
 		}else{
 			// Prebatchクリック時の処理
 			$(btnPrebatch).click(function() {
-				sessionStorage.setItem(['BATCH_ID'],[BATCH_ID]);
 				$('#pre_batch_dialog').dialog("open");
 				$('#setbtnPreBatchOverview').trigger('click');
 				$('#cellqualia_top_dialog').dialog("close");
@@ -82,7 +77,6 @@ $(function(){
 			
 			// Batchprogressクリック時の処理
 			$(btnBatchprogress).click(function() {
-				sessionStorage.setItem(['BATCH_ID'],[BATCH_ID]);
 				$('#batch_progress_dialog').dialog("open");
 				$('#setbtnBatchProgress').trigger('click');
 				$('#cellqualia_top_dialog').dialog("close");
@@ -90,7 +84,6 @@ $(function(){
 			
 			// Postbatchクリック時の処理
 			$(btnPostbatch).click(function() {
-				sessionStorage.setItem(['BATCH_ID'],[BATCH_ID]);
 				$('#post_batch_dialog').dialog("open");
 				$('#setbtnPostBatchOverView').trigger('click');
 				$('#cellqualia_top_dialog').dialog("close");
@@ -102,7 +95,6 @@ $(function(){
 });
 </script>
 <input type="button" id="setbtnCellQualiaTop" style="display:none;">
-<input type="hidden" id="cqt_batch_id">
 <input type="hidden" id="cqt_autotrans">
 
 <!-- Logo & title -->
