@@ -87,6 +87,7 @@ public class VCCommon {
 	public static final String param_status_list      = "STATUS_LIST";		// 画面へ渡すステータスリスト
 	public static final String param_disp_flg      = "DISP_FLG";		// 画面へ渡すステータスリスト
 	public static final String param_return_url      = "RETURN_URL";		// 遷移元URL
+	public static final String param_status_storage_end      = "Q06";		// 受入 保管済みステータス
 	
 	/*
 	 * REST URL

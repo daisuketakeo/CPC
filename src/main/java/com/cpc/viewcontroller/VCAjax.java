@@ -1011,6 +1011,8 @@ public class VCAjax extends VCCommon{
 			 		List<ACCEPT_TABLE> list3 = getRest(url, ACCEPT_TABLE.class);
 			 		if(list3.size()>0) {
 			 			ACCEPT_TABLE ac = list3.get(0);
+			 			// 保管済み以外は除外
+			 			if(!ac.getSTATUS().equals(param_status_storage_end)) continue;
 			 			if(!map.containsKey(ac.getMATERIAL_NO())) {
 			 				map.put(ac.getMATERIAL_NO(), ac);
 			 			}
