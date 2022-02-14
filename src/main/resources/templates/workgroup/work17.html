@@ -89,12 +89,14 @@ $(function() {
 				setDisabled(checkpass, true);
 				setDisabled(checkfail, true);
 				setDisabled(btnDataGet, true);
+				$(btnDataGet).css('pointer-events','none');
 			}else{
 				open_work(wgrp, true);	// 作業手順表示
 				setDisabled(okbtn,false);
 				setDisabled(checkpass, false);
 				setDisabled(checkfail, false);
 				setDisabled(btnDataGet, false);
+				$(btnDataGet).css('pointer-events','auto');
 			}
 		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 		  // エラーメッセージの表示

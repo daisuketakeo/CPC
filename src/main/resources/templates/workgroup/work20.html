@@ -73,12 +73,14 @@ $(function() {
 				setDisabled(checkpass, true);
 				setDisabled(checkfail, true);
 				setDisabled(btnCamera, true);
+				$(btnCamera).css('pointer-events','none');
 			}else{
 				open_work(wgrp, true);	// 作業手順表示
 				setDisabled(okbtn,false);
 				setDisabled(checkpass, false);
 				setDisabled(checkfail, false);
 				setDisabled(btnCamera, false);
+				$(btnCamera).css('pointer-events','auto');
 			}
 		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 		  // エラーメッセージの表示
