@@ -1099,6 +1099,7 @@ public class VCAjax extends VCCommon{
     public String create_instructions(@RequestBody String req) {
     	
         String url = "";
+        String batch_id = "";
         Map<String ,Object> map = getMap(req.toString());
         String im_id = map.get("IM_ID").toString();
         
@@ -1110,7 +1111,7 @@ public class VCAjax extends VCCommon{
 	 		INSTRUCTIONS_MASTER mst = list.get(0);
 	 		// 指図作成
 	 		INSTRUCTIONS_TABLE data = new INSTRUCTIONS_TABLE();
-	 		String batch_id = getBatchID();
+	 		batch_id = getBatchID();
 	 		data.setBATCH_ID(batch_id);
 	 		data.setIM_ID(im_id);
 	 		data.setNAME(mst.getNAME());
@@ -1118,7 +1119,7 @@ public class VCAjax extends VCCommon{
 	 		data.setSTATUS("I01");
 	 		url= rest_instructions+"insert";
 	 		if(!postRest(url, data)) {
-	 			return "NG";
+	 			return "";
 	 		}else {
 	 			// 工程別ステータス登録
 	 			url= rest_processmst+"select";
@@ -1143,7 +1144,7 @@ public class VCAjax extends VCCommon{
 	 		 		
 	 		 		url= rest_processstatus+"insert";
 	 		 		if(!postRest(url, pst)) {
-	 		 			return "NG";
+	 		 			return "";
 	 		 		}
 	 		 	}
 	 		 	
@@ -1162,12 +1163,12 @@ public class VCAjax extends VCCommon{
 	 	        
 	 	        String rst = workresult_regist(wrt);
 	 	        if(!rst.equals("OK")) {
-	 	        	return "NG";
+	 	        	return "";
 	 	        }
 	 		}
 	 	}
         
-        return "OK";
+        return batch_id;
         
     }
     
