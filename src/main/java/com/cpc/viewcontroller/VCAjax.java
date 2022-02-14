@@ -458,6 +458,7 @@ public class VCAjax extends VCCommon{
         	String[] auth_arry = wm.getAUTHORITY().split(",");
         	boolean exec = false;
         	USER_MASTER user = super.getUserInfo();
+        	if(user==null || user.getUSERID() ==null) return false;
         	for(String auth : auth_arry) {
         		if(user.getAUTHORITY().equals(auth)) {
         			exec = true;
@@ -679,14 +680,19 @@ public class VCAjax extends VCCommon{
     		consumes = "application/json",
     		method = RequestMethod.POST)
     @ResponseBody
-    public String workend(@RequestBody WORK_RESULT_TABLE req) {
+    public String workend(@RequestBody WORK_RESULT_TABLE req,
+    		HttpServletRequest request,
+    		HttpServletResponse response) {
     	
         String url = "";
         boolean result = false; 
-        
+    	
         // ユーザ情報取得
         USER_MASTER user = super.getUserInfo();
-        
+        if(user==null || user.getUSERID() ==null) {
+        	try{response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);}catch(Exception e) {}
+        	return "session disconnect!";
+        }
         // 作業実績登録
         WORK_RESULT_TABLE data = req;
         data.setWORK_USERID(user.getUSERID());
@@ -1098,7 +1104,9 @@ public class VCAjax extends VCCommon{
     		consumes = "application/json",
     		method = RequestMethod.POST)
     @ResponseBody
-    public String create_instructions(@RequestBody String req) {
+    public String create_instructions(@RequestBody String req,
+    		HttpServletRequest request,
+    		HttpServletResponse response) {
     	
         String url = "";
         String batch_id = "";
@@ -1152,7 +1160,10 @@ public class VCAjax extends VCCommon{
 	 		 	
 	 	        // ユーザ情報取得
 	 	        USER_MASTER user = super.getUserInfo();
-	 	        
+	 	        if(user==null || user.getUSERID() ==null){
+	 	    		try{response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);}catch(Exception e) {}
+	 	    		return param_errmsg_session;
+	 	    	}
 	 	        // 作業実績登録
 	 	        WORK_RESULT_TABLE wrt = new WORK_RESULT_TABLE();
 	 	        wrt.setPROCESS_ID("IS");
@@ -1182,7 +1193,9 @@ public class VCAjax extends VCCommon{
     		consumes = "application/json",
     		method = RequestMethod.POST)
     @ResponseBody
-    public String release_instructions(@RequestBody String req) {
+    public String release_instructions(@RequestBody String req,
+    		HttpServletRequest request,
+    		HttpServletResponse response) {
     	
         String url = "";
         Map<String ,Object> map = getMap(req.toString());
@@ -1202,7 +1215,10 @@ public class VCAjax extends VCCommon{
 	 		}else {
 	 		// ユーザ情報取得
 	 	        USER_MASTER user = super.getUserInfo();
-	 	        
+	 	        if(user==null || user.getUSERID() ==null){
+	 	    		try{response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);}catch(Exception e) {}
+	 	    		return param_errmsg_session;
+	 	    	}
 	 	        // 作業実績登録
 	 	        WORK_RESULT_TABLE wrt = new WORK_RESULT_TABLE();
 	 	        wrt.setPROCESS_ID("IS");
@@ -1232,10 +1248,16 @@ public class VCAjax extends VCCommon{
     		consumes = "application/json",
     		method = RequestMethod.POST)
     @ResponseBody
-    public String material_check(@RequestBody List<MATERIAL_CHECK_TABLE> req) {
+    public String material_check(@RequestBody List<MATERIAL_CHECK_TABLE> req,
+    		HttpServletRequest request,
+    		HttpServletResponse response) {
     	
         String url = rest_materialcheck+"insert";
         USER_MASTER user = super.getUserInfo();
+        if(user==null || user.getUSERID() ==null){
+        	try{response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);}catch(Exception e) {}
+        	return param_errmsg_session;
+        }
         String timestamp = getWorkDate();
         
         for(MATERIAL_CHECK_TABLE data : req) {
