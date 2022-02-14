@@ -82,6 +82,11 @@ $(function() {
 	// OKボタンクリック時の処理
 	$(okbtn).click(function() {
 		
+		if($(storage).val()==null || $(storage).val()==''){
+			alertdialog(MESSAGE.W008);
+			return;
+		}
+		
 		$('#confirmdialog').dialog({
 			dialogClass:'confirm_dialog',
 			modal:true, //モーダル表示

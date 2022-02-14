@@ -42,9 +42,11 @@ $(function() {
 			}).done(function(data, dataType) {
 				if(data==false){
 					setDisabled(okbtn,true);
+					setDisabled(userlotnoprintbtn,true);
 				}else{
 					open_work(wgrp, true);	// 作業手順表示
 					setDisabled(okbtn,false);
+					setDisabled(userlotnoprintbtn,false);
 				}
 			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 				console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
