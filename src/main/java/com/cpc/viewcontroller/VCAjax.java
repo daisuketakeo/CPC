@@ -1055,13 +1055,25 @@ public class VCAjax extends VCCommon{
         	if(wg2.getBEFORE_WORK_GROUP() != null &&
             		!wg2.getBEFORE_WORK_GROUP().isEmpty()) {
         		
-            	// 前前作業グループの作業実績取得
-                List<WORK_RESULT_TABLE> list3 = 
-                		getWorkResult(wg2.getBEFORE_WORK_GROUP(), "", batch_id);
-                
-                if(list3.size()>0) {
-                	list.add(list3.get(list3.size()-1));
-                }
+        		if(wg2.getBEFORE_WORK_GROUP().substring(0, 3).equals(
+        				wg1.getBEFORE_WORK_GROUP().substring(0, 3))) {
+        			// 作業グループが同じなら
+        			// 前前作業グループの作業実績取得
+                    List<WORK_RESULT_TABLE> list3 = 
+                    		getWorkResult(wg2.getBEFORE_WORK_GROUP(), "", batch_id);
+                    
+                    if(list3.size()>0) {
+                    	list.add(list3.get(list3.size()-1));
+                    }
+        		}else {
+        			// 作業グループが異なる場合
+        			WORK_RESULT_TABLE dummy = new WORK_RESULT_TABLE();
+        			dummy.setWORK_USERID("");
+        			dummy.setWORK_USERNAME("");
+        			dummy.setWORK_DATE("");
+        			list.add(dummy);
+        		}
+            	
         	}
         	
         	if(list2.size()>0) {
