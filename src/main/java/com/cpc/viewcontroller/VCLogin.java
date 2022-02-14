@@ -58,6 +58,7 @@ public class VCLogin extends VCCommon{
     
     @RequestMapping(value = "/home", method = RequestMethod.GET)
     public String home(Model model) {
+    	if(!super.loginCheck()) return disp_login;
     	model.addAttribute(attr_err_flg, null);
         setHeaderAttr(model);
         model.addAttribute(disp_body, disp_home);

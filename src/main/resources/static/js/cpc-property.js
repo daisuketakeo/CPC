@@ -1,6 +1,7 @@
 
 var deviation = 'Deviation';			// 逸脱
 var wgrp_diviation_status = 'W99';		// 作業グループの逸脱ステータス
+var is_release_status = 'I02';			// 指図リリース済ステータス
 var end_status = ['P05','T05','B03'];	// 工程の完了ステータス
 var current_status = ['P02','P03','P04','T02','T03','T04','B02'];	// 工程の仕掛ステータス
 

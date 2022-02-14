@@ -65,14 +65,6 @@ insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values
 insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP4','EP401','002','２） Scan the kit labels [Room Temperature] to verify that they are the intended material.','CP01');
 insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP4','EP401','003','３） Install the consumables according to the display indication of CellQualia. ','CP01');
 insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP4','EP401','004','４） Follow the instructions to fill the bag with the chemical and connect it to CellQualia. 。','CP01');
-insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP4','EP402','001','１） Select a culture recipe on the CellQualia control terminal.','CP01');
-insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP4','EP402','002','２） Scan the kit labels [Room Temperature] to verify that they are the intended material.','CP01');
-insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP4','EP402','003','３） Install the consumables according to the display indication of CellQualia. ','CP01');
-insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP4','EP402','004','４） Follow the instructions to fill the bag with the chemical and connect it to CellQualia. 。','CP01');
-insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP4','EP403','001','１） Select a culture recipe on the CellQualia control terminal.','CP01');
-insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP4','EP403','002','２） Scan the kit labels [Room Temperature] to verify that they are the intended material.','CP01');
-insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP4','EP403','003','３） Install the consumables according to the display indication of CellQualia. ','CP01');
-insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP4','EP403','004','４） Follow the instructions to fill the bag with the chemical and connect it to CellQualia. 。','CP01');
 insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP4','EP404','001','１） After confirming that the QC test has been passed in the preculture, adjust the concentration of the cell suspension and fill the stirring bag. Immediately attach the stirring bag to the device. 。','CP01');
 insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP4','EP404','002','２）Start run.','CP01');
 insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID, WORK,AUTHORITY) values ('EP4','EP404','003','３） After the completion of the culture, the harvest bag is promptly removed and moved to the next step.','CP01');
@@ -142,10 +134,8 @@ insert into WORK_GROUP_MASTER (PROCESS_ID,WORK_GROUP,WORK_GROUP_NAME,DISPLAY_TYP
 insert into WORK_GROUP_MASTER (PROCESS_ID,WORK_GROUP,WORK_GROUP_NAME,DISPLAY_TYPE,BEFORE_WORK_GROUP,STATUS) values ('EP3','EP303','3. Kitting for Expansion (-20℃)','06','EP302','P03');
 insert into WORK_GROUP_MASTER (PROCESS_ID,WORK_GROUP,WORK_GROUP_NAME,DISPLAY_TYPE,BEFORE_WORK_GROUP,STATUS) values ('EP3','EP304','Confirm','101','EP303','P04');
 insert into WORK_GROUP_MASTER (PROCESS_ID,WORK_GROUP,WORK_GROUP_NAME,DISPLAY_TYPE,BEFORE_WORK_GROUP,STATUS) values ('EP3','EP305','Approve','102','EP304','P05');
-insert into WORK_GROUP_MASTER (PROCESS_ID,WORK_GROUP,WORK_GROUP_NAME,DISPLAY_TYPE,BEFORE_WORK_GROUP,STATUS) values ('EP4','EP401','1. Preparation (Room Temperature)','08','EP305','P02');
-insert into WORK_GROUP_MASTER (PROCESS_ID,WORK_GROUP,WORK_GROUP_NAME,DISPLAY_TYPE,BEFORE_WORK_GROUP,STATUS) values ('EP4','EP402','1. Preparation (4℃)','08','EP401','P02');
-insert into WORK_GROUP_MASTER (PROCESS_ID,WORK_GROUP,WORK_GROUP_NAME,DISPLAY_TYPE,BEFORE_WORK_GROUP,STATUS) values ('EP4','EP403','1. Preparation (-20℃)','08','EP402','P02');
-insert into WORK_GROUP_MASTER (PROCESS_ID,WORK_GROUP,WORK_GROUP_NAME,DISPLAY_TYPE,BEFORE_WORK_GROUP,STATUS) values ('EP4','EP404','2. Culture','09','EP403','P02');
+insert into WORK_GROUP_MASTER (PROCESS_ID,WORK_GROUP,WORK_GROUP_NAME,DISPLAY_TYPE,BEFORE_WORK_GROUP,STATUS) values ('EP4','EP401','1. Preparation','08','EP305','P02');
+insert into WORK_GROUP_MASTER (PROCESS_ID,WORK_GROUP,WORK_GROUP_NAME,DISPLAY_TYPE,BEFORE_WORK_GROUP,STATUS) values ('EP4','EP404','2. Culture','09','EP401','P02');
 insert into WORK_GROUP_MASTER (PROCESS_ID,WORK_GROUP,WORK_GROUP_NAME,DISPLAY_TYPE,BEFORE_WORK_GROUP,STATUS) values ('EP4','EP405','3. Clearance','10','EP404','P02');
 insert into WORK_GROUP_MASTER (PROCESS_ID,WORK_GROUP,WORK_GROUP_NAME,DISPLAY_TYPE,BEFORE_WORK_GROUP,STATUS) values ('EP4','EP406','Confirm','101','EP405','P04');
 insert into WORK_GROUP_MASTER (PROCESS_ID,WORK_GROUP,WORK_GROUP_NAME,DISPLAY_TYPE,BEFORE_WORK_GROUP,STATUS) values ('EP4','EP407','Approve','102','EP406','P05');
@@ -165,7 +155,7 @@ insert into WORK_GROUP_MASTER (PROCESS_ID,WORK_GROUP,WORK_GROUP_NAME,DISPLAY_TYP
 insert into WORK_GROUP_MASTER (PROCESS_ID,WORK_GROUP,WORK_GROUP_NAME,DISPLAY_TYPE,BEFORE_WORK_GROUP,STATUS) values ('EP6','EP602','Approve','102','EP601','P05');
 insert into WORK_GROUP_MASTER (PROCESS_ID,WORK_GROUP,WORK_GROUP_NAME,DISPLAY_TYPE,BEFORE_WORK_GROUP,STATUS) values ('ET4','ET401','1. Cell viability after freezing and thawing','15','EP602','T02');
 insert into WORK_GROUP_MASTER (PROCESS_ID,WORK_GROUP,WORK_GROUP_NAME,DISPLAY_TYPE,BEFORE_WORK_GROUP,STATUS) values ('ET4','ET402','2. Cytokine secretion','15','ET401','T02');
-insert into WORK_GROUP_MASTER (PROCESS_ID,WORK_GROUP,WORK_GROUP_NAME,DISPLAY_TYPE,BEFORE_WORK_GROUP,STATUS) values ('ET4','ET403','3. Sterility test','22','ET402','T02');
+insert into WORK_GROUP_MASTER (PROCESS_ID,WORK_GROUP,WORK_GROUP_NAME,DISPLAY_TYPE,BEFORE_WORK_GROUP,STATUS) values ('ET4','ET403','3. Sterility test','18','ET402','T02');
 insert into WORK_GROUP_MASTER (PROCESS_ID,WORK_GROUP,WORK_GROUP_NAME,DISPLAY_TYPE,BEFORE_WORK_GROUP,STATUS) values ('ET4','ET404','4. Endotoxin test','15','ET403','T02');
 insert into WORK_GROUP_MASTER (PROCESS_ID,WORK_GROUP,WORK_GROUP_NAME,DISPLAY_TYPE,BEFORE_WORK_GROUP,STATUS) values ('ET4','ET405','5. Mycoplasma test','20','ET404','T02');
 insert into WORK_GROUP_MASTER (PROCESS_ID,WORK_GROUP,WORK_GROUP_NAME,DISPLAY_TYPE,BEFORE_WORK_GROUP,STATUS) values ('ET4','ET406','6. Virus test','21','ET405','T03');

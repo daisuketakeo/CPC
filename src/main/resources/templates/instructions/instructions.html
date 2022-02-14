@@ -140,11 +140,14 @@ $(function(){
 						// 一覧取得
 						//console.log(XHR.responseText);
 						$("#batch_id").val(XHR.responseText);
-						search(true);
+						search();
 					}else{
-						if(XHR.responseText==''){
+						if(XHR.status === 409){
+							console.log(XHR.responseText);
+							location.href = '/login';
 						}else{
-							if(XHR.responseText.indexOf('error')>=0){
+							if(XHR.responseText==''){
+							}else{
 								error(XHR.responseText); //エラーダイアログ表示
 							}
 						}
@@ -185,11 +188,27 @@ $(function(){
 				if( XHR.readyState === 4 && XHR.status === 200 ) {
 					// 正常終了時に処理
 					// 一覧取得
-					search();
+					var tbodys = $("#tbl1 tbody");//全行を取得
+					var status = "";
+					const status_json = JSON.parse($("#status_list").val());
+					for( var i=0,l=tbodys.length;i<l;i++ ){
+						// 選択行のMATERIAL_NO取得
+						var childtr = tbodys.eq(i).children();
+						var childtd = $(childtr).children();
+						var batch_id = $(childtd.eq(0)).text();
+						if(batch_id==$("#batch_id").val()){
+							childtd.eq(4).text(status_json[is_release_status]);
+						}
+					}
 				}else{
-					if(XHR.responseText==''){
+					if(XHR.status === 409){
+						console.log(XHR.responseText);
+						location.href = '/login';
 					}else{
-						error(XHR.responseText); //エラーダイアログ表示
+						if(XHR.responseText==''){
+						}else{
+							error(XHR.responseText); //エラーダイアログ表示
+						}
 					}
 				}
 			}
@@ -325,7 +344,7 @@ $(function(){
 /***********************************
 受入一覧表示
 ***********************************/
-function search(create_flg){
+function search(){
 	
 	// 保持データクリア
 	//$("#batch_id").val("");
@@ -433,11 +452,13 @@ function search(create_flg){
 	        
 	        if($("#batch_id").val()==INSTRUCTIONS_TABLE.batch_ID){
 	        	select_row(tr1);
+	        	$('#tbl1').animate({scrollTop:tbody.offset().top});
 	        }
-	        
+	        /*
 	        if(create_flg){
 	        	$('#tbl1').animate({scrollTop:tbody.offset().top});
 	        }
+	        */
 	    });
 
 	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {

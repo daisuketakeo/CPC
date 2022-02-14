@@ -89,7 +89,14 @@ public class VCAjax extends VCCommon{
      */
     @GetMapping("/ajax/get_ebrtest")
     public List<WORK_MASTER> get_ebrtestdir(
-    		@RequestParam(param_work_group) String work_group) {
+    		@RequestParam(param_work_group) String work_group,
+    		HttpServletRequest request,
+    		HttpServletResponse response) {
+    	
+    	if(!super.loginCheck()) {
+    		try{response.setStatus(HttpServletResponse.SC_CONFLICT);}catch(Exception e) {}
+    		return null;
+    	}
     	
     	// 作業手順マスタ取得
         List<WORK_MASTER> list = getWorkMaster(work_group);
@@ -146,7 +153,14 @@ public class VCAjax extends VCCommon{
      * 処理シーケンス情報取得
      */
     @GetMapping("/ajax/get_sequence")
-    public Map<String,String> get_sequence() {
+    public Map<String,String> get_sequence(
+    		HttpServletRequest request,
+    		HttpServletResponse response) {
+    	
+    	if(!super.loginCheck()) {
+    		try{response.setStatus(HttpServletResponse.SC_CONFLICT);}catch(Exception e) {}
+    		return null;
+    	}
     	
     	String SEQUENCE = get_csv(
     			super.getProperties().getCONFIG_PATH(),
@@ -168,7 +182,14 @@ public class VCAjax extends VCCommon{
      * Cellqualia top情報取得
      */
     @GetMapping("/ajax/get_cellqualia_top")
-    public Map<String,String> get_cellqualia_top() {
+    public Map<String,String> get_cellqualia_top(
+    		HttpServletRequest request,
+    		HttpServletResponse response) {
+    	
+    	if(!super.loginCheck()) {
+    		try{response.setStatus(HttpServletResponse.SC_CONFLICT);}catch(Exception e) {}
+    		return null;
+    	}
     	
     	String dir = super.getProperties().getCELLQUALIA_TOP_PATH();
     	
@@ -217,7 +238,14 @@ public class VCAjax extends VCCommon{
      */
     @GetMapping("/ajax/get_progress_batch")
     public INSTRUCTIONS_MASTER get_progress_batch(
-    		@RequestParam(param_batch_id) String batch_id) {
+    		@RequestParam(param_batch_id) String batch_id,
+    		HttpServletRequest request,
+    		HttpServletResponse response) {
+    	
+    	if(!super.loginCheck()) {
+    		try{response.setStatus(HttpServletResponse.SC_CONFLICT);}catch(Exception e) {}
+    		return null;
+    	}
     	
     	String csvdir = super.getProperties().getBATCH_PROGRESS_CSV_PATH();
     	String url = "";
@@ -294,7 +322,14 @@ public class VCAjax extends VCCommon{
      */
     @GetMapping("/ajax/get_post_batch")
     public INSTRUCTIONS_MASTER get_post_batch(
-    		@RequestParam(param_batch_id) String batch_id) {
+    		@RequestParam(param_batch_id) String batch_id,
+    		HttpServletRequest request,
+    		HttpServletResponse response) {
+    	
+    	if(!super.loginCheck()) {
+    		try{response.setStatus(HttpServletResponse.SC_CONFLICT);}catch(Exception e) {}
+    		return null;
+    	}
     	
     	String csvdir = super.getProperties().getPOST_BATCH_OVERVIEW_PATH();
     	String url = "";
@@ -357,6 +392,11 @@ public class VCAjax extends VCCommon{
     		HttpServletRequest request,
     		HttpServletResponse response) {
     	
+    	if(!super.loginCheck()) {
+    		try{response.setStatus(HttpServletResponse.SC_CONFLICT);}catch(Exception e) {}
+    		return;
+    	}
+    	
     	String url = "";
     	String dir = super.getProperties().getPOST_BATCH_OVERVIEW_PATH();
     	
@@ -381,6 +421,11 @@ public class VCAjax extends VCCommon{
     		HttpServletRequest request,
     		HttpServletResponse response) {
     	
+    	if(!super.loginCheck()) {
+    		try{response.setStatus(HttpServletResponse.SC_CONFLICT);}catch(Exception e) {}
+    		return;
+    	}
+    	
     	String url = "";
     	String dir = super.getProperties().getPOST_BATCH_OVERVIEW_PATH();
     	
@@ -401,7 +446,14 @@ public class VCAjax extends VCCommon{
      */
     @GetMapping("/ajax/get_pre_batch")
     public INSTRUCTIONS_MASTER get_pre_batch(
-    		@RequestParam(param_batch_id) String batch_id) {
+    		@RequestParam(param_batch_id) String batch_id,
+    		HttpServletRequest request,
+    		HttpServletResponse response) {
+    	
+    	if(!super.loginCheck()) {
+    		try{response.setStatus(HttpServletResponse.SC_CONFLICT);}catch(Exception e) {}
+    		return null;
+    	}
     	
     	String csvdir = super.getProperties().getPRE_BATCH_OVERVIEW_PATH();
     	String url = "";
@@ -448,8 +500,16 @@ public class VCAjax extends VCCommon{
      */
     @GetMapping("/ajax/check_operation_authority")
     public boolean check_operation_authority(
-    		@RequestParam(param_work_group) String work_group) {
+    		@RequestParam(param_work_group) String work_group,
+    		HttpServletRequest request,
+    		HttpServletResponse response) {
     	
+    	
+    	if(!super.loginCheck()) {
+    		try{response.setStatus(HttpServletResponse.SC_CONFLICT);}catch(Exception e) {}
+    		return false;
+    	}
+
         // 作業手順マスタ取得
         List<WORK_MASTER> target_workmst = 
         		getWorkMaster(work_group);
@@ -479,13 +539,20 @@ public class VCAjax extends VCCommon{
     public boolean check_status(
     		@RequestParam(param_work_group) String work_group,
     		@RequestParam(param_work_id) String work_id,
-    		@RequestParam(param_id) String id) {
+    		@RequestParam(param_id) String id,
+    		HttpServletRequest request,
+    		HttpServletResponse response) {
+    	
+    	if(!super.loginCheck()) {
+    		try{response.setStatus(HttpServletResponse.SC_CONFLICT);}catch(Exception e) {}
+    		return false;
+    	}
     	
     	/**********************************
     	 *       操作権限チェック
     	 **********************************/
         // 作業手順マスタ取得
-        if(!check_operation_authority(work_group)) {
+        if(!check_operation_authority(work_group,request,response)) {
         	return false;
         }
     	
@@ -684,15 +751,17 @@ public class VCAjax extends VCCommon{
     		HttpServletRequest request,
     		HttpServletResponse response) {
     	
+    	if(!super.loginCheck()) {
+    		try{response.setStatus(HttpServletResponse.SC_CONFLICT);}catch(Exception e) {}
+    		return param_errmsg_session;
+    	}
+    	
         String url = "";
-        boolean result = false; 
+        boolean result = false;
     	
         // ユーザ情報取得
         USER_MASTER user = super.getUserInfo();
-        if(user==null || user.getUSERID() ==null) {
-        	try{response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);}catch(Exception e) {}
-        	return "session disconnect!";
-        }
+
         // 作業実績登録
         WORK_RESULT_TABLE data = req;
         data.setWORK_USERID(user.getUSERID());
@@ -703,7 +772,7 @@ public class VCAjax extends VCCommon{
         data.setCHECK_FILE_NAME(null);
         data.setCHECK_FILE_BASE64(null);
         
-        String rst = workresult_regist(data);
+        String rst = workresult_regist(data,request,response);
         result = rst.equals("OK");
         
         /**
@@ -942,7 +1011,14 @@ public class VCAjax extends VCCommon{
     		consumes = "application/json",
     		method = RequestMethod.POST)
     @ResponseBody
-    public String workresult_regist(@RequestBody WORK_RESULT_TABLE req) {
+    public String workresult_regist(@RequestBody WORK_RESULT_TABLE req,
+    		HttpServletRequest request,
+    		HttpServletResponse response) {
+    	
+    	if(!super.loginCheck()) {
+        	try{response.setStatus(HttpServletResponse.SC_CONFLICT);}catch(Exception e) {}
+        	return param_errmsg_session;
+        }
     	
         String url = "";
         WORK_RESULT_TABLE data = req;
@@ -979,7 +1055,15 @@ public class VCAjax extends VCCommon{
      * Kit Label 発行
      */
     @GetMapping("/ajax/make_kit_label")
-    public String make_kit_label() {
+    public String make_kit_label(
+    		HttpServletRequest request,
+    		HttpServletResponse response) {
+    	
+    	if(!super.loginCheck()) {
+    		try{response.setStatus(HttpServletResponse.SC_CONFLICT);}catch(Exception e) {}
+    		return param_errmsg_session;
+    	}
+    	
     	return makeKitLabel();
     }
     
@@ -990,7 +1074,14 @@ public class VCAjax extends VCCommon{
     public String get_material_list(
     		@RequestParam(param_batch_id) String batch_id,
     		@RequestParam(param_process_id) String process_id,
-    		@RequestParam(param_work_group) String work_group) {
+    		@RequestParam(param_work_group) String work_group,
+    		HttpServletRequest request,
+    		HttpServletResponse response) {
+    	
+    	if(!super.loginCheck()) {
+    		try{response.setStatus(HttpServletResponse.SC_CONFLICT);}catch(Exception e) {}
+    		return param_errmsg_session;
+    	}
     	
     	String json = "{}";
     	
@@ -1038,7 +1129,14 @@ public class VCAjax extends VCCommon{
     @GetMapping("/ajax/get_applist")
     public List<WORK_RESULT_TABLE> get_applist(
     		@RequestParam(param_work_group) String work_group,
-    		@RequestParam(param_batch_id) String batch_id) {
+    		@RequestParam(param_batch_id) String batch_id,
+    		HttpServletRequest request,
+    		HttpServletResponse response) {
+    	
+    	if(!super.loginCheck()) {
+    		try{response.setStatus(HttpServletResponse.SC_CONFLICT);}catch(Exception e) {}
+    		return null;
+    	}
     	
     	List<WORK_RESULT_TABLE> list = new ArrayList<WORK_RESULT_TABLE>();
     	
@@ -1108,6 +1206,11 @@ public class VCAjax extends VCCommon{
     		HttpServletRequest request,
     		HttpServletResponse response) {
     	
+    	if(!super.loginCheck()) {
+    		try{response.setStatus(HttpServletResponse.SC_CONFLICT);}catch(Exception e) {}
+    		return param_errmsg_session;
+    	}
+    	
         String url = "";
         String batch_id = "";
         Map<String ,Object> map = getMap(req.toString());
@@ -1160,10 +1263,7 @@ public class VCAjax extends VCCommon{
 	 		 	
 	 	        // ユーザ情報取得
 	 	        USER_MASTER user = super.getUserInfo();
-	 	        if(user==null || user.getUSERID() ==null){
-	 	    		try{response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);}catch(Exception e) {}
-	 	    		return param_errmsg_session;
-	 	    	}
+	 	        
 	 	        // 作業実績登録
 	 	        WORK_RESULT_TABLE wrt = new WORK_RESULT_TABLE();
 	 	        wrt.setPROCESS_ID("IS");
@@ -1174,7 +1274,7 @@ public class VCAjax extends VCCommon{
 	 	        wrt.setWORK_USERNAME(user.getUSERNAME());
 	 	        wrt.setWORK_DATE(getWorkDate());
 	 	        
-	 	        String rst = workresult_regist(wrt);
+	 	        String rst = workresult_regist(wrt,request,response);
 	 	        if(!rst.equals("OK")) {
 	 	        	return "";
 	 	        }
@@ -1197,6 +1297,11 @@ public class VCAjax extends VCCommon{
     		HttpServletRequest request,
     		HttpServletResponse response) {
     	
+    	if(!super.loginCheck()) {
+    		try{response.setStatus(HttpServletResponse.SC_CONFLICT);}catch(Exception e) {}
+    		return param_errmsg_session;
+    	}
+    	
         String url = "";
         Map<String ,Object> map = getMap(req.toString());
         String batch_id = map.get("BATCH_ID").toString();
@@ -1215,10 +1320,7 @@ public class VCAjax extends VCCommon{
 	 		}else {
 	 		// ユーザ情報取得
 	 	        USER_MASTER user = super.getUserInfo();
-	 	        if(user==null || user.getUSERID() ==null){
-	 	    		try{response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);}catch(Exception e) {}
-	 	    		return param_errmsg_session;
-	 	    	}
+	 	        
 	 	        // 作業実績登録
 	 	        WORK_RESULT_TABLE wrt = new WORK_RESULT_TABLE();
 	 	        wrt.setPROCESS_ID("IS");
@@ -1229,7 +1331,7 @@ public class VCAjax extends VCCommon{
 	 	        wrt.setWORK_USERNAME(user.getUSERNAME());
 	 	        wrt.setWORK_DATE(getWorkDate());
 	 	        
-	 	        String rst = workresult_regist(wrt);
+	 	        String rst = workresult_regist(wrt,request,response);
 	 	        if(!rst.equals("OK")) {
 	 	        	return "NG";
 	 	        }
@@ -1252,12 +1354,13 @@ public class VCAjax extends VCCommon{
     		HttpServletRequest request,
     		HttpServletResponse response) {
     	
+    	if(!super.loginCheck()) {
+    		try{response.setStatus(HttpServletResponse.SC_CONFLICT);}catch(Exception e) {}
+    		return param_errmsg_session;
+    	}
+    	
         String url = rest_materialcheck+"insert";
         USER_MASTER user = super.getUserInfo();
-        if(user==null || user.getUSERID() ==null){
-        	try{response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);}catch(Exception e) {}
-        	return param_errmsg_session;
-        }
         String timestamp = getWorkDate();
         
         for(MATERIAL_CHECK_TABLE data : req) {
@@ -1282,7 +1385,14 @@ public class VCAjax extends VCCommon{
     @GetMapping("/ajax/get_procdetail")
     public List<PROC_INSTRUCTIONS_DETAIL_MASTER> get_procdetail(
     		@RequestParam(param_im_id) String im_id,
-    		@RequestParam(param_ins_proc_id) String ins_proc_id) {
+    		@RequestParam(param_ins_proc_id) String ins_proc_id,
+    		HttpServletRequest request,
+    		HttpServletResponse response) {
+    	
+    	if(!super.loginCheck()) {
+    		try{response.setStatus(HttpServletResponse.SC_CONFLICT);}catch(Exception e) {}
+    		return null;
+    	}
     	
     	// 工程別指図詳細マスタ取得
     	String url = rest_procinstructionsdetailmst+"select"+
@@ -1309,6 +1419,11 @@ public class VCAjax extends VCCommon{
 		HttpServletRequest request,
 		HttpServletResponse response) {
 
+		if(!super.loginCheck()) {
+			try{response.setStatus(HttpServletResponse.SC_CONFLICT);}catch(Exception e) {}
+			return;
+		}
+		
 		try {
 			
 			Map<String,String> map = new HashMap<String,String>();

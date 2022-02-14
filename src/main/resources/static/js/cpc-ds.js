@@ -79,9 +79,14 @@ function initnewWRT(){
 		  refrech_work();
 		}
 	  }else{
-		if(XHR.responseText==''){
+		if(XHR.status === 409){
+			console.log(XHR.responseText);
+			location.href = '/login';
 		}else{
-			error(XHR.responseText); //エラーダイアログ表示
+			if(XHR.responseText==''){
+			}else{
+				error(XHR.responseText); //エラーダイアログ表示
+			}
 		}
 	  }
 	}
@@ -124,9 +129,14 @@ function initnewWRT(){
 				null,null
 	 	);
 	  }else{
-		if(XHR.responseText==''){
+		if(XHR.status === 409){
+			console.log(XHR.responseText);
+			location.href = '/login';
 		}else{
-			error(XHR.responseText); //エラーダイアログ表示
+			if(XHR.responseText==''){
+			}else{
+				error(XHR.responseText); //エラーダイアログ表示
+			}
 		}
 	  }
 	}
@@ -156,9 +166,14 @@ function initnewWRT(){
 		// 正常終了時に処理
 		registMCT(mct_list);
 	  }else{
-		if(XHR.responseText==''){
+		if(XHR.status === 409){
+			console.log(XHR.responseText);
+			location.href = '/login';
 		}else{
-			error(XHR.responseText); //エラーダイアログ表示
+			if(XHR.responseText==''){
+			}else{
+				error(XHR.responseText); //エラーダイアログ表示
+			}
 		}
 	  }
 	}
@@ -180,9 +195,14 @@ function initnewWRT(){
 		  refrech_work();
 		}
 	  }else{
-		if(XHR.responseText==''){
+		if(XHR.status === 409){
+			console.log(XHR.responseText);
+			location.href = '/login';
 		}else{
-			error(XHR.responseText); //エラーダイアログ表示
+			if(XHR.responseText==''){
+			}else{
+				error(XHR.responseText); //エラーダイアログ表示
+			}
 		}
 	  }
 	}
