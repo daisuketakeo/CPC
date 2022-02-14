@@ -170,9 +170,11 @@ function createdata21(csvfile, tblcsv){
     	
     	var tbody = $('<tbody />');
     	
-		var tr1 = $('<tr/>');
-        tr1.append($('<td/>').text(csv_arry[0]));
-        tr1.append($('<td/>').text(csv_arry[1]));
+    	var tr1 = $('<tr/>');
+		var td1 = $('<td/>');td1.css({'width':'150px'});
+		var td2 = $('<td/>');td2.css({'width':'150px'});
+        tr1.append(td1.text(csv_arry[0]));
+        tr1.append(td2.text(csv_arry[1]));
         
         tbody.append(tr1);
         

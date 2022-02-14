@@ -184,9 +184,12 @@ function createdata20(csvfile, tblcsv){
     	var tbody = $('<tbody />');
     	
 		var tr1 = $('<tr/>');
-        tr1.append($('<td/>').text(csv_arry[0]));
-        tr1.append($('<td/>').text(csv_arry[1]));
-        tr1.append($('<td/>').text(csv_arry[2]));
+		var td1 = $('<td/>');td1.css({'width':'120px'});
+		var td2 = $('<td/>');td2.css({'width':'120px'});
+		var td3 = $('<td/>');td3.css({'width':'120px'});
+        tr1.append(td1.text(csv_arry[0]));
+        tr1.append(td2.text(csv_arry[1]));
+        tr1.append(td3.text(csv_arry[2]));
         
         tbody.append(tr1);
         
@@ -245,8 +248,7 @@ function createdata20(csvfile, tblcsv){
 				<a href="javascript:void(0);" th:id="'btnCamera'+${wgrp}"><img src="/images/camera.png" alt="カメラアイコン"></a>
 			</td>
 			<td style="width:600px;">
-				<img th:id="'imgCapture1'+${wgrp}" class="" 
-					width="400px" height="400px" alt="Capture1" style="display:none;">
+				<img th:id="'imgCapture1'+${wgrp}" height="200px" alt="Capture1" style="display:none;">
 			</td>
 			<td style="width:100px;" rowspan="2">
 				<label>Decision</label>
