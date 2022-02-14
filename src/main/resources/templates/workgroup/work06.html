@@ -44,14 +44,26 @@ $(function() {
  			}).done(function(data, dataType) {
  				if(data==false){
  					setDisabled(okbtn+WORK_MASTER.work_ID,true);
+ 					if(WORK_MASTER.work_ID=='001'){
+						setDisabled(kitlabelprintbtn,true);
+ 					}
  					if(WORK_MASTER.work_ID=='002'){
 						setDisabled(startbtn,true);
+ 					}
+ 					if(WORK_MASTER.work_ID=='003'){
+ 						setDisabled(expdlabelprintbtn,true);
  					}
  				}else{
  					open_work(wgrp, true);	// 作業手順表示
  					setDisabled(okbtn+WORK_MASTER.work_ID,false);
-					if(WORK_MASTER.work_ID=='002'){
+					if(WORK_MASTER.work_ID=='001'){
+						setDisabled(kitlabelprintbtn,false);
+ 					}
+ 					if(WORK_MASTER.work_ID=='002'){
 						setDisabled(startbtn,false);
+ 					}
+ 					if(WORK_MASTER.work_ID=='003'){
+ 						setDisabled(expdlabelprintbtn,false);
  					}
  				}
  			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
