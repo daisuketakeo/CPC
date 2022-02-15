@@ -146,9 +146,11 @@ $(function(){
 							console.log(XHR.responseText);
 							location.href = '/login';
 						}else{
-							if(XHR.responseText==''){
-							}else{
-								error(XHR.responseText); //エラーダイアログ表示
+							if(XHR.responseText.indexOf('error')>=0){
+								if(XHR.responseText==''){
+								}else{
+									error(XHR.responseText); //エラーダイアログ表示
+								}
 							}
 						}
 					}
