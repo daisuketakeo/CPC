@@ -1,4 +1,4 @@
-﻿package com.cpc.model;
+package com.cpc.model;
 
 import java.io.Serializable;
 import lombok.Data;
