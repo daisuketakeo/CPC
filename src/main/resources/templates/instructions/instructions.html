@@ -278,7 +278,7 @@ $(function(){
 					  $('<form/>', {action: value[2], method: 'post'})
 					  .append($('<input/>', {type: 'hidden', name: 'PROCESS_ID', value: key}))
 					  .append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: $("#batch_id").val()}))
-					  .append($('<input/>', {type: 'hidden', name: 'RETURN_URL', value: "/instructions"}))
+					  .append($('<input/>', {type: 'hidden', name: 'RETURN_URL', value: "instructions"}))
 					  .appendTo(document.body)
 					  .submit();
 				}else{
@@ -442,7 +442,7 @@ function search(){
 					  $('<form/>', {action: '/batchrelease', method: 'post'})
 					  .append($('<input/>', {type: 'hidden', name: 'PROCESS_ID', value: 'BR'}))
 					  .append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: INSTRUCTIONS_TABLE.batch_ID}))
-					  .append($('<input/>', {type: 'hidden', name: 'RETURN_URL', value: "/instructions"}))
+					  .append($('<input/>', {type: 'hidden', name: 'RETURN_URL', value: "instructions"}))
 					  .appendTo(document.body)
 					  .submit();
 				}
@@ -803,8 +803,8 @@ function select_row(obj){
 <div id="detail_dialog">
 	<div id="detail" style="height:100%;">
 		<ul>
-			<li><a href="/instructions_detail">Manufacturing instructions</a></li>
-			<li><a href="/proc_instructions">Manufacturing instructions by process</a></li>
+			<li><a href="instructions_detail">Manufacturing instructions</a></li>
+			<li><a href="proc_instructions">Manufacturing instructions by process</a></li>
 		</ul>
 	</div>
 	<span class="ui-helper-hidden-accessible"><input type="image"/></span>

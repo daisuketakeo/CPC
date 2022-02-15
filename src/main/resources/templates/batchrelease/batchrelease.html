@@ -32,7 +32,7 @@ $(function(){
 	// Previewボタンクリック
 	$("#previewbtn").click(function(){
 		// 印刷禁止でPDF表示
-	     window.open("/pdfjs/web/viewer.html?file=/preview_coa?BATCH_ID="+$("#BATCH_ID").val());
+	     window.open("pdfjs/web/viewer.html?file=/preview_coa?BATCH_ID="+$("#BATCH_ID").val());
 	});
 	
 	var wgrp1 = "BR01";
@@ -754,4 +754,4 @@ function confirm_batch_release(wgrp, wid, CHECK_RESULT, CHECK_REASON){
 </div>
     
 </div>
-<div th:insert="/common/menu::paramset('__${BATCH_ID}__')"></div>
+<div th:insert="common/menu::paramset('__${BATCH_ID}__')"></div>

@@ -22,7 +22,7 @@ public class VCAccept extends VCCommon{
     /*
      * 受入
      */
-    @GetMapping("/accept")
+    @GetMapping("accept")
     public String accept(Model model) {
     	
     	if(!super.loginCheck()) return disp_login;
@@ -51,14 +51,14 @@ public class VCAccept extends VCCommon{
     /*
      * 受入一覧（QC用）
      */
-    @GetMapping("/accept/qc")
+    @GetMapping("accept/qc")
     public String accept_qc(Model model) {
     	
         if(!super.loginCheck()) return disp_login;
         
 		// ヘッダ設定
     	setHeaderAttr(model);
-    	model.addAttribute(disp_body, "/accept/accept");
+    	model.addAttribute(disp_body, "accept/accept");
     	
     	// 画面パラメータ生成
     	Map<String, DisplayParameter> map = getWorkGroupList(qc);
@@ -80,14 +80,14 @@ public class VCAccept extends VCCommon{
     /*
      * 受入一覧（QA用）
      */
-    @GetMapping("/accept/qa")
+    @GetMapping("accept/qa")
     public String accept_qa(Model model) {
     	
         if(!super.loginCheck()) return disp_login;
         
 		// ヘッダ設定
     	setHeaderAttr(model);
-    	model.addAttribute(disp_body, "/accept/accept");
+    	model.addAttribute(disp_body, "accept/accept");
     	
     	// 画面パラメータ生成
     	Map<String, DisplayParameter> map = getWorkGroupList(qa);

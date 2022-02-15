@@ -170,26 +170,26 @@ $(function(){
 	<div id="detail_dialog">
 		<div id="detail" style="height:100%;">
 			<ul>
-				<li><a href="/instructions_detail">Manufacturing instructions</a></li>
-				<li><a href="/proc_instructions">Manufacturing instructions by process</a></li>
+				<li><a href="instructions_detail">Manufacturing instructions</a></li>
+				<li><a href="proc_instructions">Manufacturing instructions by process</a></li>
 			</ul>
 		</div>
 		<span class="ui-helper-hidden-accessible"><input type="image"/></span>
 	</div>
 	<!-- CellQualia Top　ダイアログ  -->
 	<div id="cellqualia_top_dialog">
-		<div th:insert="/manufacturing/cellqualia_top::paramset('__${batch_id}__')"></div>
+		<div th:insert="manufacturing/cellqualia_top::paramset('__${batch_id}__')"></div>
 	</div>
 	<!-- Batch Progress　ダイアログ  -->
 	<div id="batch_progress_dialog">
-		<div th:insert="/manufacturing/batch_progress::paramset('__${batch_id}__')"></div>
+		<div th:insert="manufacturing/batch_progress::paramset('__${batch_id}__')"></div>
 	</div>
 	<!-- Pre batch overview　ダイアログ  -->
 	<div id="pre_batch_dialog">
-		<div th:insert="/manufacturing/pre_batch_over_view::paramset('__${batch_id}__')"></div>
+		<div th:insert="manufacturing/pre_batch_over_view::paramset('__${batch_id}__')"></div>
 	</div>
 	<!-- Post batch overview　ダイアログ  -->
 	<div id="post_batch_dialog">
-		<div th:insert="/manufacturing/post_batch_over_view::paramset('__${batch_id}__')"></div>
+		<div th:insert="manufacturing/post_batch_over_view::paramset('__${batch_id}__')"></div>
 	</div>
 </div>

@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -1413,7 +1416,7 @@ public class VCAjax extends VCCommon{
     /*
      * COA PDF出力
      */
-	@GetMapping("/preview_coa")
+	@GetMapping("preview_coa")
 	public void preview_coa(
 		@RequestParam(param_batch_id) String batch_id,
 		HttpServletRequest request,
@@ -1463,10 +1466,15 @@ public class VCAjax extends VCCommon{
 			ByteArrayOutputStream baOutStr = new ByteArrayOutputStream();
 			PdfWriter writer = PdfWriter.getInstance(doc, baOutStr);
 			
-			String ttf = "src/main/resources/public/fonts/yumin.ttf";
+			String ttf = super.getProperties().getCOA_PDF_FONT_FILE();
+			String encoding = BaseFont.IDENTITY_H;
+			if(!super.checkExist(ttf)) {
+				ttf = BaseFont.HELVETICA;
+				encoding = BaseFont.WINANSI;
+			}
 			
 			//setting font family, color
-			BaseFont bf = BaseFont.createFont(ttf,BaseFont.IDENTITY_H,false);
+			BaseFont bf = BaseFont.createFont(ttf,encoding,false);
 			Font font12 = new Font(bf, 12, Font.NORMAL);
 			Font font12_underline = new Font(bf, 12, Font.UNDERLINE);
 			Font font20_header = new Font(bf, 20, Font.BOLD);

@@ -144,7 +144,7 @@ function confirm_qualitycontrol(wgp, wid,
 	    <table style="width:100%;">
 		    <tr><td id="work_list">
 	    		<div th:each="map : ${WORK_GROUP_MAP}">
-	    			<div th:insert="/workgroup/work__${map.getValue().DISPLAY_TYPE}__::paramset('__${map.getValue().WORK_GROUP}__')"></div>
+	    			<div th:insert="workgroup/work__${map.getValue().DISPLAY_TYPE}__::paramset('__${map.getValue().WORK_GROUP}__')"></div>
 				</div>
 		    <td></tr>
 		    <tr><td>
@@ -158,4 +158,4 @@ function confirm_qualitycontrol(wgp, wid,
     
   </div>
 </div>
-<div th:insert="/common/menu::paramset('__${BATCH_ID}__')"></div>
+<div th:insert="common/menu::paramset('__${BATCH_ID}__')"></div>

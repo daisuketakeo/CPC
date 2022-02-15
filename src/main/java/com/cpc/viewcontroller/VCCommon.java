@@ -775,6 +775,18 @@ public class VCCommon {
         }
     	return false;
     }
+    public boolean checkExist(String filepath) {
+    	try {
+            // ファイルがあれば
+        	if (Files.exists(Paths.get(filepath))) {
+                // ファイル読み込み
+            	return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    	return false;
+    }
     
     /*
      *Batch proress Camera vision 画像一覧取得

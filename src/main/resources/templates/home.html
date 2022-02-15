@@ -7,17 +7,17 @@ $(function(){
 	
 	$("#manufacturing").on('click', function() {
 		sessionStorage.setItem(['DISP_FLG'],['2']);
-		$("#manufacturing").prop("href","/instructions");
+		$("#manufacturing").prop("href","instructions");
 	});
 	
 	$("#quality_control").on('click', function() {
 		sessionStorage.setItem(['DISP_FLG'],['3']);
-		$("#quality_control").prop("href","/instructions");
+		$("#quality_control").prop("href","instructions");
 	});
 	
 	$("#review").on('click', function() {
 		sessionStorage.setItem(['DISP_FLG'],['4']);
-		$("#review").prop("href","/instructions");
+		$("#review").prop("href","instructions");
 	});
 	
 });
@@ -26,7 +26,7 @@ $(function(){
 <table class="home">
 	<tr>
 		<td>
-			<a href="/accept">
+			<a href="accept">
 				<img src="/images/home_ic.png">
 			</a>
 		</td>

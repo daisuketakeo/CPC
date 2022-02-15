@@ -22,14 +22,14 @@ public class VCInstructions extends VCCommon{
     public VCInstructions() {
     }
     
-    @RequestMapping(value = "/instructions", method = {RequestMethod.GET,RequestMethod.POST})
+    @RequestMapping(value = "instructions", method = {RequestMethod.GET,RequestMethod.POST})
     public String instructions(
     		@RequestParam(name=param_batch_id, required = false) String batch_id,
     		Model model) {
         if(!super.loginCheck()) return disp_login;
         
         setHeaderAttr(model);
-        model.addAttribute(disp_body, "/instructions/instructions");
+        model.addAttribute(disp_body, "instructions/instructions");
     	// ステータスリスト
     	model.addAttribute(param_status_list, getStatusJson());
     	
@@ -43,20 +43,20 @@ public class VCInstructions extends VCCommon{
 		return disp_main;
     }
     
-    @RequestMapping(value = "/instructions_detail", method = RequestMethod.GET)
+    @RequestMapping(value = "instructions_detail", method = RequestMethod.GET)
     public String instructions_detail(Model model) {
         if(!super.loginCheck()) return disp_login;
         setHeaderAttr(model);
-		return "/instructions/instructions_detail";
+		return "instructions/instructions_detail";
     }
-    @RequestMapping(value = "/proc_instructions", method = RequestMethod.GET)
+    @RequestMapping(value = "proc_instructions", method = RequestMethod.GET)
     public String proc_instructions(Model model) {
         if(!super.loginCheck()) return disp_login;
         setHeaderAttr(model);
-		return "/instructions/proc_instructions";
+		return "instructions/proc_instructions";
     }
     
-    @RequestMapping(value = "/manufacturing", method = RequestMethod.POST)
+    @RequestMapping(value = "manufacturing", method = RequestMethod.POST)
     public String manufacturing(
     		@RequestParam(name=param_batch_id) String BATCH_ID,
     		@RequestParam(name=param_process_id) String PROCESS_ID,
@@ -65,7 +65,7 @@ public class VCInstructions extends VCCommon{
         if(!super.loginCheck()) return disp_login;
         
         setHeaderAttr(model);
-        model.addAttribute(disp_body, "/manufacturing/manufacturing");
+        model.addAttribute(disp_body, "manufacturing/manufacturing");
     	
     	// 画面パラメータ生成
     	Map<String, DisplayParameter> map = getWorkGroupList(PROCESS_ID);
@@ -82,7 +82,7 @@ public class VCInstructions extends VCCommon{
 		return disp_main;
     }
     
-    @RequestMapping(value = "/qualitycontrol", method = RequestMethod.POST)
+    @RequestMapping(value = "qualitycontrol", method = RequestMethod.POST)
     public String qualitycontrol(
     		@RequestParam(name=param_batch_id) String BATCH_ID,
     		@RequestParam(name=param_process_id) String PROCESS_ID,
@@ -91,7 +91,7 @@ public class VCInstructions extends VCCommon{
         if(!super.loginCheck()) return disp_login;
         
         setHeaderAttr(model);
-        model.addAttribute(disp_body, "/qualitycontrol/qualitycontrol");
+        model.addAttribute(disp_body, "qualitycontrol/qualitycontrol");
     	
     	// 画面パラメータ生成
     	Map<String, DisplayParameter> map = getWorkGroupList(PROCESS_ID);
@@ -108,7 +108,7 @@ public class VCInstructions extends VCCommon{
 		return disp_main;
     }
     
-    @RequestMapping(value = "/batchrelease", method = RequestMethod.POST)
+    @RequestMapping(value = "batchrelease", method = RequestMethod.POST)
     public String batchrelease(
     		@RequestParam(name=param_batch_id) String BATCH_ID,
     		@RequestParam(name=param_return_url, required = false) String RETURN_URL,
@@ -116,7 +116,7 @@ public class VCInstructions extends VCCommon{
         if(!super.loginCheck()) return disp_login;
         
         setHeaderAttr(model);
-        model.addAttribute(disp_body, "/batchrelease/batchrelease");
+        model.addAttribute(disp_body, "batchrelease/batchrelease");
     	
     	// 画面パラメータ生成
     	Map<String, DisplayParameter> map = getWorkGroupList(br);
@@ -127,18 +127,18 @@ public class VCInstructions extends VCCommon{
     	model.addAttribute(param_work_group_map, map);
     	
     	model.addAttribute(param_batch_id, BATCH_ID);
-    	model.addAttribute(param_return_url, RETURN_URL==null ? "/instructions" : RETURN_URL);
+    	model.addAttribute(param_return_url, RETURN_URL==null ? "instructions" : RETURN_URL);
     	
 		return disp_main;
     }
     
-    @RequestMapping(value = "/post_batch_over_view_window", method = RequestMethod.GET)
+    @RequestMapping(value = "post_batch_over_view_window", method = RequestMethod.GET)
     public String post_batch_over_view_window(
     		@RequestParam(name=param_batch_id) String BATCH_ID, Model model) {
         if(!super.loginCheck()) return disp_login;
         setHeaderAttr(model);
         model.addAttribute(param_batch_id, BATCH_ID);
-		return "/manufacturing/post_batch_over_view_window";
+		return "manufacturing/post_batch_over_view_window";
     }
 
 }

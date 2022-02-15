@@ -43,7 +43,7 @@ $(function(){
 				sessionStorage.removeItem('OK_BUTTON');
 				setDisabled(OK_BUTTON,false);
 				// Post-batch overviewを別タブで表示
-				window.open("/post_batch_over_view_window?BATCH_ID="+BATCH_ID,"post_batch_over_view_window");
+				window.open("post_batch_over_view_window?BATCH_ID="+BATCH_ID,"post_batch_over_view_window");
 			}
 			
 		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
