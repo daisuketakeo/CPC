@@ -376,22 +376,29 @@ function search(){
 	        var tr1 = $('<tr/>');
 	        
 	        var tdbatchid = $('<td/>');
-	        var abatchid = $("<a></a>", {
-	        	  href: "#",
-	        	  class: "blank",
-	        	  text: INSTRUCTIONS_TABLE.batch_ID,
+	        if(disp_flg=='4'){
+		        var abatchid = $("<a></a>", {
+		        	  href: "#",
+		        	  class: "blank",
+		        	  text: INSTRUCTIONS_TABLE.batch_ID,
+		        	});
+		        
+		        $(abatchid).on('click',function(){
+		        	if(disp_flg=='4'){
+			        	// batch release画面へ遷移				
+						  $('<form/>', {action: '/batchrelease', method: 'post'})
+						  .append($('<input/>', {type: 'hidden', name: 'PROCESS_ID', value: 'BR'}))
+						  .append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: INSTRUCTIONS_TABLE.batch_ID}))
+						  .append($('<input/>', {type: 'hidden', name: 'RETURN_URL', value: "instructions"}))
+						  .appendTo(document.body)
+						  .submit();
+					}
 	        	});
-	        
-	        $(abatchid).on('click',function(){
-	        	$("#detail").tabs(
-    				{ active: 0 } //タブの初期値指定
-    			);
-	        	$('#detail_dialog').dialog("open");
-	        	sessionStorage.setItem(['BATCH_ID'],[INSTRUCTIONS_TABLE.batch_ID]);
-	        	$('#setbtnInsructionsDetail').trigger('click');
-        	});
-	        
-	        tdbatchid.append(abatchid);
+		        tdbatchid.append(abatchid);
+			}else{
+				tdbatchid.text(INSTRUCTIONS_TABLE.batch_ID);
+			}
+
 	        tr1.append(tdbatchid);
 	        tr1.append($('<td/>').text(INSTRUCTIONS_TABLE.protocol));
 	        tr1.append($('<td/>').text(INSTRUCTIONS_TABLE.starting_TIME));
@@ -436,6 +443,7 @@ function search(){
 	        $('#tbl1').append(tbody);
 	        
 	        // 一覧の行ダブルクリック
+	        /*
 	        tr1.dblclick(function(){
 	        	if(disp_flg=='4'){
 		        	// batch release画面へ遷移				
@@ -447,6 +455,7 @@ function search(){
 					  .submit();
 				}
 	        });
+	        */
 	        // 一覧の行クリック
 	        tr1.click(function(){
 	        	select_row(this);

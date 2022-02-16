@@ -3,6 +3,7 @@ package com.cpc.viewcontroller;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -900,18 +901,52 @@ public class VCCommon {
      */
     public void download(String dir, String file, HttpServletResponse response) {
     	
-        try (OutputStream os = response.getOutputStream();) {
-        	
-            byte[] fb1 = 
-            		FileUtils.readFileToByteArray(new File(Paths.get(dir, file).toString()));
-            response.setContentType("application/octet-stream");
-            response.setHeader("Content-Disposition", "attachment; filename="+file);
-            response.setContentLength(fb1.length);
-            os.write(fb1);
-            os.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
+    	StringBuilder rtnhtml = new StringBuilder();
+    	rtnhtml.append("<html>");
+    	rtnhtml.append("<head>");
+    	rtnhtml.append("<title>File download</title>");
+    	rtnhtml.append("</head>");
+    	rtnhtml.append("<body>");
+    	rtnhtml.append("<p>File not found.</p>");
+    	rtnhtml.append("</body>");
+    	rtnhtml.append("</html>");
+    	
+    	// ファイルがあれば
+    	if(dir.isEmpty() || file.isEmpty()) {
+			try{
+				response.setContentType("text/html; charset=UTF-8");
+			    PrintWriter out = response.getWriter();
+			    out.println(rtnhtml.toString());
+			    out.close();
+			    return;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+    	}
+    	if (Files.exists(Paths.get(dir, file))) {
+            try (OutputStream os = response.getOutputStream();) {
+            	
+                byte[] fb1 = 
+                		FileUtils.readFileToByteArray(new File(Paths.get(dir, file).toString()));
+                response.setContentType("application/octet-stream");
+                response.setHeader("Content-Disposition", "attachment; filename="+file);
+                response.setContentLength(fb1.length);
+                os.write(fb1);
+                os.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return;
+        }else {
+			try{
+				response.setContentType("text/html; charset=UTF-8");
+			    PrintWriter out = response.getWriter();
+			    out.println(rtnhtml.toString());
+			    out.close();
+			    return;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        return;
     }
 }
