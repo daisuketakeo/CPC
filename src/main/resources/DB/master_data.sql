@@ -1,11 +1,11 @@
 delete from user_master;
-insert into user_master (USERID, USERNAME, PASSWORD, AUTHORITY) values ('ko01','KO01','a','KO01');
-insert into user_master (USERID, USERNAME, PASSWORD, AUTHORITY) values ('cp01','CP01','a','CP01');
-insert into user_master (USERID, USERNAME, PASSWORD, AUTHORITY) values ('cp02','CP02','a','CP02');
-insert into user_master (USERID, USERNAME, PASSWORD, AUTHORITY) values ('cp03','CP03','a','CP03');
-insert into user_master (USERID, USERNAME, PASSWORD, AUTHORITY) values ('qa01','QA01','a','QA01');
-insert into user_master (USERID, USERNAME, PASSWORD, AUTHORITY) values ('qc01','QC01','a','QC01');
-insert into user_master (USERID, USERNAME, PASSWORD, AUTHORITY) values ('qc02','QC02','a','QC02');
+insert into user_master (USERID, PASSWORD, AUTHORITY, USERNAME) values ('ko01','a','KO01','キッティングオペレータ（KO）');
+insert into user_master (USERID, PASSWORD, AUTHORITY, USERNAME) values ('cp01','a','CP01','製造担当者（CP）');
+insert into user_master (USERID, PASSWORD, AUTHORITY, USERNAME) values ('cp02','a','CP02','製造サブマネージャー（CPサブマネージャー）');
+insert into user_master (USERID, PASSWORD, AUTHORITY, USERNAME) values ('cp03','a','CP03','製造マネージャー（CPマネージャー）');
+insert into user_master (USERID, PASSWORD, AUTHORITY, USERNAME) values ('qa01','a','QA01','品質保証（QA）');
+insert into user_master (USERID, PASSWORD, AUTHORITY, USERNAME) values ('qc01','a','QC01','品質管理担当（QC）');
+insert into user_master (USERID, PASSWORD, AUTHORITY, USERNAME) values ('qc02','a','QC02','品質管理マネージャー（QCマネージャー）');
 
 delete from WORK_MASTER;
 insert into WORK_MASTER (PROCESS_ID, WORK_GROUP, WORK_ID,AUTHORITY, WORK) values ('QC','QC01','001','QC01,QC02','１） A "Received Label" issued by QA is attached to the received product, and it is transported to the receiving test site.');
