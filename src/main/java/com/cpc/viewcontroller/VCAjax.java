@@ -83,8 +83,23 @@ public class VCAjax extends VCCommon{
      * 承認者か？
      */
     @GetMapping("/ajax/isapp")
-    public boolean isapp() { 
-    	return super.isAdmin();
+    public boolean isapp(
+    		@RequestParam(param_process_id) String process_id,
+    		HttpServletRequest request,
+    		HttpServletResponse response) { 
+    	
+    	if(!super.loginCheck()) {
+    		try{response.setStatus(HttpServletResponse.SC_CONFLICT);}catch(Exception e) {}
+    		return false;
+    	}
+    	
+    	if(process_id.equals("ET2") ||
+    			process_id.equals("ET3") ||
+    			process_id.equals("ET4")) {
+    		return super.isQA();
+    	}
+    	
+    	return super.isCP_Admin();
     }
     
     /*

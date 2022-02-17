@@ -104,7 +104,7 @@ $(function() {
 		// 承認者か？
 		$.ajax({
 		type: "GET", 
-		url: '/ajax/isapp',
+		url: '/ajax/isapp?PROCESS_ID='+process_id,
 		}).done(function(data, dataType) {
 			if(data){
 				$(apppanel).show();

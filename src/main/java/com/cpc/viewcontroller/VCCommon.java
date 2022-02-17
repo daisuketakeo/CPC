@@ -196,6 +196,12 @@ public class VCCommon {
     	if(user.getAUTHORITY().equals("QA01")) return true;
         return false;
     }
+	public boolean isCP_Admin() {
+    	USER_MASTER user = (USER_MASTER)session.getAttribute(seeeson_user);
+    	if(user==null) return false;
+    	if(user.getAUTHORITY().equals("CP03")) return true;
+        return false;
+    }
 	
 	/*
 	 * 定義情報取得
