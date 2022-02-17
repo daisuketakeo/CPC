@@ -44,6 +44,10 @@ $(function(){
 				setDisabled(OK_BUTTON,false);
 				// Post-batch overviewを別タブで表示
 				window.open("post_batch_over_view_window?BATCH_ID="+BATCH_ID,"post_batch_over_view_window");
+				// Batch progressメニュー有効化
+				$("#hamberger_menu4_li").show();
+				// Post-batch overviewメニュー有効化
+				$("#hamberger_menu5_li").show();
 			}
 			
 		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
