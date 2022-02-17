@@ -127,6 +127,7 @@ public class VCInstructions extends VCCommon{
     	model.addAttribute(param_work_group_map, map);
     	
     	model.addAttribute(param_batch_id, BATCH_ID);
+    	model.addAttribute(param_process_id, br);
     	model.addAttribute(param_return_url, RETURN_URL==null ? "instructions" : RETURN_URL);
     	
 		return disp_main;

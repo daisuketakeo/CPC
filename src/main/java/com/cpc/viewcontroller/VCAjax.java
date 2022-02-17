@@ -758,6 +758,84 @@ public class VCAjax extends VCCommon{
     }
     
     /*
+     * ステータスチェック（ボタンの有効／無効セット）
+     */
+    @GetMapping("/ajax/check_status_qc")
+    public boolean check_status_qc(
+    		@RequestParam(param_batch_id) String batch_id,
+    		HttpServletRequest request,
+    		HttpServletResponse response) {
+    	
+    	if(!super.loginCheck()) {
+    		try{response.setStatus(HttpServletResponse.SC_CONFLICT);}catch(Exception e) {}
+    		return false;
+    	}
+    	
+    	/**********************************
+    	 *       操作権限チェック
+    	 **********************************/
+        // 作業手順マスタ取得
+        if(!isQA()) {
+        	return false;
+        }
+
+        // QC-2/QC-3/QC-4のいづれか最後に承認した場合
+		// 作業手順マスタ取得
+     	String url= rest_workmst+"select";
+ 	 	List<WORK_MASTER> list = getRest(url, WORK_MASTER.class);
+ 	 	WORK_MASTER ET2_wm = null;
+ 	 	WORK_MASTER ET3_wm = null;
+ 	 	WORK_MASTER ET4_wm = null;
+ 	 	for(WORK_MASTER wm : list) {
+ 	 		if(wm.getPROCESS_ID().equals("ET2")) {
+ 	 			ET2_wm = wm;
+ 	 		}
+ 	 		if(wm.getPROCESS_ID().equals("ET3")) {
+ 	 			ET3_wm = wm;
+ 	 		}
+ 	 		if(wm.getPROCESS_ID().equals("ET4")) {
+ 	 			ET4_wm = wm;
+ 	 		}
+ 	 	}
+ 	 	
+ 	 	// 作業実績取得
+ 	 	boolean ET2end = false;
+ 	 	if(ET2_wm!=null) {
+             // 作業実績取得
+             List<WORK_RESULT_TABLE> et2_workresult = 
+             		getWorkResult(ET2_wm.getWORK_GROUP(), ET2_wm.getWORK_ID(), batch_id);
+             if(et2_workresult.size()>0) {
+             	ET2end = true;
+             }
+ 	 	}
+ 	 	boolean ET3end = false;
+ 	 	if(ET3_wm!=null) {
+             // 作業実績取得
+             List<WORK_RESULT_TABLE> et3_workresult = 
+             		getWorkResult(ET3_wm.getWORK_GROUP(), ET3_wm.getWORK_ID(), batch_id);
+             if(et3_workresult.size()>0) {
+             	ET3end = true;
+             }
+ 	 	}
+ 	 	boolean ET4end = false;
+ 	 	if(ET4_wm!=null) {
+             // 作業実績取得
+             List<WORK_RESULT_TABLE> et4_workresult = 
+             		getWorkResult(ET4_wm.getWORK_GROUP(), ET4_wm.getWORK_ID(), batch_id);
+             if(et4_workresult.size()>0) {
+             	ET4end = true;
+             }
+ 	 	}
+ 	 	
+ 	 	// 未完了があった場合
+ 	 	if(!ET2end || !ET3end || !ET4end) {
+ 	 		return false;
+ 	 	}
+        
+        return true;
+    }
+    
+    /*
      * 作業完了処理
      * 引数：Json形式
      */
