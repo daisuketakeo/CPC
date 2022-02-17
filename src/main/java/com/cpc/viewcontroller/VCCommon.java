@@ -267,8 +267,8 @@ public class VCCommon {
     public void setHeaderAttr(Model model) {
     	USER_MASTER user = getUserInfo();
     	String user_name = user != null ? user.getUSERNAME() : ""; 
-    	user_name += user != null && authority.containsKey(user.getAUTHORITY()) 
-    			? "("+authority.get(user.getAUTHORITY())+")" : "";
+//    	user_name += user != null && authority.containsKey(user.getAUTHORITY()) 
+//    			? "("+authority.get(user.getAUTHORITY())+")" : "";
     	model.addAttribute("user_name", user_name);
         model.addAttribute("system_name", property.getSYSTEM_NAME());
         model.addAttribute("PROCESS_MASTER_json", getRest(rest_processmst+"select"));
