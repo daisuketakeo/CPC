@@ -49,8 +49,15 @@ $(function(){
 	  autoOpen: false,
   	  modal:true, //モーダル表示
   	  title:"CellQualia Top", //タイトル
- 	  height: 700,
-      width: "100%"
+ 	  height: 800,
+      width: "100%",
+      buttons:[
+          {text: "Close",
+           class:"btn custombtn",
+           click: function() {
+        	   $(this).dialog("close");
+        	   }
+          }]
   	});
     
 	// Batcvh Progress　ダイアログ
@@ -58,8 +65,15 @@ $(function(){
 	  autoOpen: false,
   	  modal:true, //モーダル表示
   	  title:"Batch progress", //タイトル
- 	  height: 700,
-      width: "100%"
+ 	  height: 800,
+      width: "100%",
+      buttons:[
+          {text: "Close",
+           class:"btn custombtn",
+           click: function() {
+        	   $(this).dialog("close");
+        	   }
+          }]
   	});
 	
 	// Pre batch overview　ダイアログ
@@ -67,8 +81,15 @@ $(function(){
 	  autoOpen: false,
   	  modal:true, //モーダル表示
   	  title:"Pre-batch overview", //タイトル
- 	  height: 700,
-      width: "100%"
+ 	  height: 800,
+      width: "100%",
+      buttons:[
+          {text: "Close",
+           class:"btn custombtn",
+           click: function() {
+        	   $(this).dialog("close");
+        	   }
+          }]
   	});
 	
 	// Post batch overview　ダイアログ
@@ -76,8 +97,15 @@ $(function(){
 	  autoOpen: false,
   	  modal:true, //モーダル表示
   	  title:"Post-batch overview", //タイトル
- 	  height: 700,
-      width: "100%"
+ 	  height: 800,
+      width: "100%",
+      buttons:[
+          {text: "Close",
+           class:"btn custombtn",
+           click: function() {
+        	   $(this).dialog("close");
+        	   }
+          }]
   	});
 	
 	// 製造指図メニュークリック
