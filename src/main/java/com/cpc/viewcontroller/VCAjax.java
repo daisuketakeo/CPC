@@ -1021,7 +1021,7 @@ public class VCAjax extends VCCommon{
                 	 		INSTRUCTIONS_TABLE insdata = new INSTRUCTIONS_TABLE();
                 	 		insdata.setBATCH_ID(req.getID());
                 	 		insdata.setSTATUS("I03");
-                	 		insdata.setSTARTING_TIME(super.getWorkDate());
+                	 		//insdata.setSTARTING_TIME(super.getWorkDate());
                 	 		url = rest_instructions+"update";
                         	postRest(url, insdata);
                     	}
@@ -1410,6 +1410,7 @@ public class VCAjax extends VCCommon{
 	 		
 	 		INSTRUCTIONS_TABLE data = list.get(0);
 	 		data.setSTATUS("I02");
+	 		data.setSTARTING_TIME(super.getWorkDate());
 	 		url= rest_instructions+"update";
 	 		if(!postRest(url, data)) {
 	 			return "NG";
