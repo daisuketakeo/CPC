@@ -108,7 +108,6 @@ $(function() {
  		 					WORK_RESULT_TABLE = data[2];
  		 		 		    $(ApprovedName).text(WORK_RESULT_TABLE.work_USERNAME);
  		 		 		    $(ApprovedDate).text(WORK_RESULT_TABLE.work_DATE);
- 		 		 		    
  		 		 		    if(WORK_RESULT_TABLE.check_RESULT=='1'){
  		 			    		$(continue_check).prop('checked', true);
  		 			    	}
@@ -118,6 +117,12 @@ $(function() {
  					    }else{
  					    	$(ApprovedName).text('-');
  		 		 		    $(ApprovedDate).text('-');
+ 		 		 		    if(WORK_RESULT_TABLE.check_RESULT=='1'){
+		 			    		$(continue_check).prop('checked', true);
+		 			    	}
+					    	if(WORK_RESULT_TABLE.check_RESULT=='0'){
+		 			    		$(suspension_check).prop('checked', true);
+		 			    	}
  					    }
  				 	    
  					}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
