@@ -2,13 +2,8 @@ package com.cpc.viewcontroller;
 
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,12 +25,9 @@ import com.cpc.model.AI_RELATION_TABLE;
 import com.cpc.model.INSTRUCTIONS_MASTER;
 import com.cpc.model.INSTRUCTIONS_TABLE;
 import com.cpc.model.MATERIAL_CHECK_TABLE;
-import com.cpc.model.MATERIAL_GROUP_TABLE;
 import com.cpc.model.PROCESS_MASTER;
 import com.cpc.model.PROCESS_STATUS_TABLE;
 import com.cpc.model.PROC_INSTRUCTIONS_DETAIL_MASTER;
-import com.cpc.model.PROC_INSTRUCTIONS_MASTER;
-import com.cpc.model.STATUS_MASTER;
 import com.cpc.model.USER_MASTER;
 import com.cpc.model.WORK_GROUP_MASTER;
 import com.cpc.model.WORK_MASTER;
@@ -49,8 +40,6 @@ import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Table;
 import com.lowagie.text.pdf.BaseFont;
-import com.lowagie.text.pdf.PdfEncryptor;
-import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfWriter;
 
 /**  
@@ -1167,19 +1156,19 @@ public class VCAjax extends VCCommon{
      * マテリアル一覧取得
      */
     @GetMapping("/ajax/get_material_list")
-    public String get_material_list(
+    public List<ACCEPT_TABLE> get_material_list(
     		@RequestParam(param_batch_id) String batch_id,
     		@RequestParam(param_process_id) String process_id,
     		@RequestParam(param_work_group) String work_group,
     		HttpServletRequest request,
     		HttpServletResponse response) {
     	
+    	List<ACCEPT_TABLE> material_lsit = new ArrayList<ACCEPT_TABLE>();
+    	
     	if(!super.loginCheck()) {
     		try{response.setStatus(HttpServletResponse.SC_CONFLICT);}catch(Exception e) {}
-    		return param_errmsg_session;
+    		return null;
     	}
-    	
-    	String json = "{}";
     	
     	// 製造指図テーブル取得
     	String url= rest_instructions+"select"+
@@ -1193,11 +1182,14 @@ public class VCAjax extends VCCommon{
 					"?"+ param_im_id+"="+im_id+
 					"&"+ param_process_id+"="+process_id;
 		 	List<AI_RELATION_TABLE> list2 = getRest(url, AI_RELATION_TABLE.class);
-		 	if(list2.size()>0) {
-
-		 		Map<String ,Object> map = new HashMap<String ,Object>();
-		 		for(AI_RELATION_TABLE art : list2) {
-			 		String material_no = art.getMATERIAL_NO();
+		 	List<String> lsit_mno = new ArrayList<String>();
+		 	for(AI_RELATION_TABLE art : list2) {
+		 		lsit_mno.add(art.getMATERIAL_NO());
+	 		}
+		 	Collections.sort(lsit_mno);
+		 	
+		 	if(lsit_mno.size()>0) {
+		 		for(String material_no : lsit_mno) {
 			 		// 受入テーブル取得
 			 		url= rest_accept+"select"+
 							"?"+ param_material_no+"="+material_no;
@@ -1206,17 +1198,13 @@ public class VCAjax extends VCCommon{
 			 			ACCEPT_TABLE ac = list3.get(0);
 			 			// 保管済み以外は除外
 			 			if(!ac.getSTATUS().equals(param_status_storage_end)) continue;
-			 			if(!map.containsKey(ac.getMATERIAL_NO())) {
-			 				map.put(ac.getMATERIAL_NO(), ac);
-			 			}
+			 			material_lsit.add(list3.get(0));
 			 		}
 		 		}
-		 		
-		 		json = getJson(map);
 		 	}
 	 	}
 	 	
-        return json;
+        return material_lsit;
     }
     
     /*
