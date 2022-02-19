@@ -212,6 +212,36 @@
 }
 
 /*********************************
+ 受入一覧
+*********************************/
+/* 画面全体 */
+.panel_accept {
+  position: relative;
+  width:100%;
+}
+/*ヘッダ名*/
+.headername_accept {
+  position: absolute;
+  top:10px;
+  width:100%;
+  text-align: center;
+}
+.tablepanel_accept {
+  position: absolute;
+  top:50px;
+  width:100%;
+  display: flex;
+  justify-content: center;
+}
+.workpanel_accept {
+  position: absolute;
+  top:360px;
+  width:100%;
+  display: flex;
+  justify-content: left;
+}
+
+/*********************************
  指図一覧
 *********************************/
 /* 画面全体 */

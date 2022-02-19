@@ -337,15 +337,12 @@ function initAT(){
 <input type="hidden" id="PROCESS_ID" th:value="${PROCESS_ID}">
 <input type="hidden" id="WORK_GROUP_JSON" th:value="${WORK_GROUP_JSON}">
 <input type="hidden" id="status_list" th:value="${STATUS_LIST}">
-<div class="container text-center">
-  <div class="columns">
+<div class="panel_accept">
   
-  	<div class="column col-12 m2"><h4>Acceptance</h4></div>
-
-    <div style="margin:auto;">
-    <table style="width:100%;">
-    	<tr><td>
-	    <!-- 受入一覧 -->
+  	<div class="headername_accept"><h4>Acceptance</h4></div>
+	
+	<!-- 受入一覧 -->
+    <div class="tablepanel_accept">
 		<table id="tbl1" class="tableArea">
 			<thead>
 				<tr>
@@ -364,24 +361,26 @@ function initAT(){
 				</tr>
 	        </thead>
 		</table>
-	    <td></tr>
-	    <tr><td id="work_list">
-    		<div th:each="map : ${WORK_GROUP_MAP}">
-    			<div th:insert="workgroup/work__${map.getValue().DISPLAY_TYPE}__::paramset('__${map.getValue().WORK_GROUP}__')"></div>
-			</div>
-	    <td></tr>
-	    <tr><td>
-	        <div style="height: 50px;"></div>
-        <td></tr>
-	    <tr style="text-align: right;"><td>
-		    <input type="button" id="closebtn" value="Close" class="btn custombtn fixed_btn">
-	    <td></tr>
-    </table>
-
+	</div>
+	
+	<!-- 作業手順 -->
+	<div class="workpanel_accept">
+	    <table style="width:100%;">
+		    <tr><td id="work_list">
+	    		<div th:each="map : ${WORK_GROUP_MAP}">
+	    			<div th:insert="workgroup/work__${map.getValue().DISPLAY_TYPE}__::paramset('__${map.getValue().WORK_GROUP}__')"></div>
+				</div>
+		    <td></tr>
+		    <tr><td>
+	    		<div style="height: 50px;"></div>
+		    <td></tr>
+		    <tr style="text-align: right;"><td>
+			    <input type="button" id="closebtn" value="Close" class="btn custombtn fixed_btn">
+		    <td></tr>
+	    </table>
     </div>
     
   </div>
-</div>
  
 </form>
 
