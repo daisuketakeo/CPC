@@ -142,7 +142,7 @@ function initAT(){
 	$("#material_no").val(material_no);
 	
 	// 作業手順グループ再表示
-	refrech_work(material_no);
+	refrech_work();
 
 	// 作業手順表示
 	$("#work_list").show();
@@ -152,14 +152,14 @@ function initAT(){
  /***********************************
  作業手順グループ再表示
  ***********************************/
- function refrech_work(material_no){
+ function refrech_work(){
 	const work_group_json = JSON.parse($("#WORK_GROUP_JSON").val());
 	Object.keys(work_group_json).forEach(function (key) {
 		WORK_GROUP = work_group_json[key];
 		open_work(WORK_GROUP.work_GROUP, false);	// 作業手順非表示
 		var setwork = 'setwork'+WORK_GROUP.work_GROUP;
 		// 各作業グループのセットボタン押下
-		$('#setbtn'+WORK_GROUP.work_GROUP).trigger('click', [material_no]);
+		$('#setbtn'+WORK_GROUP.work_GROUP).trigger('click', [$("#material_no").val()]);
 	});
  }
 
@@ -211,7 +211,7 @@ function initAT(){
 			}
 	        
 			// 作業手順グループ再表示
-			refrech_work($("#material_no").val());
+			refrech_work();
 	        
 	    });
 
