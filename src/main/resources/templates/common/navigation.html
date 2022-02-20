@@ -1,8 +1,7 @@
 <div th:fragment="navigation" th:remove="tag">
 
-<div id="header_bar" class="navbar" style="max-height: 50px">
+<div id="header_bar" class="navbar" style="max-height:50px;width:100%;position: fixed;z-index:999;">
 	<section class="navbar-section">
-		<!-- <span class="navbar-brand m-2" style="min-width: 200px;" th:text="${system_name}"></span> -->
 		<label class="navbar-brand m-2" style="min-width: 300px;" th:text="${user_name}"></label>
 		<a href="#" class="btn btn-link m-2 text-secondary" style="min-width: 80px;" th:href="@{/home}">Home</a>
 		<a  id="logout_link" href="javascript:void(0);" class="btn btn-link m-2 text-secondary" style="min-width: 80px;">Logout</a>
