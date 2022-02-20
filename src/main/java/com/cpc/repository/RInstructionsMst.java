@@ -84,6 +84,7 @@ public interface RInstructionsMst{
             + ", PRB_YOBI1 "
             + ", PRB_YOBI2 "
             + ", PRB_YOBI3 "
+            + ", BARCODE_READER "
          +") VALUES ( "
             + "  #{IM_ID} "
             + ", #{NAME} "
@@ -151,6 +152,7 @@ public interface RInstructionsMst{
             + ", #{PRB_YOBI1} "
             + ", #{PRB_YOBI2} "
             + ", #{PRB_YOBI3} "
+            + ", #{BARCODE_READER} "
          +")"
          )
     int insert(INSTRUCTIONS_MASTER model);
@@ -224,6 +226,7 @@ public interface RInstructionsMst{
         "    <if test='PRB_YOBI1 != null'> , PRB_YOBI1 = #{PRB_YOBI1} </if>",
         "    <if test='PRB_YOBI2 != null'> , PRB_YOBI2 = #{PRB_YOBI2} </if>",
         "    <if test='PRB_YOBI3 != null'> , PRB_YOBI3 = #{PRB_YOBI3} </if>",
+        "    <if test='BARCODE_READER != null'> , BARCODE_READER = #{BARCODE_READER} </if>",
         "  </set>",
         "  WHERE ",
         "       IM_ID = #{IM_ID}",

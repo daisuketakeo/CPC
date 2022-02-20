@@ -73,4 +73,5 @@ public class INSTRUCTIONS_MASTER  implements Serializable{
 	private String PRB_YOBI1;
 	private String PRB_YOBI2;
 	private String PRB_YOBI3;
+	private String BARCODE_READER;
 }

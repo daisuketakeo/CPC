@@ -765,6 +765,19 @@
 	left	: 0px;
 }
 
+/* Kitting,Expansion時のバーコード読込用テキスト（バーコードありの場合) */
+.barcode_reader_on{
+	width:0px;
+	height:0px;
+	position: absolute;
+	top:20px;
+	right:50px;
+	z-index:-10;
+}
+.barcode_reader_off{
+	width:300px;
+}
+
 /*********************************
  Batch release
 *********************************/

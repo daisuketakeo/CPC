@@ -5,6 +5,7 @@ $(function() {
 	var wgrp = /*[[${wgrp}]]*/ '';
 	var batch_id = $('#BATCH_ID').val();
 	var process_id = $('#PROCESS_ID').val();
+	var barcode_reader = $('#BARCODE_READER').val();
 	
 	// 作業グループ名セット
 	getWorkGroupName(wgrp, wgrp, "work_group_name");
@@ -23,6 +24,140 @@ $(function() {
 	var tdcheck = 'tdcheck'+wgrp;
 	var tdperformed_Time = 'tdperformed_Time'+wgrp;
 	var material_group_id_read = '#material_group_id_read'+wgrp;
+	var barcode_reader_dialog = '#barcode_reader_dialog'+wgrp;
+	
+	if(barcode_reader=='1'){
+		
+		// バーコードリーダ：ONの場合
+		
+		$(material_group_id_read).removeClass('barcode_reader_off');
+		$(material_group_id_read).addClass('barcode_reader_on');
+		
+		// バーコード読み取り時の処理
+		$(material_group_id_read).on('input', function(event) {
+			
+			// 実施対象のマテリアル取得
+			var args = 
+				"?MATERIAL_GORUP_ID="+$(material_group_id_read).val();
+			$.ajax({
+			type: "GET", 
+			url: '/rest/materialgroup/select'+args,
+			}).done(function(data, dataType) {
+				var usage_arr = JSON.parse(data);
+				$.each(usage_arr.list,function(i,MATERIAL_GORUP_ID){
+					if($('#'+tdcheck+MATERIAL_GORUP_ID.material_NO).length){
+						$('#'+tdcheck+MATERIAL_GORUP_ID.material_NO).prop('checked', true);
+					}
+				});
+				$(startbtn).val('Start');
+				$(material_group_id_read).val('');
+				$(startbtn).focus();
+				
+			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+				console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+			});
+			
+		});
+		
+		// Startボタン押下後にフォーカスが外れたらフォーカスしなおす
+		$(material_group_id_read).blur(function (e) {
+		    if($(startbtn).val()=='Stop'){
+				// バーコードリーダONの場合はフォーカス外れたら入力欄を一旦クリア
+	    		$(material_group_id_read).val('');
+	    		$(material_group_id_read).focus();
+			}
+		});
+		
+		// Startbtnボタンクリック時の処理
+		$(startbtn).click(function() {
+			if($(startbtn).val()=='Start'){
+				$(material_group_id_read).val('');
+				$(material_group_id_read).focus();
+				$(startbtn).val('Stop');
+			}else{
+				$(startbtn).val('Start');
+				$(material_group_id_read).val('');
+				$(startbtn).focus();
+			}
+
+		});
+		
+	}else{
+		
+		// バーコードリーダ：OFFの場合
+		
+		$(material_group_id_read).removeClass('barcode_reader_on');
+		$(material_group_id_read).addClass('barcode_reader_off');
+		
+		// バーコードリーダ　ダイアログ
+		$(barcode_reader_dialog).dialog({
+		  autoOpen: false,
+	  	  modal:true, //モーダル表示
+	  	  title:"Barcode reader", //タイトル
+	 	  height: 200,
+	      width: 400,
+	      buttons:[{
+				text: "OK",
+				class:"btn custombtn",
+				click: function() {
+					// 入力値読み取り
+					
+					var input_vals = $(material_group_id_read).val().split(",");
+					
+					$.each(input_vals,function(i,input_val){
+						// 実施対象のマテリアル取得
+						var args = 
+							"?MATERIAL_GORUP_ID="+input_val;
+						$.ajax({
+						type: "GET", 
+						url: '/rest/materialgroup/select'+args,
+						}).done(function(data, dataType) {
+							var usage_arr = JSON.parse(data);
+							$.each(usage_arr.list,function(i,MATERIAL_GORUP_ID){
+								if($('#'+tdcheck+MATERIAL_GORUP_ID.material_NO).length){
+									$('#'+tdcheck+MATERIAL_GORUP_ID.material_NO).prop('checked', true);
+								}
+							});
+						}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+							console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+						});
+				    });
+					
+					$(startbtn).val('Start');
+					$(material_group_id_read).val('');
+					$(startbtn).focus();
+					
+					$(this).dialog("close");
+				}
+	     	},
+			{
+				text: "Cancel",
+				class:"btn custombtn",
+				click: function() {
+					$(this).dialog("close");
+					$(startbtn).val('Start');
+					$(material_group_id_read).val('');
+					$(startbtn).focus();
+				}
+			}]
+	  	});
+		
+		// Startbtnボタンクリック時の処理
+		$(startbtn).click(function() {
+			if($(startbtn).val()=='Start'){
+				$(material_group_id_read).val('');
+				$(material_group_id_read).focus();
+				$(startbtn).val('Stop');
+				// バーコード読み取り時の処理
+				$(barcode_reader_dialog).dialog("open");
+			}else{
+				$(startbtn).val('Start');
+				$(material_group_id_read).val('');
+				$(startbtn).focus();
+			}
+
+		});
+	}
 	
  	// 初期表示処理
 	$(setbtn).click(function() {
@@ -156,15 +291,6 @@ $(function() {
 						}	
 					}
 				});
-				
-				// チェックボックス無効
-				for( var i=0,l=tbodys.length;i<l;i++ ){
-					// 選択行のMATERIAL_NO取得
-					var childtr = tbodys.eq(i).children();
-					var childtd = $(childtr).children();
-					var material_no = $(childtd.eq(0)).text();
-					$('#'+tdcheck+material_no).prop('disabled', true);
-				}
 
 			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 				console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
@@ -193,6 +319,15 @@ $(function() {
 						
 						var performed_Time = $('<td id="'+tdperformed_Time+ACCEPT_TABLE.material_NO+'"/>');
 						var mcheck = $('<td/>');
+						var cbox = $("<input>", {
+				        	  type: "checkbox",
+				        	  id: tdcheck+ACCEPT_TABLE.material_NO,
+				        	  checked: false,
+				        	});
+						cbox.click(function() {
+							return false;
+						});
+						mcheck.append(cbox);
 						
 						tr1.append(performed_Time);
 						tr1.append(mcheck);
@@ -211,39 +346,24 @@ $(function() {
 						url: '/rest/materialcheck/select'+args,
 						}).done(function(materialcheck, dataType) {
 							var materialcheck_arr = JSON.parse(materialcheck);
+							
 							if(materialcheck_arr.list.length>0){
 								MATERIAL_CHECK_TABLE = materialcheck_arr.list[0];
 								if(MATERIAL_CHECK_TABLE.check_DATE=='' ||
 										MATERIAL_CHECK_TABLE.check_DATE == null){
 									// 作業実施日が空白の場合
 									performed_Time.text("");
-						 	    	mcheck.append($("<input>", {
-							        	  type: "checkbox",
-							        	  id: tdcheck+ACCEPT_TABLE.material_NO,
-							        	  checked: false,
-							        	  disabled: true,
-							        	}));
+						 	    	cbox.prop('checked',false);
 								}else{
 									//　作業実施日がある場合
 									performed_Time.text(MATERIAL_CHECK_TABLE.check_DATE);
-									mcheck.append($("<input>", {
-							        	  type: "checkbox",
-							        	  id: tdcheck+ACCEPT_TABLE.material_NO,
-							        	  checked: true,
-							        	  disabled: true,
-							        	}));
+									cbox.prop('checked',true);
 								}
 					 	    }else{
 					 	    	// 作業実績がない場合
 					 	    	performed_Time.text("");
-					 	    	mcheck.append($("<input>", {
-						        	  type: "checkbox",
-						        	  id: tdcheck+ACCEPT_TABLE.material_NO,
-						        	  checked: false,
-						        	  disabled: true,
-						        	}));
+					 	    	cbox.prop('checked',false);
 					 	    }
-							
 							
 						}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 							console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
@@ -335,64 +455,6 @@ $(function() {
 	        //pdfMake.createPdf(docDef).open();
 		}
 	});
-	
-	// Startbtnボタンクリック時の処理
-	$(startbtn).click(function() {
-		if($(startbtn).val()=='Start'){
-			$(material_group_id_read).val('');
-			$(material_group_id_read).focus();
-			$(startbtn).val('Stop');
-		}else{
-			$(startbtn).val('Start');
-			$(material_group_id_read).val('');
-			$(startbtn).focus();
-		}
-	});
-	
-	// Startボタン押下後にフォーカスが外れたらフォーカスしなおす
-	$(material_group_id_read).blur(function (e) {
-	    if($(startbtn).val()=='Stop'){
-	    	$(material_group_id_read).val('');
-			$(material_group_id_read).focus();
-		}
-	});
-	// バーコード読み取り時の処理
-	$(material_group_id_read).on('input', function(event) {
-		
-		//console.log($(material_group_id_read).val());
-		
-		// チェックボックスも有効
-		var tbodys = $(mtbl+" tbody");//全行を取得
-		for( var i=0,l=tbodys.length;i<l;i++ ){
-			// 選択行のMATERIAL_NO取得
-			var childtr = tbodys.eq(i).children();
-			var childtd = $(childtr).children();
-			var material_no = $(childtd.eq(0)).text();
-			$('#'+tdcheck+material_no).prop('disabled', false);
-		}
-		// 実施対象のマテリアル取得
-		var args = 
-			"?MATERIAL_GORUP_ID="+$(material_group_id_read).val();
-		//console.log(args);
-		$.ajax({
-		type: "GET", 
-		url: '/rest/materialgroup/select'+args,
-		}).done(function(data, dataType) {
-			//console.log(data);
-			var usage_arr = JSON.parse(data);
-			$.each(usage_arr.list,function(i,MATERIAL_GORUP_ID){
-				if($('#'+tdcheck+MATERIAL_GORUP_ID.material_NO).length){
-					$('#'+tdcheck+MATERIAL_GORUP_ID.material_NO).prop('checked', true);
-				}
-			});
-			$(startbtn).val('Start');
-			$(material_group_id_read).val('');
-			$(startbtn).focus();
-		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-			console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
-		});
-		
-	})
 	
 	// 有効期限ラベルPrintボタンクリック時の処理
 	$(expdlabelprintbtn).click(function() {
@@ -571,7 +633,7 @@ $(function() {
 <td>
 </tr>
 </table>
-<div class="disopaypanel">
-<input type="text" th:id="'material_group_id_read'+${wgrp}" 
-	style="width:0px;height:0px;position: absolute;top:20px;right:50px;z-index:-10;">
+
+<div th:id="'barcode_reader_dialog'+${wgrp}" class="disopaypanel">
+	<input type="text" th:id="'material_group_id_read'+${wgrp}" class="barcode_reader_on">
 </div>

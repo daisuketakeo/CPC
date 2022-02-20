@@ -1,5 +1,6 @@
 package com.cpc.viewcontroller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.cpc.model.DisplayParameter;
+import com.cpc.model.INSTRUCTIONS_MASTER;
+import com.cpc.model.INSTRUCTIONS_TABLE;
 
 /**  
  製造指図テーブル View Controller 
@@ -78,6 +81,19 @@ public class VCInstructions extends VCCommon{
     	model.addAttribute(param_batch_id, BATCH_ID);
     	model.addAttribute(param_process_id, PROCESS_ID);
     	model.addAttribute(param_return_url, RETURN_URL);
+    	
+    	String url = rest_instructions+"select?BATCH_ID="+BATCH_ID;
+    	String BARCODE_READER = "";
+	 	List<INSTRUCTIONS_TABLE> list = getRest(url, INSTRUCTIONS_TABLE.class);
+	 	if(list.size()>0) {
+	 		url = rest_instructionsmst+"select?IM_ID="+list.get(0).getIM_ID();
+		 	List<INSTRUCTIONS_MASTER> list2 = getRest(url, INSTRUCTIONS_MASTER.class);
+		 	if(list2.size()>0) {
+		 		BARCODE_READER = list2.get(0).getBARCODE_READER();
+		 	}
+	 	}
+    	
+    	model.addAttribute(param_barcode_reader, BARCODE_READER);
     	
 		return disp_main;
     }
