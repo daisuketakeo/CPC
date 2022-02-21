@@ -7,7 +7,7 @@
 		<a  id="logout_link" href="javascript:void(0);" class="btn btn-link m-2 text-secondary" style="min-width: 80px;">Logout</a>
 	</section>
 	<!-- ハンバーガーメニュー -->
-	<span class="hamberger"><hr><hr><hr></span>
+	<span class="hamberger" id="hamberger_menu_span"><hr><hr><hr></span>
 	<div class="hamberger_menu" id="hamberger_menu_list">
 	</div>
 </div>
@@ -20,9 +20,19 @@
 <script>
 $(function(){
 	// ヘッダメニュー クリック
-	$(".hamberger").click(function() {
-        $(this).toggleClass("close");
-        $('.hamberger_menu').toggleClass("show");
+	$('#hamberger_menu_span').click(function() {
+		if($(this).attr("class")=='hamberger'){
+			$(this).toggleClass("close");
+			$('#hamberger_menu_list').show();
+		}else{
+			$(this).removeClass("close");
+			$('#hamberger_menu_list').hide();
+		}
+    });
+	
+	$('#hamberger_menu_list').click(function() {
+		$(this).hide();
+		$('#hamberger_menu_span').removeClass("close");
     });
 	
 	// ログアウトリンク クリック

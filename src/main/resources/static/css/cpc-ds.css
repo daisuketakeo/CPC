@@ -74,7 +74,7 @@
     width: 55%;
 }
 .hamberger_menu {
-  visibility: hidden;
+  display:none;
   position: fixed;
   z-index: 10;
   top: 40px;
@@ -84,10 +84,6 @@
 .hamberger_menu li {
   position: relative;
   left: 0;
-}
-.hamberger_menu.show {
-  opacity: 1;
-  visibility: visible;
 }
 
 /*********************************
