@@ -399,13 +399,18 @@ function search(){
 		        
 		        $(abatchid).on('click',function(){
 		        	if(disp_flg=='4'){
-			        	// batch release画面へ遷移				
-						  $('<form/>', {action: '/batchrelease', method: 'post'})
-						  .append($('<input/>', {type: 'hidden', name: 'PROCESS_ID', value: 'BR'}))
-						  .append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: INSTRUCTIONS_TABLE.batch_ID}))
-						  .append($('<input/>', {type: 'hidden', name: 'RETURN_URL', value: "instructions"}))
-						  .appendTo(document.body)
-						  .submit();
+						  if(status_json[INSTRUCTIONS_TABLE.status]==create_status){
+								// ステータスが指図作成済の場合操作不可
+								alertdialog(MESSAGE.W011);
+							}else{
+								// batch release画面へ遷移				
+								$('<form/>', {action: '/batchrelease', method: 'post'})
+								.append($('<input/>', {type: 'hidden', name: 'PROCESS_ID', value: 'BR'}))
+								.append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: INSTRUCTIONS_TABLE.batch_ID}))
+								.append($('<input/>', {type: 'hidden', name: 'RETURN_URL', value: "instructions"}))
+								.appendTo(document.body)
+								.submit();
+							}
 					}
 	        	});
 		        tdbatchid.append(abatchid);
