@@ -66,7 +66,7 @@ function search(){
 	     	// 逸脱の作業グループをトップに表示する
 			var BR_WORK_GROUP = sessionStorage.getItem(['BR_WORK_GROUP']);
 			if(BR_WORK_GROUP!=null && BR_WORK_GROUP!=''){
-				$("html,body").animate({scrollTop:$("#tr_header"+BR_WORK_GROUP).offset().top});
+				$("html,body").animate({scrollTop:$("#tr_header"+BR_WORK_GROUP).offset().top-50});
 			}
 	     	
 	    });
