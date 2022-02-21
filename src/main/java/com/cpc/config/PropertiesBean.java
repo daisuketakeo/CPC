@@ -35,6 +35,7 @@ public class PropertiesBean {
 	private String CHECKLIST_MSG2;
 	
 	private String KIT_LABEL_FIX_STRING;
+	private String BARCODE_READER;
 	
 	private String SEQUENCE_INTERVAL;
 	
