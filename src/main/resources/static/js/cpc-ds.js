@@ -310,7 +310,7 @@ function open_work(no, open){
 	*/
 	if(open){
 		// 仕掛位置まで移動
-		$("html,body").animate({scrollTop:$("#tr_header"+no).offset().top});
+		$("html,body").animate({scrollTop:$("#tr_header"+no).offset().top-50});
 	}
 }
  /*

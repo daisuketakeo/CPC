@@ -275,7 +275,7 @@ public class VCCommon {
         model.addAttribute("PROCESS_MASTER_json", getRest(rest_processmst+"select"));
         model.addAttribute("WORK_GROUP_MASTER_json", getRest(rest_workgroupmst+"select"));
         model.addAttribute("WORK_MASTER_json", getRest(rest_workmst+"select"));
-        model.addAttribute("param_barcode_reader", property.getBARCODE_READER());
+        model.addAttribute(param_barcode_reader, property.getBARCODE_READER());
     }
     
     /*
