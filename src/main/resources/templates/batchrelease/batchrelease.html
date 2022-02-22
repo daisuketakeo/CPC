@@ -112,7 +112,7 @@ function search(){
 	
     $.each(wgrp_list,function(i,WORK_GROUP_MASTER){
     	
-    	if(WORK_GROUP_MASTER.process_ID=='IS'){
+    	if(WORK_GROUP_MASTER.process_ID==proc_instructions){
     		var tr_is = $('#br_row1');
     		$(tr_is).empty();
     		
@@ -129,7 +129,7 @@ function search(){
 			
 			// 指図作成日時取得
 		 	var args = 
-				"?WORK_GROUP=IS01"+
+				"?WORK_GROUP="+wgrp_instructions_create+
 				"&ID="+$("#BATCH_ID").val();
 			$.ajax({
 			type: "GET", 
@@ -146,7 +146,7 @@ function search(){
 		    		
 		    		// 指図リリース日時取得
 		    		var args = 
-						"?WORK_GROUP=IS02"+
+						"?WORK_GROUP="+wgrp_instructions_release+
 						"&ID="+$("#BATCH_ID").val();
 					$.ajax({
 					type: "GET", 
@@ -181,29 +181,29 @@ function search(){
 		}).done(function(data, dataType) {
 			
 			var tr = $('<tr/>');
-			if(WORK_GROUP_MASTER.process_ID=='EP1'){
+			if(WORK_GROUP_MASTER.process_ID==proc_kitting_preclture){
 	    		tr = $('#br_row2');
 	    	}
-			if(WORK_GROUP_MASTER.process_ID=='EP2'){
+			if(WORK_GROUP_MASTER.process_ID==proc_preclture){
 	    		tr = $('#br_row3');
 	    	}
-			if(WORK_GROUP_MASTER.process_ID=='ET1'){
+			if(WORK_GROUP_MASTER.process_ID==proc_QC1){
 	    		tr = $('#br_row4');
 	    	}
-			if(WORK_GROUP_MASTER.process_ID=='EP3'){
+			if(WORK_GROUP_MASTER.process_ID==proc_kitting_expansion){
 	    		tr = $('#br_row5');
 	    	}
-			if(WORK_GROUP_MASTER.process_ID=='EP4'){
+			if(WORK_GROUP_MASTER.process_ID==proc_expansion){
 	    		tr = $('#br_row6');
 	    	}
 			
-			if(WORK_GROUP_MASTER.process_ID=='ET2'){
+			if(WORK_GROUP_MASTER.process_ID==proc_QC2){
 	    		tr = $('#qc_row1');
 	    	}
-			if(WORK_GROUP_MASTER.process_ID=='ET3'){
+			if(WORK_GROUP_MASTER.process_ID==proc_QC3){
 	    		tr = $('#qc_row2');
 	    	}
-			if(WORK_GROUP_MASTER.process_ID=='ET4'){
+			if(WORK_GROUP_MASTER.process_ID==proc_QC4){
 	    		tr = $('#qc_row3');
 	    	}
 			
@@ -452,7 +452,7 @@ function confirm_batch_release(wgrp, wid, CHECK_RESULT, CHECK_REASON){
 				class:"btn custombtn",
 				click: function() {
 					// 作業完了処理実行
-					endwork("BR",$("#BATCH_ID").val(), wgrp, wid,
+					endwork(proc_batch_release,$("#BATCH_ID").val(), wgrp, wid,
 							CHECK_RESULT, CHECK_REASON
 				 	);
 					$(this).dialog("close");

@@ -155,8 +155,8 @@ $(function(){
 	
 	// Expansionの先頭作業（1. Preparation (Room Temperature)）実績取得
  	var args = 
- 		"?WORK_GROUP=EP401"+
- 		"&WORK_ID=001"+
+ 		"?WORK_GROUP="+wgrp_expansion_top+
+ 		"&WORK_ID="+wid_expansion_top+
 		"&ID="+batch_id;
 	$.ajax({
 	type: "GET", 
@@ -172,8 +172,8 @@ $(function(){
 	});
 	// Expansionの 2. Culture（手順2：Start run)作業実績取得
  	var args = 
- 		"?WORK_GROUP=EP404"+
- 		"&WORK_ID=002"+
+ 		"?WORK_GROUP="+wgrp_expansion_culture+
+ 		"&WORK_ID="+wid_expansion_culture+
 		"&ID="+batch_id;
 	$.ajax({
 	type: "GET", 

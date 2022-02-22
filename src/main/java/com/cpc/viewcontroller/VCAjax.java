@@ -82,9 +82,9 @@ public class VCAjax extends VCCommon{
     		return false;
     	}
     	
-    	if(process_id.equals("ET2") ||
-    			process_id.equals("ET3") ||
-    			process_id.equals("ET4")) {
+    	if(process_id.equals(ET2) ||
+    			process_id.equals(ET3) ||
+    			process_id.equals(ET4)) {
     		return super.isQA();
     	}
     	
@@ -686,7 +686,7 @@ public class VCAjax extends VCCommon{
     	}
     	
     	// batch release の場合
-    	if(work_group.indexOf("BR")>=0) {
+    	if(work_group.indexOf(br)>=0) {
     		
     		// QC-2/QC-3/QC-4のいづれか最後に承認した場合
 			// 作業手順マスタ取得
@@ -696,13 +696,13 @@ public class VCAjax extends VCCommon{
     	 	WORK_MASTER ET3_wm = null;
     	 	WORK_MASTER ET4_wm = null;
     	 	for(WORK_MASTER wm : list) {
-    	 		if(wm.getPROCESS_ID().equals("ET2")) {
+    	 		if(wm.getPROCESS_ID().equals(ET2)) {
     	 			ET2_wm = wm;
     	 		}
-    	 		if(wm.getPROCESS_ID().equals("ET3")) {
+    	 		if(wm.getPROCESS_ID().equals(ET3)) {
     	 			ET3_wm = wm;
     	 		}
-    	 		if(wm.getPROCESS_ID().equals("ET4")) {
+    	 		if(wm.getPROCESS_ID().equals(ET4)) {
     	 			ET4_wm = wm;
     	 		}
     	 	}
@@ -776,13 +776,13 @@ public class VCAjax extends VCCommon{
  	 	WORK_MASTER ET3_wm = null;
  	 	WORK_MASTER ET4_wm = null;
  	 	for(WORK_MASTER wm : list) {
- 	 		if(wm.getPROCESS_ID().equals("ET2")) {
+ 	 		if(wm.getPROCESS_ID().equals(ET2)) {
  	 			ET2_wm = wm;
  	 		}
- 	 		if(wm.getPROCESS_ID().equals("ET3")) {
+ 	 		if(wm.getPROCESS_ID().equals(ET3)) {
  	 			ET3_wm = wm;
  	 		}
- 	 		if(wm.getPROCESS_ID().equals("ET4")) {
+ 	 		if(wm.getPROCESS_ID().equals(ET4)) {
  	 			ET4_wm = wm;
  	 		}
  	 	}
@@ -858,7 +858,7 @@ public class VCAjax extends VCCommon{
         data.setCHECK_FILE_BASE64(null);
         
         String rst = workresult_regist(data,request,response);
-        result = rst.equals("OK");
+        result = rst.equals(param_ok);
         
         /**
          * ステータス更新
@@ -1005,7 +1005,7 @@ public class VCAjax extends VCCommon{
                         }
                         
                     	// 先頭工程の場合
-                    	if(data.getWORK_GROUP().equals("EP101")) {
+                    	if(data.getWORK_GROUP().equals(top_pid)) {
                     		// 指図のステータス、開始日時更新
                 	 		INSTRUCTIONS_TABLE insdata = new INSTRUCTIONS_TABLE();
                 	 		insdata.setBATCH_ID(req.getID());
@@ -1019,9 +1019,9 @@ public class VCAjax extends VCCommon{
         	}
         	
         	//
-        	if(req.getPROCESS_ID().equals("ET2") ||
-					req.getPROCESS_ID().equals("ET3") ||
-					req.getPROCESS_ID().equals("ET4")) {
+        	if(req.getPROCESS_ID().equals(ET2) ||
+					req.getPROCESS_ID().equals(ET3) ||
+					req.getPROCESS_ID().equals(ET4)) {
 				
     			// QC-2/QC-3/QC-4のいづれか最後に承認した場合
     			// 作業手順マスタ取得
@@ -1031,13 +1031,13 @@ public class VCAjax extends VCCommon{
         	 	WORK_MASTER ET3_wm = null;
         	 	WORK_MASTER ET4_wm = null;
         	 	for(WORK_MASTER wm : list) {
-        	 		if(wm.getPROCESS_ID().equals("ET2")) {
+        	 		if(wm.getPROCESS_ID().equals(ET2)) {
         	 			ET2_wm = wm;
         	 		}
-        	 		if(wm.getPROCESS_ID().equals("ET3")) {
+        	 		if(wm.getPROCESS_ID().equals(ET3)) {
         	 			ET3_wm = wm;
         	 		}
-        	 		if(wm.getPROCESS_ID().equals("ET4")) {
+        	 		if(wm.getPROCESS_ID().equals(ET4)) {
         	 			ET4_wm = wm;
         	 		}
         	 	}
@@ -1085,7 +1085,7 @@ public class VCAjax extends VCCommon{
 			}
         }
 		
-		return result ? "OK" : "NG";
+		return result ? param_ok : param_ng;
     }
     
     /*
@@ -1132,7 +1132,7 @@ public class VCAjax extends VCCommon{
             url = rest_workresult+"insert";
         }
         
-        return postRest(url, data) ? "OK": "NG";
+        return postRest(url, data) ? param_ok: param_ng;
         
     }
     
@@ -1323,14 +1323,14 @@ public class VCAjax extends VCCommon{
 	 		 	List<PROCESS_MASTER> list2 = getRest(url, PROCESS_MASTER.class);
 	 		 	for(PROCESS_MASTER pm : list2) {
 	 		 		String init_status = "";
-	 		 		if(pm.getPROCESS_ID().indexOf("IS")>=0) continue;
+	 		 		if(pm.getPROCESS_ID().indexOf(is)>=0) continue;
 	 		 		if(pm.getPROCESS_ID().indexOf("EP")>=0) {
 	 		 			init_status = "P01";
 	 		 		}
-	 		 		if(pm.getPROCESS_ID().indexOf("ET")>=0) {
+	 		 		if(pm.getPROCESS_ID().indexOf(et)>=0) {
 	 		 			init_status = "T01";
 	 		 		}
-	 		 		if(pm.getPROCESS_ID().indexOf("BR")>=0) {
+	 		 		if(pm.getPROCESS_ID().indexOf(br)>=0) {
 	 		 			init_status = "B01";
 	 		 		}
 	 		 		
@@ -1350,7 +1350,7 @@ public class VCAjax extends VCCommon{
 	 	        
 	 	        // 作業実績登録
 	 	        WORK_RESULT_TABLE wrt = new WORK_RESULT_TABLE();
-	 	        wrt.setPROCESS_ID("IS");
+	 	        wrt.setPROCESS_ID(is);
 	 	        wrt.setWORK_GROUP("IS01");
 	 	        wrt.setWORK_ID("001");
 	 	        wrt.setID(batch_id);
@@ -1359,7 +1359,7 @@ public class VCAjax extends VCCommon{
 	 	        wrt.setWORK_DATE(getWorkDate());
 	 	        
 	 	        String rst = workresult_regist(wrt,request,response);
-	 	        if(!rst.equals("OK")) {
+	 	        if(!rst.equals(param_ok)) {
 	 	        	return "";
 	 	        }
 	 		}
@@ -1401,14 +1401,14 @@ public class VCAjax extends VCCommon{
 	 		data.setSTARTING_TIME(super.getWorkDate());
 	 		url= rest_instructions+"update";
 	 		if(!postRest(url, data)) {
-	 			return "NG";
+	 			return param_ng;
 	 		}else {
 	 		// ユーザ情報取得
 	 	        USER_MASTER user = super.getUserInfo();
 	 	        
 	 	        // 作業実績登録
 	 	        WORK_RESULT_TABLE wrt = new WORK_RESULT_TABLE();
-	 	        wrt.setPROCESS_ID("IS");
+	 	        wrt.setPROCESS_ID(is);
 	 	        wrt.setWORK_GROUP("IS02");
 	 	        wrt.setWORK_ID("001");
 	 	        wrt.setID(batch_id);
@@ -1417,13 +1417,13 @@ public class VCAjax extends VCCommon{
 	 	        wrt.setWORK_DATE(getWorkDate());
 	 	        
 	 	        String rst = workresult_regist(wrt,request,response);
-	 	        if(!rst.equals("OK")) {
-	 	        	return "NG";
+	 	        if(!rst.equals(param_ok)) {
+	 	        	return param_ng;
 	 	        }
 	 		}
 	 	}
         
-        return "OK";
+        return param_ok;
         
     }
     
@@ -1456,11 +1456,11 @@ public class VCAjax extends VCCommon{
         	
         	url= rest_materialcheck+"insert";
 	 		if(!postRest(url, data)) {
-	 			return "NG";
+	 			return param_ng;
 	 		}
         }
         
-        return "OK";
+        return param_ok;
         
     }
     
@@ -1515,7 +1515,7 @@ public class VCAjax extends VCCommon{
 			String pass = "Passed";
 			String fail = "Failed";
 			String url = rest_workresult+"select"
-	                + "?"+param_process_id+"=ET3"
+	                + "?"+param_process_id+"="+ET3
 	                + "&"+param_id+"="+batch_id;
 			
             // 作業実績取得
@@ -1530,7 +1530,7 @@ public class VCAjax extends VCCommon{
             }
             
             url = rest_workresult+"select"
-	                + "?"+param_process_id+"=ET4"
+	                + "?"+param_process_id+"="+ET4
 	                + "&"+param_id+"="+batch_id;
             
             // 作業実績取得

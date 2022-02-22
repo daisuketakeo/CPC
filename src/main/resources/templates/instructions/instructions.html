@@ -306,7 +306,7 @@ $(function(){
 	// 操作権限チェック
 	$.ajax({
 	    type: "GET", 
-	    url: '/ajax/check_operation_authority?WORK_GROUP=IS01',
+	    url: '/ajax/check_operation_authority?WORK_GROUP='+wgrp_instructions_create,
 	}).done(function(data, dataType) {
 	    if(!data){
 	    	$("#createbtn").prop("disabled",true);
@@ -405,7 +405,7 @@ function search(){
 							}else{
 								// batch release画面へ遷移				
 								$('<form/>', {action: '/batchrelease', method: 'post'})
-								.append($('<input/>', {type: 'hidden', name: 'PROCESS_ID', value: 'BR'}))
+								.append($('<input/>', {type: 'hidden', name: 'PROCESS_ID', value: proc_batch_release}))
 								.append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: INSTRUCTIONS_TABLE.batch_ID}))
 								.append($('<input/>', {type: 'hidden', name: 'RETURN_URL', value: "instructions"}))
 								.appendTo(document.body)
@@ -467,7 +467,7 @@ function search(){
 	        	if(disp_flg=='4'){
 		        	// batch release画面へ遷移				
 					  $('<form/>', {action: '/batchrelease', method: 'post'})
-					  .append($('<input/>', {type: 'hidden', name: 'PROCESS_ID', value: 'BR'}))
+					  .append($('<input/>', {type: 'hidden', name: 'PROCESS_ID', value: proc_batch_release}))
 					  .append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: INSTRUCTIONS_TABLE.batch_ID}))
 					  .append($('<input/>', {type: 'hidden', name: 'RETURN_URL', value: "instructions"}))
 					  .appendTo(document.body)
@@ -535,7 +535,7 @@ function select_row(obj){
 			var process_id = PROCESS_STATUS_TABLE.process_ID;
 			//console.log(process_id);
 			
-			if(process_id!='IS'){	// 指図工程は工程フロー図に存在しないため除外
+			if(process_id!=proc_instructions){	// 指図工程は工程フロー図に存在しないため除外
 				
 				var end_flg = false;
 				
@@ -589,50 +589,50 @@ function select_row(obj){
 			$('#ar'+PROCESS.get(key)[0]).hide();
 		}
 		
-		if(!PROCESS.get('EP1')[4]){
-			$('#ar'+PROCESS.get('EP1')[0]).show();
-			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get('EP1')[0]).offset().left-30});
+		if(!PROCESS.get(proc_kitting_preclture)[4]){
+			$('#ar'+PROCESS.get(proc_kitting_preclture)[0]).show();
+			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get(proc_kitting_preclture)[0]).offset().left-30});
 		}
-		if(!PROCESS.get('EP2')[4] && PROCESS.get('EP1')[4]){
-			$('#ar'+PROCESS.get('EP2')[0]).show();
-			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get('EP2')[0]).offset().left-30});
+		if(!PROCESS.get(proc_preclture)[4] && PROCESS.get(proc_kitting_preclture)[4]){
+			$('#ar'+PROCESS.get(proc_preclture)[0]).show();
+			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get(proc_preclture)[0]).offset().left-30});
 		}
-		if(!PROCESS.get('ET1')[4] && PROCESS.get('EP2')[4]){
-			$('#ar'+PROCESS.get('ET1')[0]).show();
-			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get('ET1')[0]).offset().left-30});
+		if(!PROCESS.get(proc_QC1)[4] && PROCESS.get(proc_preclture)[4]){
+			$('#ar'+PROCESS.get(proc_QC1)[0]).show();
+			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get(proc_QC1)[0]).offset().left-30});
 		}
-		if(!PROCESS.get('EP3')[4] && PROCESS.get('ET1')[4]){
-			$('#ar'+PROCESS.get('EP3')[0]).show();
-			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get('EP3')[0]).offset().left-30});
+		if(!PROCESS.get(proc_kitting_expansion)[4] && PROCESS.get(proc_QC1)[4]){
+			$('#ar'+PROCESS.get(proc_kitting_expansion)[0]).show();
+			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get(proc_kitting_expansion)[0]).offset().left-30});
 		}
-		if(!PROCESS.get('EP4')[4] && PROCESS.get('EP3')[4]){
-			$('#ar'+PROCESS.get('EP4')[0]).show();
-			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get('EP4')[0]).offset().left-30});
+		if(!PROCESS.get(proc_expansion)[4] && PROCESS.get(proc_kitting_expansion)[4]){
+			$('#ar'+PROCESS.get(proc_expansion)[0]).show();
+			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get(proc_expansion)[0]).offset().left-30});
 		}
-		if(!PROCESS.get('EP5')[4] && PROCESS.get('EP4')[4]){
-			$('#ar'+PROCESS.get('EP5')[0]).show();
-			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get('EP5')[0]).offset().left-30});
+		if(!PROCESS.get(proc_buffer_exchange)[4] && PROCESS.get(proc_expansion)[4]){
+			$('#ar'+PROCESS.get(proc_buffer_exchange)[0]).show();
+			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get(proc_buffer_exchange)[0]).offset().left-30});
 		}
-		if(!PROCESS.get('EP6')[4] && PROCESS.get('EP5')[4]){
-			$('#ar'+PROCESS.get('EP6')[0]).show();
-			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get('EP6')[0]).offset().left-30});
+		if(!PROCESS.get(proc_freezing)[4] && PROCESS.get(proc_buffer_exchange)[4]){
+			$('#ar'+PROCESS.get(proc_freezing)[0]).show();
+			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get(proc_freezing)[0]).offset().left-30});
 		}
-		if(!PROCESS.get('ET2')[4] && PROCESS.get('EP4')[4]){
-			$('#ar'+PROCESS.get('ET2')[0]).show();
-			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get('ET2')[0]).offset().left-30});
+		if(!PROCESS.get(proc_QC2)[4] && PROCESS.get(proc_expansion)[4]){
+			$('#ar'+PROCESS.get(proc_QC2)[0]).show();
+			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get(proc_QC2)[0]).offset().left-30});
 		}
-		if(!PROCESS.get('ET3')[4] && PROCESS.get('EP5')[4]){
-			$('#ar'+PROCESS.get('ET3')[0]).show();
-			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get('ET3')[0]).offset().left-30});
+		if(!PROCESS.get(proc_QC3)[4] && PROCESS.get(proc_buffer_exchange)[4]){
+			$('#ar'+PROCESS.get(proc_QC3)[0]).show();
+			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get(proc_QC3)[0]).offset().left-30});
 		}
-		if(!PROCESS.get('ET4')[4] && PROCESS.get('EP6')[4]){
-			$('#ar'+PROCESS.get('ET4')[0]).show();
-			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get('ET4')[0]).offset().left-30});
+		if(!PROCESS.get(proc_QC4)[4] && PROCESS.get(proc_freezing)[4]){
+			$('#ar'+PROCESS.get(proc_QC4)[0]).show();
+			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get(proc_QC4)[0]).offset().left-30});
 		}
-		if(!PROCESS.get('BR')[4] 
-			&& PROCESS.get('ET2')[4] && PROCESS.get('ET3')[4] && PROCESS.get('ET4')[4]){
-			$('#ar'+PROCESS.get('BR')[0]).show();
-			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get('BR')[0]).offset().left-30});
+		if(!PROCESS.get(proc_batch_release)[4] 
+			&& PROCESS.get(proc_QC2)[4] && PROCESS.get(proc_QC3)[4] && PROCESS.get(proc_QC4)[4]){
+			$('#ar'+PROCESS.get(proc_batch_release)[0]).show();
+			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get(proc_batch_release)[0]).offset().left-30});
 		}
 		
 	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {

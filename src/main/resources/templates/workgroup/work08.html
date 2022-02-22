@@ -246,7 +246,7 @@ $(function() {
 		
 		// キッティング時の作業実績取得
 	 	var args = 
-	 		"?WORK_GROUP=EP3"+wgrp.substring(3,5)+
+	 		"?WORK_GROUP="+proc_kitting_expansion+wgrp.substring(3,5)+
 	 		"&WORK_ID=001"+
 			"&ID="+batch_id;
 		$.ajax({
@@ -265,8 +265,8 @@ $(function() {
 		
 		// 先頭作業（1. Preparation）実績取得
 	 	var args = 
-	 		"?WORK_GROUP=EP401"+
-	 		"&WORK_ID=001"+
+	 		"?WORK_GROUP="+wgrp_expansion_top+
+	 		"&WORK_ID="+wid_expansion_top+
 			"&ID="+batch_id;
 		$.ajax({
 		type: "GET", 
@@ -337,9 +337,9 @@ $(function() {
 			}).done(function(kmaterialcheck, dataType) {
 				var kmaterialcheck_arr = JSON.parse(kmaterialcheck);
 				$.each(kmaterialcheck_arr.list,function(j,MATERIAL_CHECK_TABLE_kitting){
-					if(MATERIAL_CHECK_TABLE_kitting.work_GROUP=='EP301' ||
-							MATERIAL_CHECK_TABLE_kitting.work_GROUP=='EP302' ||
-							MATERIAL_CHECK_TABLE_kitting.work_GROUP=='EP303'){
+					if(MATERIAL_CHECK_TABLE_kitting.work_GROUP==wgrp_kitting_expansion_rt ||
+							MATERIAL_CHECK_TABLE_kitting.work_GROUP==wgrp_kitting_expansion_p4t ||
+							MATERIAL_CHECK_TABLE_kitting.work_GROUP==wgrp_kitting_expansion_m20t){
 						if(MATERIAL_CHECK_TABLE_kitting.check_DATE=='' ||
 								MATERIAL_CHECK_TABLE_kitting.check_DATE == null){
 							// 作業実施日が空白の場合

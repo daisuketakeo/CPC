@@ -91,7 +91,8 @@ public class VCCommon {
 	public static final String param_barcode_reader      = "BARCODE_READER";		// 画面へ渡すBARCODE_READER
 	public static final String param_status_storage_end      = "Q06";		// 受入 保管済みステータス
 	public static final String param_errmsg_session = "Session disconnect!　Please sign in　agein.";		// セッション切れエラーメッセージ
-	
+	public static final String param_ok      = "OK";		// 画面戻り値 OK
+	public static final String param_ng      = "NG";		// 画面戻り値 NG
 	/*
 	 * REST URL
 	 */
@@ -132,9 +133,14 @@ public class VCCommon {
 	public static final String qc = "QC"; // 受入(QC用)
 	public static final String qa = "QA"; // 受入(QA用) 
 	public static final String is = "IS"; // 指図
-//	public static final String ep = "EP"; // EBR製造
-//	public static final String et = "ET"; // EBR試験
+	public static final String ep = "EP"; // EBR製造
+	public static final String et = "ET"; // EBR試験
 	public static final String br = "BR"; // バッチレコードレビュー
+	
+	public static final String ET2 = "ET2"; // QC-2
+	public static final String ET3 = "ET3"; // QC-3
+	public static final String ET4 = "ET4"; // QC-4
+	public static final String top_pid = "EP101"; // Kitting preculture
 			
 	/*
 	 * ログイン状態チェック

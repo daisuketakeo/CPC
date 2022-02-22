@@ -59,8 +59,8 @@ $(function() {
 		
 		// 2. Culture（手順2：Start run)作業実績取得
 	 	var args = 
-	 		"?WORK_GROUP=EP404"+
-	 		"&WORK_ID=002"+
+	 		"?WORK_GROUP="+wgrp_expansion_culture+
+	 		"&WORK_ID="+wid_expansion_culture+
 			"&ID="+batch_id;
 		$.ajax({
 		type: "GET", 
