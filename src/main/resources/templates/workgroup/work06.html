@@ -101,27 +101,28 @@ $(function() {
 				class:"btn custombtn",
 				click: function() {
 					// 入力値読み取り
-					
-					var input_vals = $(material_group_id_read).val().split(",");
-					
-					$.each(input_vals,function(i,input_val){
-						// 実施対象のマテリアル取得
-						var args = 
-							"?MATERIAL_GORUP_ID="+input_val;
-						$.ajax({
-						type: "GET", 
-						url: '/rest/materialgroup/select'+args,
-						}).done(function(data, dataType) {
-							var usage_arr = JSON.parse(data);
-							$.each(usage_arr.list,function(i,MATERIAL_GORUP_ID){
-								if($('#'+tdcheck+MATERIAL_GORUP_ID.material_NO).length){
-									$('#'+tdcheck+MATERIAL_GORUP_ID.material_NO).prop('checked', true);
-								}
+					if($(material_group_id_read).val()!=''){
+						var input_vals = $(material_group_id_read).val().split(",");
+						
+						$.each(input_vals,function(i,input_val){
+							// 実施対象のマテリアル取得
+							var args = 
+								"?MATERIAL_GORUP_ID="+input_val;
+							$.ajax({
+							type: "GET", 
+							url: '/rest/materialgroup/select'+args,
+							}).done(function(data, dataType) {
+								var usage_arr = JSON.parse(data);
+								$.each(usage_arr.list,function(i,MATERIAL_GORUP_ID){
+									if($('#'+tdcheck+MATERIAL_GORUP_ID.material_NO).length){
+										$('#'+tdcheck+MATERIAL_GORUP_ID.material_NO).prop('checked', true);
+									}
+								});
+							}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+								console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 							});
-						}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-							console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
-						});
-				    });
+					    });
+					}
 					
 					$(startbtn).val('Start');
 					$(material_group_id_read).val('');

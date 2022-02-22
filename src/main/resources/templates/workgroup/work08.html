@@ -113,38 +113,39 @@ $(function() {
 				class:"btn custombtn",
 				click: function() {
 					// 入力値読み取り
-					
-					var tbodys = $(mtbl+" tbody");//全行を取得
-					// 実施対象のマテリアル取得
-					var args = 
-						"?MATERIAL_GORUP_ID="+$(material_group_id_read).val();
-					$.ajax({
-					type: "GET", 
-					url: '/rest/materialgroup/select'+args,
-					}).done(function(data, dataType) {
-						var usage_arr = JSON.parse(data);
-						$.each(usage_arr.list,function(i,MATERIAL_GORUP_ID){
-							if($('#'+tdcheck+MATERIAL_GORUP_ID.material_NO).length){
-								$('#'+tdcheck+MATERIAL_GORUP_ID.material_NO).prop('checked', true);
+					if($(material_group_id_read).val()!=''){
+						var tbodys = $(mtbl+" tbody");//全行を取得
+						// 実施対象のマテリアル取得
+						var args = 
+							"?MATERIAL_GORUP_ID="+$(material_group_id_read).val();
+						$.ajax({
+						type: "GET", 
+						url: '/rest/materialgroup/select'+args,
+						}).done(function(data, dataType) {
+							var usage_arr = JSON.parse(data);
+							$.each(usage_arr.list,function(i,MATERIAL_GORUP_ID){
+								if($('#'+tdcheck+MATERIAL_GORUP_ID.material_NO).length){
+									$('#'+tdcheck+MATERIAL_GORUP_ID.material_NO).prop('checked', true);
+								}
+							});
+							
+							var okbtndisabled = false;
+							for( var i=0,l=tbodys.length;i<l;i++ ){
+								// 選択行のMATERIAL_NO取得
+								var childtr = tbodys.eq(i).children();
+								var childtd = $(childtr).children();
+								var material_no = $(childtd.eq(0)).text();
+								if($('#'+tdcheck+material_no).prop('checked') == false){
+									okbtndisabled = true;
+								}
 							}
+							
+							setDisabled(okbtn+'002',okbtndisabled);
+							
+						}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+							console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 						});
-						
-						var okbtndisabled = false;
-						for( var i=0,l=tbodys.length;i<l;i++ ){
-							// 選択行のMATERIAL_NO取得
-							var childtr = tbodys.eq(i).children();
-							var childtd = $(childtr).children();
-							var material_no = $(childtd.eq(0)).text();
-							if($('#'+tdcheck+material_no).prop('checked') == false){
-								okbtndisabled = true;
-							}
-						}
-						
-						setDisabled(okbtn+'002',okbtndisabled);
-						
-					}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-						console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
-					});
+					}
 					
 					$(startbtn).val('Start');
 					$(material_group_id_read).val('');
