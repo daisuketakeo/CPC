@@ -337,6 +337,7 @@ $(function() {
 			url: '/rest/materialcheck/select'+args,
 			}).done(function(kmaterialcheck, dataType) {
 				var kmaterialcheck_arr = JSON.parse(kmaterialcheck);
+				var material_list = [];
 				$.each(kmaterialcheck_arr.list,function(j,MATERIAL_CHECK_TABLE_kitting){
 					if(MATERIAL_CHECK_TABLE_kitting.work_GROUP==wgrp_kitting_expansion_rt ||
 							MATERIAL_CHECK_TABLE_kitting.work_GROUP==wgrp_kitting_expansion_p4t ||
@@ -348,82 +349,90 @@ $(function() {
 							//　作業実施日がある場合
 							if($.inArray(MATERIAL_CHECK_TABLE_kitting.material_NO, material_arry)==-1){
 								material_arry.push(MATERIAL_CHECK_TABLE_kitting.material_NO);
-								
-								// マテリアル一覧初期表示の場合
-								$.ajax({
-								type: "GET", 
-								url: '/rest/accept/select?MATERIAL_NO='+MATERIAL_CHECK_TABLE_kitting.material_NO,
-								}).done(function(data, dataType) {
-									var data_arr = JSON.parse(data);
-									$.each(data_arr.list,function(i,ACCEPT_TABLE){
-										
-										var tbody = $('<tbody />');
-										var tr1 = $('<tr/>');
-										tr1.append($('<td/>').text(ACCEPT_TABLE.material_NO));
-										tr1.append($('<td/>').text(ACCEPT_TABLE.material_NAME));
-										tr1.append($('<td/>').text(ACCEPT_TABLE.required_AMOUNT));
-										tr1.append($('<td/>').text(ACCEPT_TABLE.prepared_AMOUNT));
-										tr1.append($('<td/>').text(ACCEPT_TABLE.user_LOT_NO));
-										tr1.append($('<td/>').text(ACCEPT_TABLE.exp_DATE));
-										
-										var performed_Time = $('<td id="'+tdperformed_Time+ACCEPT_TABLE.material_NO+'"/>');
-										var mcheck = $('<td/>');
-										var cbox = $("<input>", {
-											type: "checkbox",
-											id: tdcheck+ACCEPT_TABLE.material_NO,
-											checked: false,
-										});
-										cbox.click(function() {
-											return false;
-										});
-										mcheck.append(cbox);
-										
-										tr1.append(performed_Time);
-										tr1.append(mcheck);
-										
-										tbody.append(tr1);
-										$(mtbl).append(tbody);
-										
-										// マテリアルの作業実績取得
-										args = 
-											"?MATERIAL_NO="+ACCEPT_TABLE.material_NO+
-											"&BATCH_ID="+batch_id+
-											"&WORK_GROUP="+wgrp+
-											"&WORK_ID=002";
-										$.ajax({
-										type: "GET", 
-										url: '/rest/materialcheck/select'+args,
-										}).done(function(materialcheck, dataType) {
-											var materialcheck_arr = JSON.parse(materialcheck);
-											if(materialcheck_arr.list.length>0){
-												MATERIAL_CHECK_TABLE = materialcheck_arr.list[0];
-												if(MATERIAL_CHECK_TABLE.check_DATE=='' ||
-														MATERIAL_CHECK_TABLE.check_DATE == null){
-													// 作業実施日が空白の場合
-													performed_Time.text("");
-													cbox.prop('checked',false);
-												}else{
-													//　作業実施日がある場合
-													performed_Time.text(MATERIAL_CHECK_TABLE.check_DATE);
-													cbox.prop('checked',true);
-												}
-											}else{
-												// 作業実績がない場合
-												performed_Time.text("");
-												cbox.prop('checked',false);
-											}
-											
-										}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-											console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
-										});
-										
-									});
-								}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
-									console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
-								});
 							}
 						}
 					}
+				});
+				
+				var args = 
+					"?BATCH_ID="+batch_id+
+					"&PROCESS_ID="+process_id+
+					"&WORK_GROUP=";
+				// マテリアル一覧取得
+				$.ajax({
+				type: "GET", 
+				url: '/ajax/get_material_list'+args,
+				}).done(function(data1, dataType) {
+					//console.log(data1);
+					$.each(data1,function(i,ACCEPT_TABLE){
+						
+						if(material_arry.includes(ACCEPT_TABLE.material_NO)){
+							
+							var tbody = $('<tbody />');
+							var tr1 = $('<tr/>');
+							tr1.append($('<td/>').text(ACCEPT_TABLE.material_NO));
+							tr1.append($('<td/>').text(ACCEPT_TABLE.material_NAME));
+							tr1.append($('<td/>').text(ACCEPT_TABLE.required_AMOUNT));
+							tr1.append($('<td/>').text(ACCEPT_TABLE.prepared_AMOUNT));
+							tr1.append($('<td/>').text(ACCEPT_TABLE.user_LOT_NO));
+							tr1.append($('<td/>').text(ACCEPT_TABLE.exp_DATE));
+							
+							var performed_Time = $('<td id="'+tdperformed_Time+ACCEPT_TABLE.material_NO+'"/>');
+							var mcheck = $('<td/>');
+							var cbox = $("<input>", {
+								type: "checkbox",
+								id: tdcheck+ACCEPT_TABLE.material_NO,
+								checked: false,
+							});
+							cbox.click(function() {
+								return false;
+							});
+							mcheck.append(cbox);
+							
+							tr1.append(performed_Time);
+							tr1.append(mcheck);
+							
+							tbody.append(tr1);
+							$(mtbl).append(tbody);
+							
+							// マテリアルの作業実績取得
+							args = 
+								"?MATERIAL_NO="+ACCEPT_TABLE.material_NO+
+								"&BATCH_ID="+batch_id+
+								"&WORK_GROUP="+wgrp+
+								"&WORK_ID=002";
+							$.ajax({
+							type: "GET", 
+							url: '/rest/materialcheck/select'+args,
+							}).done(function(materialcheck, dataType) {
+								var materialcheck_arr = JSON.parse(materialcheck);
+								if(materialcheck_arr.list.length>0){
+									MATERIAL_CHECK_TABLE = materialcheck_arr.list[0];
+									if(MATERIAL_CHECK_TABLE.check_DATE=='' ||
+											MATERIAL_CHECK_TABLE.check_DATE == null){
+										// 作業実施日が空白の場合
+										performed_Time.text("");
+										cbox.prop('checked',false);
+									}else{
+										//　作業実施日がある場合
+										performed_Time.text(MATERIAL_CHECK_TABLE.check_DATE);
+										cbox.prop('checked',true);
+									}
+								}else{
+									// 作業実績がない場合
+									performed_Time.text("");
+									cbox.prop('checked',false);
+								}
+								
+							}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+								console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+							});
+							
+						}
+						
+					});
+				}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+					console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 				});
 				
 			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
