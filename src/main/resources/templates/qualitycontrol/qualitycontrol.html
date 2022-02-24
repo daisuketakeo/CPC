@@ -58,18 +58,11 @@ function search(){
 	        tbody.append(tr1);
 	        
 	        $('#tbl1').append(tbody);
-	        
-	     	// 作業手順再表示			
-			refrech_work();
-	     	
-			// Batch release画面から遷移した場合
-	     	// 逸脱の作業グループをトップに表示する
-			var BR_WORK_GROUP = sessionStorage.getItem(['BR_WORK_GROUP']);
-			if(BR_WORK_GROUP!=null && BR_WORK_GROUP!=''){
-				$("html,body").animate({scrollTop:$("#tr_header"+BR_WORK_GROUP).offset().top-50});
-			}
 	     	
 	    });
+	    
+     	// 作業手順再表示			
+		refrech_work();
 
 	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
