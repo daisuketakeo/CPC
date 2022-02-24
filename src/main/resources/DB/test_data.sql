@@ -38,18 +38,24 @@ update WORK_MASTER set CSV1='ET406-1.csv' where WORK_GROUP = 'ET406' and WORK_ID
 
 delete from MATERIAL_GROUP_TABLE;
 insert into MATERIAL_GROUP_TABLE values ('MG001','001');
-insert into MATERIAL_GROUP_TABLE values ('MG001','002');
-insert into MATERIAL_GROUP_TABLE values ('MG001','003');
-insert into MATERIAL_GROUP_TABLE values ('MG002','004');
+insert into MATERIAL_GROUP_TABLE values ('MG001','004');
+insert into MATERIAL_GROUP_TABLE values ('MG001','007');
+insert into MATERIAL_GROUP_TABLE values ('MG002','002');
 insert into MATERIAL_GROUP_TABLE values ('MG002','005');
-insert into MATERIAL_GROUP_TABLE values ('MG003','007');
-insert into MATERIAL_GROUP_TABLE values ('MG003','008');
+insert into MATERIAL_GROUP_TABLE values ('MG002','008');
+insert into MATERIAL_GROUP_TABLE values ('MG003','003');
+insert into MATERIAL_GROUP_TABLE values ('MG003','006');
+insert into MATERIAL_GROUP_TABLE values ('MG003','009');
 
 delete from AI_RELATION_TABLE;
 insert into AI_RELATION_TABLE values ('IM001','EP1','001');
 insert into AI_RELATION_TABLE values ('IM001','EP1','002');
 insert into AI_RELATION_TABLE values ('IM001','EP1','003');
 insert into AI_RELATION_TABLE values ('IM001','EP1','004');
+insert into AI_RELATION_TABLE values ('IM001','EP1','005');
+insert into AI_RELATION_TABLE values ('IM001','EP1','006');
+insert into AI_RELATION_TABLE values ('IM001','EP1','007');
+insert into AI_RELATION_TABLE values ('IM001','EP1','008');
 insert into AI_RELATION_TABLE values ('IM001','EP3','001');
 insert into AI_RELATION_TABLE values ('IM001','EP3','002');
 insert into AI_RELATION_TABLE values ('IM001','EP3','003');
@@ -60,6 +66,8 @@ insert into AI_RELATION_TABLE values ('IM001','EP3','007');
 insert into AI_RELATION_TABLE values ('IM001','EP3','008');
 insert into AI_RELATION_TABLE values ('IM001','EP3','009');
 insert into AI_RELATION_TABLE values ('IM001','EP3','010');
+insert into AI_RELATION_TABLE values ('IM001','EP3','011');
+insert into AI_RELATION_TABLE values ('IM001','EP3','012');
 insert into AI_RELATION_TABLE values ('IM001','EP4','001');
 insert into AI_RELATION_TABLE values ('IM001','EP4','002');
 insert into AI_RELATION_TABLE values ('IM001','EP4','003');
@@ -70,10 +78,17 @@ insert into AI_RELATION_TABLE values ('IM001','EP4','007');
 insert into AI_RELATION_TABLE values ('IM001','EP4','008');
 insert into AI_RELATION_TABLE values ('IM001','EP4','009');
 insert into AI_RELATION_TABLE values ('IM001','EP4','010');
+insert into AI_RELATION_TABLE values ('IM001','EP4','011');
+insert into AI_RELATION_TABLE values ('IM001','EP4','012');
+
 insert into AI_RELATION_TABLE values ('IM002','EP1','001');
 insert into AI_RELATION_TABLE values ('IM002','EP1','002');
 insert into AI_RELATION_TABLE values ('IM002','EP1','003');
 insert into AI_RELATION_TABLE values ('IM002','EP1','004');
+insert into AI_RELATION_TABLE values ('IM002','EP1','005');
+insert into AI_RELATION_TABLE values ('IM002','EP1','006');
+insert into AI_RELATION_TABLE values ('IM002','EP1','007');
+insert into AI_RELATION_TABLE values ('IM002','EP1','008');
 insert into AI_RELATION_TABLE values ('IM002','EP3','001');
 insert into AI_RELATION_TABLE values ('IM002','EP3','002');
 insert into AI_RELATION_TABLE values ('IM002','EP3','003');
@@ -84,6 +99,8 @@ insert into AI_RELATION_TABLE values ('IM002','EP3','007');
 insert into AI_RELATION_TABLE values ('IM002','EP3','008');
 insert into AI_RELATION_TABLE values ('IM002','EP3','009');
 insert into AI_RELATION_TABLE values ('IM002','EP3','010');
+insert into AI_RELATION_TABLE values ('IM002','EP3','011');
+insert into AI_RELATION_TABLE values ('IM002','EP3','012');
 insert into AI_RELATION_TABLE values ('IM002','EP4','001');
 insert into AI_RELATION_TABLE values ('IM002','EP4','002');
 insert into AI_RELATION_TABLE values ('IM002','EP4','003');
@@ -94,38 +111,41 @@ insert into AI_RELATION_TABLE values ('IM002','EP4','007');
 insert into AI_RELATION_TABLE values ('IM002','EP4','008');
 insert into AI_RELATION_TABLE values ('IM002','EP4','009');
 insert into AI_RELATION_TABLE values ('IM002','EP4','010');
+insert into AI_RELATION_TABLE values ('IM002','EP4','011');
+insert into AI_RELATION_TABLE values ('IM002','EP4','012');
 
 delete from INSTRUCTIONS_MASTER;
-insert into INSTRUCTIONS_MASTER (IM_ID,NAME,MATERIAL_GORUP_ID,PROTOCOL,BARCODE_READER) values ('IM001','MOC_MSC_EXP5L_2021/AA/BB','MG001','PROTOCOL001','1');
-insert into INSTRUCTIONS_MASTER (IM_ID,NAME,MATERIAL_GORUP_ID,PROTOCOL,BARCODE_READER) values ('IM002','MOC_MSC_EXP5L_2021/EE/FF','MG001','PROTOCOL002','0');
+insert into INSTRUCTIONS_MASTER (IM_ID,PROTOCOL) values ('IM001','PROTOCOL_001');
+insert into INSTRUCTIONS_MASTER (IM_ID,PROTOCOL) values ('IM002','PROTOCOL_002');
 
 update INSTRUCTIONS_MASTER set 
-comment = 'comment_IM001',
-cell_TYPE = 'cell_TYPE_IM001',
-input_AMOUNT = 'input_AMOUNT_IM001',
-target_AMOUNT_CELLS = 'target_AMOUNT_CELLS_IM001',
-target_AMOUNT_BAGS = 'target_AMOUNT_BAGS_IM001',
-total_PASSAGE_TIMES = 'total_PASSAGE_TIMES_IM001',
-duration_EST = 'duration_EST_IM001',
-medium = 'medium_IM001',
-ecm_COATING = 'ecm_COATING_IM001',
-dissociation_REAGENT = 'dissociation_REAGENT_IM001',
-pre_CULTURE_VESSEL = 'pre_CULTURE_VESSEL_IM001',
-pre_CULTURE_MATERIAL_NAME = 'pre_CULTURE_MATERIAL_NAME_IM001',
-pre_CULTURE_VOLUME = 'pre_CULTURE_VOLUME_IM001',
-pre_CULTURE_INCUBATION_TIME = 'pre_CULTURE_INCUBATION_TIME_IM001',
-icp1_VESSEL = 'icp1_VESSEL_IM001',
-icp1_MATERIAL_NAME = 'icp1_MATERIAL_NAME_IM001',
-icp1_VOLUME = 'icp1_VOLUME_IM001',
-icp1_INCUBATION_TIME = 'icp1_INCUBATION_TIME_IM001',
-icp2_VESSEL = 'icp2_VESSEL_IM001',
-icp2_MATERIAL_NAME = 'icp2_MATERIAL_NAME_IM001',
-icp2_VOLUME = 'icp2_VOLUME_IM001',
-icp2_INCUBATION_TIME = 'icp2_INCUBATION_TIME_IM001',
-icp3_VESSEL = 'icp3_VESSEL_IM001',
-icp3_MATERIAL_NAME = 'icp3_MATERIAL_NAME_IM001',
-icp3_VOLUME = 'icp3_VOLUME_IM001',
-icp3_INCUBATION_TIME = 'icp3_INCUBATION_TIME_IM001'
+name ='MOC_MSC_001 expansion 3800mL',
+comment = 'Mock',
+cell_TYPE = 'hMSC',
+input_AMOUNT = '4.5 x 104 cells',
+target_AMOUNT_CELLS = '4.5 x 108 cells',
+target_AMOUNT_BAGS = '6 bags',
+total_PASSAGE_TIMES = '4',
+duration_EST = '288 hr',
+medium = 'Cellartis® MSC Xeno-Free Culture Medium',
+ecm_COATING = '-',
+dissociation_REAGENT = 'TrypLE Select Enzyme (X0.25)',
+pre_CULTURE_VESSEL = 'Vessel:',
+pre_CULTURE_MATERIAL_NAME = 'M003, Corning® CellBIND® 75cm² U-Shaped Canted Neck Cell Culture Flask with Vent Cap',
+pre_CULTURE_VOLUME = 'Volume: 15 ml',
+pre_CULTURE_INCUBATION_TIME = 'Incubation time: 72h',
+icp1_VESSEL = 'Vessel 1(Passage-2):',
+icp1_MATERIAL_NAME = 'M018, Corning® CellBIND® Polystyrene CellSTACK® - 1 Chamber with Vent Caps',
+icp1_VOLUME = 'Volume: 200 ml',
+icp1_INCUBATION_TIME = 'Incubation time: 72h',
+icp2_VESSEL = 'Vessel 2(Passage-3):',
+icp2_MATERIAL_NAME = 'M019, Corning® CellBIND® Polystyrene CellSTACK® - 5 Chamber with Vent Caps',
+icp2_VOLUME = 'Volume: 1000 ml',
+icp2_INCUBATION_TIME = 'Incubation time: 72h',
+icp3_VESSEL = 'Vessel 3(Passage-4):',
+icp3_MATERIAL_NAME = 'M020, Corning® CellBIND® HYPERStack® - 36 Layer Cell Culture Vessel',
+icp3_VOLUME = 'Volume: 3900 ml',
+icp3_INCUBATION_TIME = 'Incubation time: 72h'
 , BP_ALERM = 'alarm.csv'
 , BP_WARNING = 'warning.csv'
 , BP_HEADER = 'header.csv'
@@ -138,50 +158,51 @@ icp3_INCUBATION_TIME = 'icp3_INCUBATION_TIME_IM001'
 , BP_IDENTIFICATION = 'identification.csv'
 , BP_CULTURE_CONDITION = 'culture_condition.csv'
 , BP_DETAIL = 'detail.csv'
-, POB_ICP = 'ICP.csv'
-, POB_ICP_SUMMARY = 'SUMMARY.csv'
-, POB_ICP_MICROBIOLOGICAL_STERILITY = 'MICROBIOLOGICAL.csv'
-, POB_ICP_KARYOTYPE_RESULTS = 'KARYOTYPE.csv'
-, POB_ICP_PTENCY = 'PTENCY.csv'
-, POB_ICP_MATERIAL_OVERVIEW = 'MATERIAL_OVERVIEW.csv'
-, POB_ICP_MATERIAL_IDENTIFICATION = 'MATERIAL_IDENTIFICATION.csv'
+, POB_ICP = 'icp.csv'
+, POB_ICP_SUMMARY = 'summary.csv'
+, POB_ICP_MICROBIOLOGICAL_STERILITY = 'microbiological.csv'
+, POB_ICP_KARYOTYPE_RESULTS = 'karyotype.csv'
+, POB_ICP_PTENCY = 'potency.csv'
+, POB_ICP_MATERIAL_OVERVIEW = 'overview.csv'
+, POB_ICP_MATERIAL_IDENTIFICATION = 'identification.csv'
 , POB_ELECTRONIC_BATCH_RECORD = 'EBR_Batch_20171023.pdf'
-, POB_CELL_GROWTH_VIDEO = 'production ID_5077814.mp4'
-, POB_ICP_CULTURE_CONDITION = 'CULTURE_CONDITION.csv'
-, PRB_ICP_MATERIAL_OVERVIEW = 'MATERIAL_OVERVIEW.csv'
-, PRB_ICP_MATERIAL_IDENTIFICATION = 'MATERIAL_IDENTIFICATION.csv'
-, PRB_ICP_CULTURE_CONDITION = 'CULTURE_CONDITION.csv'
-, PRB_ICP_ALERM = 'ALERM.csv'
-, PRB_ICP_WARNINGS = 'WARNINGS.csv'
+, POB_CELL_GROWTH_VIDEO = 'countdown.mp4'
+, POB_ICP_CULTURE_CONDITION = 'culture_condition.csv'
+, PRB_ICP_MATERIAL_OVERVIEW = 'overview.csv'
+, PRB_ICP_MATERIAL_IDENTIFICATION = 'identification.csv'
+, PRB_ICP_CULTURE_CONDITION = 'culture_condition.csv'
+, PRB_ICP_ALERM = 'alarms.csv'
+, PRB_ICP_WARNINGS = 'warnings.csv'
 where im_id='IM001';
 
 update INSTRUCTIONS_MASTER set 
-comment = 'comment_IM002',
-cell_TYPE = 'cell_TYPE_IM002',
-input_AMOUNT = 'input_AMOUNT_IM002',
-target_AMOUNT_CELLS = 'target_AMOUNT_CELLS_IM002',
-target_AMOUNT_BAGS = 'target_AMOUNT_BAGS_IM002',
-total_PASSAGE_TIMES = 'total_PASSAGE_TIMES_IM002',
-duration_EST = 'duration_EST_IM002',
-medium = 'medium_IM002',
-ecm_COATING = 'ecm_COATING_IM002',
-dissociation_REAGENT = 'dissociation_REAGENT_IM002',
-pre_CULTURE_VESSEL = 'pre_CULTURE_VESSEL_IM002',
-pre_CULTURE_MATERIAL_NAME = 'pre_CULTURE_MATERIAL_NAME_IM002',
-pre_CULTURE_VOLUME = 'pre_CULTURE_VOLUME_IM002',
-pre_CULTURE_INCUBATION_TIME = 'pre_CULTURE_INCUBATION_TIME_IM002',
-icp1_VESSEL = 'icp1_VESSEL_IM002',
-icp1_MATERIAL_NAME = 'icp1_MATERIAL_NAME_IM002',
-icp1_VOLUME = 'icp1_VOLUME_IM002',
-icp1_INCUBATION_TIME = 'icp1_INCUBATION_TIME_IM002',
-icp2_VESSEL = 'icp2_VESSEL_IM002',
-icp2_MATERIAL_NAME = 'icp2_MATERIAL_NAME_IM002',
-icp2_VOLUME = 'icp2_VOLUME_IM002',
-icp2_INCUBATION_TIME = 'icp2_INCUBATION_TIME_IM002',
-icp3_VESSEL = 'icp3_VESSEL_IM002',
-icp3_MATERIAL_NAME = 'icp3_MATERIAL_NAME_IM002',
-icp3_VOLUME = 'icp3_VOLUME_IM002',
-icp3_INCUBATION_TIME = 'icp3_INCUBATION_TIME_IM002'
+name ='MOC_MSC_002 expansion 3800mL',
+comment = 'Mock',
+cell_TYPE = 'hMSC',
+input_AMOUNT = '4.5 x 104 cells',
+target_AMOUNT_CELLS = '4.5 x 108 cells',
+target_AMOUNT_BAGS = '6 bags',
+total_PASSAGE_TIMES = '4',
+duration_EST = '288 hr',
+medium = 'Cellartis® MSC Xeno-Free Culture Medium',
+ecm_COATING = '-',
+dissociation_REAGENT = 'TrypLE Select Enzyme (X0.25)',
+pre_CULTURE_VESSEL = 'Vessel:',
+pre_CULTURE_MATERIAL_NAME = 'M003, Corning® CellBIND® 75cm² U-Shaped Canted Neck Cell Culture Flask with Vent Cap',
+pre_CULTURE_VOLUME = 'Volume: 15 ml',
+pre_CULTURE_INCUBATION_TIME = 'Incubation time: 72h',
+icp1_VESSEL = 'Vessel 1(Passage-2):',
+icp1_MATERIAL_NAME = 'M018, Corning® CellBIND® Polystyrene CellSTACK® - 1 Chamber with Vent Caps',
+icp1_VOLUME = 'Volume: 200 ml',
+icp1_INCUBATION_TIME = 'Incubation time: 72h',
+icp2_VESSEL = 'Vessel 2(Passage-3):',
+icp2_MATERIAL_NAME = 'M019, Corning® CellBIND® Polystyrene CellSTACK® - 5 Chamber with Vent Caps',
+icp2_VOLUME = 'Volume: 1000 ml',
+icp2_INCUBATION_TIME = 'Incubation time: 72h',
+icp3_VESSEL = 'Vessel 3(Passage-4):',
+icp3_MATERIAL_NAME = 'M020, Corning® CellBIND® HYPERStack® - 36 Layer Cell Culture Vessel',
+icp3_VOLUME = 'Volume: 3900 ml',
+icp3_INCUBATION_TIME = 'Incubation time: 72h'
 , BP_ALERM = 'alarm.csv'
 , BP_WARNING = 'warning.csv'
 , BP_HEADER = 'header.csv'
@@ -194,21 +215,21 @@ icp3_INCUBATION_TIME = 'icp3_INCUBATION_TIME_IM002'
 , BP_IDENTIFICATION = 'identification.csv'
 , BP_CULTURE_CONDITION = 'culture_condition.csv'
 , BP_DETAIL = 'detail.csv'
-, POB_ICP = 'ICP.csv'
-, POB_ICP_SUMMARY = 'SUMMARY.csv'
-, POB_ICP_MICROBIOLOGICAL_STERILITY = 'MICROBIOLOGICAL.csv'
-, POB_ICP_KARYOTYPE_RESULTS = 'KARYOTYPE.csv'
-, POB_ICP_PTENCY = 'PTENCY.csv'
-, POB_ICP_MATERIAL_OVERVIEW = 'MATERIAL_OVERVIEW.csv'
-, POB_ICP_MATERIAL_IDENTIFICATION = 'MATERIAL_IDENTIFICATION.csv'
+, POB_ICP = 'icp.csv'
+, POB_ICP_SUMMARY = 'summary.csv'
+, POB_ICP_MICROBIOLOGICAL_STERILITY = 'microbiological.csv'
+, POB_ICP_KARYOTYPE_RESULTS = 'karyotype.csv'
+, POB_ICP_PTENCY = 'potency.csv'
+, POB_ICP_MATERIAL_OVERVIEW = 'overview.csv'
+, POB_ICP_MATERIAL_IDENTIFICATION = 'identification.csv'
 , POB_ELECTRONIC_BATCH_RECORD = 'EBR_Batch_20171023.pdf'
-, POB_CELL_GROWTH_VIDEO = 'production ID_5077814.mp4'
-, POB_ICP_CULTURE_CONDITION = 'CULTURE_CONDITION.csv'
-, PRB_ICP_MATERIAL_OVERVIEW = 'MATERIAL_OVERVIEW.csv'
-, PRB_ICP_MATERIAL_IDENTIFICATION = 'MATERIAL_IDENTIFICATION.csv'
-, PRB_ICP_CULTURE_CONDITION = 'CULTURE_CONDITION.csv'
-, PRB_ICP_ALERM = 'ALERM.csv'
-, PRB_ICP_WARNINGS = 'WARNINGS.csv'
+, POB_CELL_GROWTH_VIDEO = 'countdown.mp4'
+, POB_ICP_CULTURE_CONDITION = 'culture_condition.csv'
+, PRB_ICP_MATERIAL_OVERVIEW = 'overview.csv'
+, PRB_ICP_MATERIAL_IDENTIFICATION = 'identification.csv'
+, PRB_ICP_CULTURE_CONDITION = 'culture_condition.csv'
+, PRB_ICP_ALERM = 'alarms.csv'
+, PRB_ICP_WARNINGS = 'warnings.csv'
 where im_id='IM002';
 
 delete from PROC_INSTRUCTIONS_MASTER;
