@@ -94,6 +94,7 @@ public class VCCommon {
 	public static final String param_errmsg_session = "Session disconnect!　Please sign in　agein.";		// セッション切れエラーメッセージ
 	public static final String param_ok                 = "OK";					// 画面戻り値 OK
 	public static final String param_ng                 = "NG";					// 画面戻り値 NG
+	public static final String param_sequence_flg       = "SEQUENCE_FLG";		// 処理シーケンスフラグ 1:表示完了 1以外：処理なし
 	
 	/*
 	 * REST URL

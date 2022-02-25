@@ -42,6 +42,11 @@ $(function(){
 		$("#cellqualia_link_area").show();
 		
 		var DIALOG_FLG = sessionStorage.getItem(['DIALOG_FLG']);
+		var SEQUENCE_FLG = sessionStorage.getItem(['SEQUENCE_FLG']);
+		var sflg = '';
+		if(SEQUENCE_FLG=='1'){
+			sflg = "&SEQUENCE_FLG="+SEQUENCE_FLG;
+		}
 		var AUTOTRANS = $("#cqt_autotrans").val();
 		//console.log(BATCH_ID);
 		
@@ -49,7 +54,7 @@ $(function(){
 			if(DIALOG_FLG=='batch_progress'){
 				setTimeout(function(){
 					// Batch progressを別タブで表示
-					window.open("batch_progress_window?BATCH_ID="+BATCH_ID,"batch_progress_window");
+					window.open("batch_progress_window?BATCH_ID="+BATCH_ID+sflg,"batch_progress_window");
 					$('#cellqualia_top_dialog').dialog("close");
 		          }, AUTOTRANS*1000);
 			}
@@ -78,7 +83,7 @@ $(function(){
 			// Batchprogressクリック時の処理
 			$(btnBatchprogress).click(function() {
 				// Batch progressを別タブで表示
-				window.open("batch_progress_window?BATCH_ID="+BATCH_ID,"batch_progress_window");
+				window.open("batch_progress_window?BATCH_ID="+BATCH_ID+sflg,"batch_progress_window");
 				$('#cellqualia_top_dialog').dialog("close");
 			});
 			
@@ -89,6 +94,8 @@ $(function(){
 				$('#cellqualia_top_dialog').dialog("close");
 			});
 		}
+		
+		sessionStorage.removeItem('SEQUENCE_FLG');
 		
 	});
 

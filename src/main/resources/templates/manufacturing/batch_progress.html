@@ -1,6 +1,7 @@
-<div th:fragment="paramset(batch_id)" th:remove="tag">
+<div th:fragment="paramset(batch_id,sequence_flg)" th:remove="tag">
 <script th:inline="javascript">
 var BATCH_ID = /*[[${batch_id}]]*/ '';
+var SEQUENCE_FLG = /*[[${sequence_flg}]]*/ '';
 $(function(){
 	
 	var myChart1;
@@ -12,9 +13,6 @@ $(function(){
 	$("#setbtnBatchProgress").click(function(e) {
 		
 		$("#batchprogress_panel").show();
-		
-		var OK_BUTTON = sessionStorage.getItem(['OK_BUTTON']);
-		//console.log(BATCH_ID);
 		
 	    // シーケンス取得
 		$.ajax({
@@ -38,16 +36,10 @@ $(function(){
 			bp_create_table(data.bp_CULTURE_CONDITION, "#tdl_bp_culture_conditions");
 			bp_create_table(data.bp_DETAIL, "#tdl_bp_detail");
 			
-			if(OK_BUTTON!=null && OK_BUTTON!=''){
+			if(SEQUENCE_FLG=='1'){
 				// Expansionの 2. Culture（手順2：Start run)実行
-				sessionStorage.removeItem('OK_BUTTON');
-				setDisabled(OK_BUTTON,false);
 				// Post-batch overviewを別タブで表示
 				window.open("post_batch_over_view_window?BATCH_ID="+BATCH_ID,"post_batch_over_view_window");
-				// Batch progressメニュー有効化
-				$("#hamberger_menu4_li").show();
-				// Post-batch overviewメニュー有効化
-				$("#hamberger_menu5_li").show();
 			}
 			
 		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {

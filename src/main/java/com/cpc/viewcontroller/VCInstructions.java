@@ -138,10 +138,13 @@ public class VCInstructions extends VCCommon{
     
     @RequestMapping(value = "batch_progress_window", method = RequestMethod.GET)
     public String batch_progress_window(
-    		@RequestParam(name=param_batch_id) String BATCH_ID, Model model) {
+    		@RequestParam(name=param_batch_id) String BATCH_ID, 
+    		@RequestParam(name=param_sequence_flg, required = false) String SEQUENCE_FLG,
+    		Model model) {
         if(!super.loginCheck()) return disp_login;
         setHeaderAttr(model);
         model.addAttribute(param_batch_id, BATCH_ID);
+        model.addAttribute(param_sequence_flg, SEQUENCE_FLG);
 		return "manufacturing/batch_progress_window";
     }
     

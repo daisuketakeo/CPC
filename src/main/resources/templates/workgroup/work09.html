@@ -213,9 +213,16 @@ function execsequence(csvfile, tbl, interval, autointerval){
             	// 最後の文字列表示後、CellQualia Top 画面を表示
             	sessionStorage.setItem(['BATCH_ID'],[$("#BATCH_ID").val()]);
 				sessionStorage.setItem(['DIALOG_FLG'],['batch_progress']);
-				sessionStorage.setItem(['OK_BUTTON'],[okbtn+'002']);
+				sessionStorage.setItem(['SEQUENCE_FLG'],'1');
 				$('#cellqualia_top_dialog').dialog("open");
 				$('#setbtnCellQualiaTop').trigger('click');
+				
+				//　OKボタン有効
+				setDisabled(okbtn+'002',false);
+				// Batch progressメニュー有効化
+				$("#hamberger_menu4_li").show();
+				// Post-batch overviewメニュー有効化
+				$("#hamberger_menu5_li").show();
             }
             
           }, interval*1000);
