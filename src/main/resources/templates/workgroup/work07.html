@@ -40,6 +40,7 @@ $(function() {
  					}
  				}else{
  					if(wgrp.substring(3,5)=='01'){
+ 						open_work(wgrp, true);	// 作業手順表示
  						$("html,body").animate({scrollTop:$(td+WORK_MASTER.work_ID).offset().top-100});
  					}else{
  						open_work(wgrp, true);	// 作業手順表示
@@ -88,6 +89,9 @@ $(function() {
 		url: '/rest/workresult/select'+args,
 		}).done(function(data, dataType) {
 			var usage_arr = JSON.parse(data);
+			if(wm.length==usage_arr.list.length){
+				open_work(wgrp, false);	// 作業手順非表示
+			}
 		    $.each(usage_arr.list,function(i,WORK_RESULT_TABLE){
 		    	if(WORK_RESULT_TABLE.work_ID=='008'){
 		    		$('#countvalue').val(WORK_RESULT_TABLE.count_RESULT);
@@ -102,7 +106,7 @@ $(function() {
 	
 	// カウント値入力
 	$('#countvalue').change(function() {
-		calc();
+		calc8();
 	});
 	
 	// OKボタンクリック時の処理
@@ -172,6 +176,10 @@ function calc(){
     $('#calc_result').text(result);
     var cell_suapension_result = 590000/result*100;
     $('#cell_suapension').text(cell_suapension_result);
+}
+function calc8(){
+    var result = $('#countvalue').val() / 40000;
+    $('#calc_result').text(result);
 }
 
 </script>
