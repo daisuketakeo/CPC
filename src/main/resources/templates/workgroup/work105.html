@@ -69,7 +69,6 @@ $(function() {
  				
  				var usage_arr = JSON.parse(data);
  			    $.each(usage_arr.list,function(i,WORK_RESULT_TABLE){
- 			    	console.log(WORK_RESULT_TABLE);
  			    	$(reason).val(WORK_RESULT_TABLE.check_REASON);
  			    	if(WORK_RESULT_TABLE.check_RESULT=='1'){
  			    		$(release).prop('checked', true);

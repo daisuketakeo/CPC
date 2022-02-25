@@ -491,152 +491,128 @@ function confirm_batch_release(wgrp, wid, CHECK_RESULT, CHECK_REASON){
 	</div>
 </div>
 
-<table>
-	<tr>
-		<td>
-			<div style="min-width:50px;"></div>
-		</td>
-		<td>
-			<h4>Batch record</h4>
-		</td>
-	</tr>
-	<tr>
-		<td>
-		</td>
-		<td>
-			<table id="tbl2" class="table_ebr">
-				<thead>
-					<tr>
-						<th class="th_ebr" style="width:100px">Deviation</th>
-						<th class="th_ebr" style="width:100px">Process #</th>
-						<th class="th_ebr" style="width:150px">Process Name</th>
-						<th class="th_ebr" style="width:100px">Performed by</th>
-						<th class="th_ebr" style="width:120px">Performed Date</th>
-						<th class="th_ebr" style="width:100px;">Confirmed by</th>
-						<th class="th_ebr" style="width:120px">Confirmed Date</th>
-						<th class="th_ebr" style="width:100px">Approved by</th>
-						<th class="th_ebr" style="width:120px">Approved Date</th>
-					</tr>
-		        </thead>
-		        <tbody><tr id="br_row1"></tr></tbody>
-		        <tbody><tr id="br_row2"></tr></tbody>
-		        <tbody><tr id="br_row3"></tr></tbody>
-		        <tbody><tr id="br_row4"></tr></tbody>
-		        <tbody><tr id="br_row5"></tr></tbody>
-		        <tbody><tr id="br_row6"></tr></tbody>
-			</table>
-		</td>
-	</tr>
-	
-	<tr>
-		<td>
-			<div style="min-height:20px;"></div>
-		</td>
-	</tr>
-	
-	<tr>
-		<td>
-		</td>
-		<td>
-			<h4>QC Test record</h4>
-		</td>
-	</tr>
-	<tr>
-		<td>
-		</td>
-		<td>
-			<table id="tbl3" class="table_ebr">
-				<thead>
-					<tr>
-						<th class="th_ebr" style="width:100px">Deviation</th>
-						<th class="th_ebr" style="width:100px">Process #</th>
-						<th class="th_ebr" style="width:150px">Process Name</th>
-						<th class="th_ebr" style="width:100px">Performed by</th>
-						<th class="th_ebr" style="width:120px">Performed Date</th>
-						<th class="th_ebr" style="width:100px">Confirmed by</th>
-						<th class="th_ebr" style="width:120px">Confirmed Date</th>
-						<th class="th_ebr" style="width:100px">Approved by</th>
-						<th class="th_ebr" style="width:120px">Approved Date</th>
-					</tr>
-		        </thead>
-		        <tbody><tr id="qc_row1"></tr></tbody>
-		        <tbody><tr id="qc_row2"></tr></tbody>
-		        <tbody><tr id="qc_row3"></tr></tbody>
-			</table>
-		</td>
-	</tr>
-	<tr>
-		<td>
-		</td>
-		<td>
-		   Certificate of analysis：
-		   <input type="button" id="previewbtn" value="Preview" class="btn custombtn">
-		</td>
-	</tr>
-	
-	<tr>
-		<td>
-			<div style="min-height:20px;"></div>
-		</td>
-	</tr>
-	
-	<tr id="devreport_header">
-		<td>
-		</td>
-		<td>
-			<h4>Deviation Report</h4>
-		</td>
-	</tr>
-	<tr id="devreport_table">
-		<td>
-		</td>
-		<td>
-			<table id="tbl4" class="table_ebr">
-				<thead>
-					<tr>
-						<th class="th_ebr" style="width:120px">Deviation #</th>
-						<th class="th_ebr" style="width:120px">Deviation Date</th>
-						<th class="th_ebr" style="width:120px">Reported Date</th>
-						<th class="th_ebr" style="width:145px">Reported by</th>
-						<th class="th_ebr" style="width:120px">Occurrent Date</th>
-						<th class="th_ebr" style="width:120px">Closing Date</th>
-						<th class="th_ebr" style="width:120px">Reviewed Date</th>
-						<th class="th_ebr" style="width:145px">Reviewed by</th>
-					</tr>
-		        </thead>
-			</table>
-		</td>
-	</tr>
-	
-	<tr>
-		<td>
-			<div style="min-height:20px;"></div>
-		</td>
-	</tr>
-	
-	<tr>
-		<td>
-		</td>
-		<td>
-			<div style="width:100%;">
-			    <table style="width:100%;">
-				    <tr><td id="work_list">
-			    		<div th:each="map : ${WORK_GROUP_MAP}">
-			    			<div th:insert="workgroup/work__${map.getValue().DISPLAY_TYPE}__::paramset('__${map.getValue().WORK_GROUP}__')"></div>
-						</div>
-				    <td></tr>
-				    <tr><td>
-			    		<div style="height: 50px;"></div>
-				    <td></tr>
-				    <tr style="text-align: right;"><td>
-					    <input type="button" id="closebtn" value="Close" class="btn custombtn fixed_btn">
-				    <td></tr>
-			    </table>
-		    </div>
-		</td>
-	</tr>
+<div style="height:20px;"></div>
+<div style="display:flex;">
+	<div style="min-width:50px;"></div>
+	<div style="width:90%;text-align:left;">
+		<h4>Batch record</h4>
+	</div>
+</div>
+<div style="display:flex;">
+	<div style="min-width:50px;"></div>
+	<div  id="devreport_table" style="width:90%;">
+		<table id="tbl2" class="table_ebr">
+			<thead>
+				<tr>
+					<th class="th_ebr" style="width:10%">Deviation</th>
+					<th class="th_ebr" style="width:10%">Process #</th>
+					<th class="th_ebr" style="width:10%">Process Name</th>
+					<th class="th_ebr" style="width:15%">Performed by</th>
+					<th class="th_ebr" style="width:8%">Performed Date</th>
+					<th class="th_ebr" style="width:15%;">Confirmed by</th>
+					<th class="th_ebr" style="width:8%">Confirmed Date</th>
+					<th class="th_ebr" style="width:15%">Approved by</th>
+					<th class="th_ebr" style="width:8%">Approved Date</th>
+				</tr>
+		       </thead>
+		       <tbody><tr id="br_row1"></tr></tbody>
+		       <tbody><tr id="br_row2"></tr></tbody>
+		       <tbody><tr id="br_row3"></tr></tbody>
+		       <tbody><tr id="br_row4"></tr></tbody>
+		       <tbody><tr id="br_row5"></tr></tbody>
+		       <tbody><tr id="br_row6"></tr></tbody>
+		</table>
+	</div>
+</div>
 
-</table>
-    
+<div style="height:20px;"></div>
+<div style="display:flex;">
+	<div style="min-width:50px;"></div>
+	<div style="width:90%;text-align:left;">
+		<h4>QC Test record</h4>
+	</div>
+</div>
+<div style="display:flex;">
+	<div style="min-width:50px;"></div>
+	<div style="width:90%;border: 0px none;">
+		<table id="tbl3" class="table_ebr">
+			<thead>
+				<tr>
+					<th class="th_ebr" style="width:10%">Deviation</th>
+					<th class="th_ebr" style="width:10%">Process #</th>
+					<th class="th_ebr" style="width:10%">Process Name</th>
+					<th class="th_ebr" style="width:15%">Performed by</th>
+					<th class="th_ebr" style="width:8%">Performed Date</th>
+					<th class="th_ebr" style="width:15%;">Confirmed by</th>
+					<th class="th_ebr" style="width:8%">Confirmed Date</th>
+					<th class="th_ebr" style="width:15%">Approved by</th>
+					<th class="th_ebr" style="width:8%">Approved Date</th>
+				</tr>
+	        </thead>
+	        <tbody><tr id="qc_row1"></tr></tbody>
+	        <tbody><tr id="qc_row2"></tr></tbody>
+	        <tbody><tr id="qc_row3"></tr></tbody>
+		</table>
+	</div>
+</div>
+
+<div style="height:20px;"></div>
+<div style="display:flex;">
+	<div style="min-width:50px;"></div>
+	<div style="text-align:left;">
+		<label style="font-size:16pt;">Certificate of analysis：</label>
+	</div>
+	<div style="text-align:left;">
+		<input type="button" id="previewbtn" value="Preview" class="btn custombtn">
+	</div>
+</div>
+
+<div style="height:20px;"></div>
+<div style="display:flex;">
+	<div style="min-width:50px;"></div>
+	<div style="width:90%;text-align:left;">
+		<h4>Deviation Report</h4>
+	</div>
+</div>
+<div style="display:flex;">
+	<div style="min-width:50px;"></div>
+	<div id="devreport_header" style="width:90%;">
+		<table id="tbl4" class="table_ebr">
+			<thead>
+				<tr>
+					<th class="th_ebr" style="width:10%">Deviation #</th>
+					<th class="th_ebr" style="width:12%">Deviation Date</th>
+					<th class="th_ebr" style="width:12%">Reported Date</th>
+					<th class="th_ebr" style="width:15%">Reported by</th>
+					<th class="th_ebr" style="width:12%">Occurrent Date</th>
+					<th class="th_ebr" style="width:12%">Closing Date</th>
+					<th class="th_ebr" style="width:12%">Reviewed Date</th>
+					<th class="th_ebr" style="width:15%">Reviewed by</th>
+				</tr>
+	        </thead>
+		</table>
+	</div>
+</div>
+
+<div style="height:20px;"></div>
+<div style="display:flex;">
+	<div style="min-width:50px;"></div>
+	<div style="width:100%;">
+	    <table style="width:100%;">
+		    <tr><td id="work_list">
+	    		<div th:each="map : ${WORK_GROUP_MAP}">
+	    			<div th:insert="workgroup/work__${map.getValue().DISPLAY_TYPE}__::paramset('__${map.getValue().WORK_GROUP}__')"></div>
+				</div>
+		    <td></tr>
+		    <tr><td>
+	    		<div style="height: 50px;"></div>
+		    <td></tr>
+		    <tr style="text-align: right;"><td>
+			    <input type="button" id="closebtn" value="Close" class="btn custombtn fixed_btn">
+		    <td></tr>
+	    </table>
+	</div>
+</div>
+
 </div>
 <div th:insert="common/menu::paramset('__${BATCH_ID}__')"></div>
