@@ -35,7 +35,6 @@ $(function() {
 		
 		// バーコード読み取り時の処理
 		$(material_group_id_read).on('input', function(event) {
-			
 			// 実施対象のマテリアル取得
 			var args = 
 				"?MATERIAL_GORUP_ID="+$(material_group_id_read).val();
@@ -434,26 +433,86 @@ $(function() {
 				url: '/ajax/make_kit_label',
 				}).done(function(data, dataType) {
 			    	$(kitlabel).val(data);
-			    	//PDF作成処理
-			        var docDef = {
-			          content:[
-			            {qr: data}
-			          ],
-			        };
-			      　　pdfMake.createPdf(docDef).download(file_name);
-			        //pdfMake.createPdf(docDef).open();
+			    	
+					//PDF作成処理
+					pdfMake.fonts = {
+							ipagp: {
+							normal: 'ipagp.ttf',
+							bold: 'ipagp.ttf',
+							italics: 'ipagp.ttf',
+							bolditalics: 'ipagp.ttf',
+						}
+					};
+					var docDef = {
+						content:[
+							{
+								columns: [
+									{
+										width: 'auto',
+										margin: [ 0, 0, 20, 0 ],
+										qr: data
+									},
+									{
+										width: '*',
+										table: {
+											widths: ['auto', '*'],
+											body: [
+												['Kit label', data],
+											]
+										}
+									}
+									
+								]
+							}
+						],
+						defaultStyle: {
+							font: 'ipagp'
+						}
+					};
+					pdfMake.createPdf(docDef).download(file_name);
+					//pdfMake.createPdf(docDef).open();
+					
 				}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 					console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 				});
 		}else{
 			//PDF作成処理
-	        var docDef = {
-	          content:[
-	            {qr: $(kitlabel).val()}
-	          ],
-	        };
-	        pdfMake.createPdf(docDef).download(file_name);
-	        //pdfMake.createPdf(docDef).open();
+			pdfMake.fonts = {
+					ipagp: {
+					normal: 'ipagp.ttf',
+					bold: 'ipagp.ttf',
+					italics: 'ipagp.ttf',
+					bolditalics: 'ipagp.ttf',
+				}
+			};
+			var docDef = {
+				content:[
+					{
+						columns: [
+							{
+								width: 'auto',
+								margin: [ 0, 0, 20, 0 ],
+								qr: $(kitlabel).val()
+							},
+							{
+								width: '*',
+								table: {
+									widths: ['auto', '*'],
+									body: [
+										['Kit label', $(kitlabel).val()],
+									]
+								}
+							}
+							
+						]
+					}
+				],
+				defaultStyle: {
+					font: 'ipagp'
+				}
+			};
+			pdfMake.createPdf(docDef).download(file_name);
+			//pdfMake.createPdf(docDef).open();
 		}
 	});
 	
@@ -483,24 +542,82 @@ $(function() {
 	        
 	    	$(expdlabel).val(min_exp_date);
 	    	if(min_exp_date!=''){
-		    	//PDF作成処理
-		        var docDef = {
-		          content:[
-		            {qr: min_exp_date}
-		          ],
-		        };
-		        //pdfMake.createPdf(docDef).open();
-		        pdfMake.createPdf(docDef).download(file_name);
+				//PDF作成処理
+				pdfMake.fonts = {
+						ipagp: {
+						normal: 'ipagp.ttf',
+						bold: 'ipagp.ttf',
+						italics: 'ipagp.ttf',
+						bolditalics: 'ipagp.ttf',
+					}
+				};
+				var docDef = {
+					content:[
+						{
+							columns: [
+								{
+									width: 'auto',
+									margin: [ 0, 0, 20, 0 ],
+									qr: min_exp_date
+								},
+								{
+									width: '*',
+									table: {
+										widths: ['auto', '*'],
+										body: [
+											['Exp. date label', min_exp_date],
+										]
+									}
+								}
+								
+							]
+						}
+					],
+					defaultStyle: {
+						font: 'ipagp'
+					}
+				};
+				pdfMake.createPdf(docDef).download(file_name);
+				//pdfMake.createPdf(docDef).open();
 	    	}
 		}else{
 			//PDF作成処理
-	        var docDef = {
-	          content:[
-	            {qr: $(expdlabel).val()}
-	          ],
-	        };
-	        //pdfMake.createPdf(docDef).open();
-	        pdfMake.createPdf(docDef).download(file_name);
+			pdfMake.fonts = {
+					ipagp: {
+					normal: 'ipagp.ttf',
+					bold: 'ipagp.ttf',
+					italics: 'ipagp.ttf',
+					bolditalics: 'ipagp.ttf',
+				}
+			};
+			var docDef = {
+				content:[
+					{
+						columns: [
+							{
+								width: 'auto',
+								margin: [ 0, 0, 20, 0 ],
+								qr: $(expdlabel).val()
+							},
+							{
+								width: '*',
+								table: {
+									widths: ['auto', '*'],
+									body: [
+										['Exp. date label', $(expdlabel).val()],
+									]
+								}
+							}
+							
+						]
+					}
+				],
+				defaultStyle: {
+					font: 'ipagp'
+				}
+			};
+			pdfMake.createPdf(docDef).download(file_name);
+			//pdfMake.createPdf(docDef).open();
 		}
 	})
 
