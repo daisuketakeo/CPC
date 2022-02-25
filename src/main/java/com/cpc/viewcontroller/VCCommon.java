@@ -144,6 +144,9 @@ public class VCCommon {
 	public static final String ET3 = "ET3"; // QC-3
 	public static final String ET4 = "ET4"; // QC-4
 	public static final String top_pid = "EP101"; // Kitting preculture
+	public static final String ke_rt = "EP301"; // Kitting expansion RT
+	public static final String ke_p4t = "EP302"; // Kitting expansion p4t
+	public static final String ke_m20 = "EP303"; // Kitting expansion m20t
 			
 	/*
 	 * ログイン状態チェック

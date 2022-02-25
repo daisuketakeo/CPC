@@ -1165,7 +1165,6 @@ public class VCAjax extends VCCommon{
     @GetMapping("/ajax/get_material_list")
     public List<ACCEPT_TABLE> get_material_list(
     		@RequestParam(param_batch_id) String batch_id,
-    		@RequestParam(param_process_id) String process_id,
     		@RequestParam(param_work_group) String work_group,
     		HttpServletRequest request,
     		HttpServletResponse response) {
@@ -1187,7 +1186,7 @@ public class VCAjax extends VCCommon{
 	 		// 受入指図連携テーブル取得
 	 		url= rest_airelation+"select"+
 					"?"+ param_im_id+"="+im_id+
-					"&"+ param_process_id+"="+process_id;
+					"&"+ param_work_group+"="+work_group;
 		 	List<AI_RELATION_TABLE> list2 = getRest(url, AI_RELATION_TABLE.class);
 		 	List<String> lsit_mno = new ArrayList<String>();
 		 	for(AI_RELATION_TABLE art : list2) {
@@ -1209,6 +1208,55 @@ public class VCAjax extends VCCommon{
 			 		}
 		 		}
 		 	}
+	 	}
+	 	
+        return material_lsit;
+    }
+    
+    /*
+     * マテリアル一覧取得
+     */
+    @GetMapping("/ajax/get_kitting_material_list")
+    public List<ACCEPT_TABLE> get_kitting_material_list(
+    		@RequestParam(param_batch_id) String batch_id,
+    		HttpServletRequest request,
+    		HttpServletResponse response) {
+    	
+    	List<ACCEPT_TABLE> material_lsit = new ArrayList<ACCEPT_TABLE>();
+    	
+    	if(!super.loginCheck()) {
+    		try{response.setStatus(HttpServletResponse.SC_CONFLICT);}catch(Exception e) {}
+    		return null;
+    	}
+    	
+    	// マテリアルチェックテーブル取得
+    	String url= rest_materialcheck+"select"+
+				"?"+ param_batch_id+"="+batch_id;
+	 	List<MATERIAL_CHECK_TABLE> list1 = getRest(url, MATERIAL_CHECK_TABLE.class);
+	 	
+	 	List<String> lsit_mno = new ArrayList<String>();
+	 	for(MATERIAL_CHECK_TABLE mct : list1) {
+	 		if(mct.getWORK_GROUP().equals(ke_rt) ||
+	 				mct.getWORK_GROUP().equals(ke_p4t) ||
+	 				mct.getWORK_GROUP().equals(ke_m20)) {
+	 			lsit_mno.add(mct.getMATERIAL_NO());
+	 		}
+ 		}
+	 	Collections.sort(lsit_mno);
+	 	
+	 	if(lsit_mno.size()>0) {
+	 		for(String material_no : lsit_mno) {
+		 		// 受入テーブル取得
+		 		url= rest_accept+"select"+
+						"?"+ param_material_no+"="+material_no;
+		 		List<ACCEPT_TABLE> list3 = getRest(url, ACCEPT_TABLE.class);
+		 		if(list3.size()>0) {
+		 			ACCEPT_TABLE ac = list3.get(0);
+		 			// 保管済み以外は除外
+		 			if(!ac.getSTATUS().equals(param_status_storage_end)) continue;
+		 			material_lsit.add(list3.get(0));
+		 		}
+	 		}
 	 	}
 	 	
         return material_lsit;

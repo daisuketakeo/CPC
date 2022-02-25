@@ -50,9 +50,8 @@ $(function(){
 	
 	// Post-batch overviewリンククリック
 	$("#bp_post_batch_overview_link").click(function() {
-		$('#post_batch_dialog').dialog("open");
-		$('#setbtnPostBatchOverView').trigger('click');
-		$('#batch_progress_dialog').dialog("close");
+		// Post-batch overviewを別タブで表示
+		window.open("post_batch_over_view_window?BATCH_ID="+BATCH_ID,"post_batch_over_view_window");
 	});
     
 });

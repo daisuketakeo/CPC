@@ -57,13 +57,13 @@ public class RCAiRelation {
     @GetMapping("/rest/airelation/select")
     public String select(
          @RequestParam(name="IM_ID", required = false) String IM_ID
-         ,@RequestParam(name="PROCESS_ID", required = false) String PROCESS_ID
+         ,@RequestParam(name="WORK_GROUP", required = false) String WORK_GROUP
          ,@RequestParam(name="MATERIAL_NO", required = false) String MATERIAL_NO
          ) {
      
         AI_RELATION_TABLE data = new AI_RELATION_TABLE();
         data.setIM_ID(IM_ID);
-        data.setPROCESS_ID(PROCESS_ID);
+        data.setWORK_GROUP(WORK_GROUP);
         data.setMATERIAL_NO(MATERIAL_NO);
         
         String json = "";

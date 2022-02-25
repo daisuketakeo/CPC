@@ -35,6 +35,9 @@ $(function() {
 		
 		// バーコード読み取り時の処理
 		$(material_group_id_read).on('input', function(event) {
+			
+			var tbodys = $(mtbl+" tbody");//全行を取得
+			
 			// 実施対象のマテリアル取得
 			var args = 
 				"?MATERIAL_GORUP_ID="+$(material_group_id_read).val();
@@ -48,6 +51,20 @@ $(function() {
 						$('#'+tdcheck+MATERIAL_GORUP_ID.material_NO).prop('checked', true);
 					}
 				});
+				
+				var okbtndisabled = false;
+				for( var i=0,l=tbodys.length;i<l;i++ ){
+					// 選択行のMATERIAL_NO取得
+					var childtr = tbodys.eq(i).children();
+					var childtd = $(childtr).children();
+					var material_no = $(childtd.eq(0)).text();
+					if($('#'+tdcheck+material_no).prop('checked') == false){
+						okbtndisabled = true;
+					}
+				}
+				
+				setDisabled(okbtn+'002',okbtndisabled);
+				
 				$(startbtn).val('Start');
 				$(material_group_id_read).val('');
 				$(startbtn).focus();
@@ -104,6 +121,9 @@ $(function() {
 						var input_vals = $(material_group_id_read).val().split(",");
 						
 						$.each(input_vals,function(i,input_val){
+							
+							var tbodys = $(mtbl+" tbody");//全行を取得
+							
 							// 実施対象のマテリアル取得
 							var args = 
 								"?MATERIAL_GORUP_ID="+input_val;
@@ -117,6 +137,20 @@ $(function() {
 										$('#'+tdcheck+MATERIAL_GORUP_ID.material_NO).prop('checked', true);
 									}
 								});
+								
+								var okbtndisabled = false;
+								for( var i=0,l=tbodys.length;i<l;i++ ){
+									// 選択行のMATERIAL_NO取得
+									var childtr = tbodys.eq(i).children();
+									var childtd = $(childtr).children();
+									var material_no = $(childtd.eq(0)).text();
+									if($('#'+tdcheck+material_no).prop('checked') == false){
+										okbtndisabled = true;
+									}
+								}
+								
+								setDisabled(okbtn+'002',okbtndisabled);
+								
 							}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 								console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 							});
@@ -190,15 +224,17 @@ $(function() {
  					}
  				}else{
  					open_work(wgrp, true);	// 作業手順表示
- 					setDisabled(okbtn+WORK_MASTER.work_ID,false);
 					if(WORK_MASTER.work_ID=='001'){
 						setDisabled(kitlabelprintbtn,false);
+						setDisabled(okbtn+WORK_MASTER.work_ID,false);
  					}
  					if(WORK_MASTER.work_ID=='002'){
 						setDisabled(startbtn,false);
+						setDisabled(okbtn+WORK_MASTER.work_ID,true);
  					}
  					if(WORK_MASTER.work_ID=='003'){
  						setDisabled(expdlabelprintbtn,false);
+ 						setDisabled(okbtn+WORK_MASTER.work_ID,false);
  					}
  				}
  			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
@@ -299,7 +335,6 @@ $(function() {
 		}else{
 			var args = 
 				"?BATCH_ID="+batch_id+
-				"&PROCESS_ID="+process_id+
 				"&WORK_GROUP="+wgrp;
 			// マテリアル一覧初期表示の場合
 			$.ajax({

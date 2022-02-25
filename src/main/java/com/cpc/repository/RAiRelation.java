@@ -19,11 +19,11 @@ public interface RAiRelation{
  
     @Insert("INSERT INTO AI_RELATION_TABLE ( "
             + "  IM_ID "
-            + ", PROCESS_ID "
+            + ", WORK_GROUP "
             + ", MATERIAL_NO "
          +") VALUES ( "
             + "  #{IM_ID} "
-            + ", #{PROCESS_ID} "
+            + ", #{WORK_GROUP} "
             + ", #{MATERIAL_NO} "
          +")"
          )
@@ -36,7 +36,7 @@ public interface RAiRelation{
         "  </set>",
         "  WHERE ",
         "       IM_ID = #{IM_ID}",
-        "   AND PROCESS_ID = #{PROCESS_ID}",
+        "   AND WORK_GROUP = #{WORK_GROUP}",
         "   AND MATERIAL_NO = #{MATERIAL_NO}",
         "</script>",
     })
@@ -45,7 +45,7 @@ public interface RAiRelation{
     @Delete("DELETE FROM AI_RELATION_TABLE "
          +" WHERE "
             + "     IM_ID = #{IM_ID} "
-            + " AND PROCESS_ID = #{PROCESS_ID} "
+            + " AND WORK_GROUP = #{WORK_GROUP} "
             + " AND MATERIAL_NO = #{MATERIAL_NO} "
          )
     int delete(AI_RELATION_TABLE model);
@@ -57,8 +57,8 @@ public interface RAiRelation{
         "    <if test='IM_ID != &quot;&quot; and IM_ID != null'>",
         "      AND IM_ID = #{IM_ID}",
         "    </if>",
-        "    <if test='PROCESS_ID != &quot;&quot; and PROCESS_ID != null'>",
-        "      AND PROCESS_ID = #{PROCESS_ID}",
+        "    <if test='WORK_GROUP != &quot;&quot; and WORK_GROUP != null'>",
+        "      AND WORK_GROUP = #{WORK_GROUP}",
         "    </if>",
         "    <if test='MATERIAL_NO != &quot;&quot; and MATERIAL_NO != null'>",
         "      AND MATERIAL_NO = #{MATERIAL_NO}",

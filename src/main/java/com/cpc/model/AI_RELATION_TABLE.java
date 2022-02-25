@@ -8,6 +8,6 @@ import lombok.Data;
 @Data
 public class AI_RELATION_TABLE  implements Serializable{
 	private String IM_ID;
-	private String PROCESS_ID;
+	private String WORK_GROUP;
 	private String MATERIAL_NO;
 }
