@@ -28,6 +28,7 @@ $(function() {
 	var PerformedDate = '#PerformedDate'+wgrp;
 	var ApprovedName = '#ApprovedName'+wgrp;
 	var ApprovedDate = '#ApprovedDate'+wgrp;
+	var work_result_no = '#work_result_no'+wgrp;
 	
 	// 作業手順取得
 	var wm = wmjson.list.filter((u) => u.work_GROUP == wgrp);
@@ -96,12 +97,12 @@ $(function() {
  		 			setCheckBoxPassFail(checkpass, checkfail, WORK_RESULT_TABLE.check_RESULT);
  		 			setCheckBoxPassFail(coapass, coafail, WORK_RESULT_TABLE.check_COA);
  		 			$(downfile_text).text(WORK_RESULT_TABLE.check_FILE_NAME);
- 		 	 		$(downfile_text).attr("href", WORK_RESULT_TABLE.check_FILE_BASE64);
- 		 	 		$(downfile_text).attr("download", WORK_RESULT_TABLE.check_FILE_NAME);
- 		 	 		
  		 	 		$(PerformedName).text(WORK_RESULT_TABLE.work_USERNAME);
  		 	 		$(PerformedDate).text(WORK_RESULT_TABLE.work_DATE);
- 		 			
+ 		 	 		if(WORK_RESULT_TABLE.check_FILE_NAME!=''){
+ 		 	 			$(work_result_no).val(WORK_RESULT_TABLE.work_RESULT_NO);
+ 		 	 		}
+ 		 	 		
  		 	    }
  		 	    else{
  		 	    	// 作業実績が存在しない場合
@@ -110,9 +111,6 @@ $(function() {
  		 			setCheckBoxPassFail(checkpass, checkfail, '');
  		 			setCheckBoxPassFail(coapass, coafail, '');
  		 			$(downfile_text).text('');
- 		 	 		$(downfile_text).attr("href", '');
- 		 	 		$(downfile_text).attr("download", '');
- 		 	 		
  		 	 		$(PerformedName).text('');
  		 	 		$(PerformedDate).text('');
  		 	    }
@@ -236,13 +234,22 @@ $(function() {
 				}
 			]
 		});
-	})
+	});
+	
+	// ファイルリンククリック時の処理
+	$(downfile_text).click(function() {
+		// ファイルダウンロード
+		if($(work_result_no).val()!=''){
+			doenload_attached_file($(work_result_no).val());
+		}
+	});
 	
 });
 
 </script>
 <!-- コンテンツ -->
 <input type="hidden" th:id="'work_id'+${wgrp}" >
+<input type="hidden" th:id="'work_result_no'+${wgrp}" >
 <input type="button" th:id="'setbtn'+${wgrp}" style="display:none;">
 <table style="width:100%;">
 <tr th:id="'tr_header'+${wgrp}"><td>
@@ -336,7 +343,7 @@ $(function() {
 				<tr>
 					<td class="checklistfile">
 						<label for="file_upload">
-							Attached file：<a href="" th:id="'downfile_text'+${wgrp}"></a>
+							Attached file：<a href="javascript:void(0);" th:id="'downfile_text'+${wgrp}"></a>
 						</label>
 					</td>
 				</tr>

@@ -136,6 +136,15 @@ public class VCInstructions extends VCCommon{
 		return disp_main;
     }
     
+    @RequestMapping(value = "batch_progress_window", method = RequestMethod.GET)
+    public String batch_progress_window(
+    		@RequestParam(name=param_batch_id) String BATCH_ID, Model model) {
+        if(!super.loginCheck()) return disp_login;
+        setHeaderAttr(model);
+        model.addAttribute(param_batch_id, BATCH_ID);
+		return "manufacturing/batch_progress_window";
+    }
+    
     @RequestMapping(value = "post_batch_over_view_window", method = RequestMethod.GET)
     public String post_batch_over_view_window(
     		@RequestParam(name=param_batch_id) String BATCH_ID, Model model) {
@@ -143,6 +152,15 @@ public class VCInstructions extends VCCommon{
         setHeaderAttr(model);
         model.addAttribute(param_batch_id, BATCH_ID);
 		return "manufacturing/post_batch_over_view_window";
+    }
+    
+    @RequestMapping(value = "pre_batch_over_view_window", method = RequestMethod.GET)
+    public String pre_batch_over_view_window(
+    		@RequestParam(name=param_batch_id) String BATCH_ID, Model model) {
+        if(!super.loginCheck()) return disp_login;
+        setHeaderAttr(model);
+        model.addAttribute(param_batch_id, BATCH_ID);
+		return "manufacturing/pre_batch_over_view_window";
     }
 
 }

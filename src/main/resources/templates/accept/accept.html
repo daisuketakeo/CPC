@@ -221,49 +221,6 @@ function initAT(){
 	});
 }
  
-/***********************************
-ファイルアプロード
-***********************************/
- function fileupload(
- 	WORK_GROUP,WORK_ID,CHECK_FILE_NAME,CHECK_FILE_BASE64
- 	){
-	
-	// 作業実績登録			
-    initnewWRT();
-    new_WORK_RESULT_TABLE.process_ID        = $("#PROCESS_ID").val();
-    new_WORK_RESULT_TABLE.work_GROUP        = WORK_GROUP;
-    new_WORK_RESULT_TABLE.work_ID           = WORK_ID;
-    new_WORK_RESULT_TABLE.id                = $("#material_no").val();
-    new_WORK_RESULT_TABLE.check_RESULT      = null;　//　新規登録 or 更新しないのでNULL
-    new_WORK_RESULT_TABLE.check_REASON      = null;　//　新規登録 or 更新しないのでNULL
-    new_WORK_RESULT_TABLE.check_COA         = null;　//　新規登録 or 更新しないのでNULL
-    new_WORK_RESULT_TABLE.check_COA_REASON  = null;　//　新規登録 or 更新しないのでNULL
-    new_WORK_RESULT_TABLE.check_FILE_NAME   = CHECK_FILE_NAME;
-    new_WORK_RESULT_TABLE.check_FILE_BASE64 = CHECK_FILE_BASE64;
-   
-	//データを送信
-	var XHR = new XMLHttpRequest();
-	XHR.open( "POST", "/ajax/workresult_regist" );
-	XHR.setRequestHeader('Content-Type', 'application/json');
-	XHR.send(JSON.stringify(new_WORK_RESULT_TABLE));
-	XHR.onreadystatechange = function() {
-	  if( XHR.readyState === 4 && XHR.status === 200 ) {
-		// 正常終了時に処理
-	  }else{
-			if(XHR.status === 409){
-				console.log(XHR.responseText);
-				location.href = '/login';
-			}else{
-				if(XHR.responseText==''){
-				}else{
-					error(XHR.responseText); //エラーダイアログ表示
-				}
-			}
-	  }
-	}
-	
- }
- 
  /***********************************
  受入情報更新＋作業実績登録
  ***********************************/
@@ -328,6 +285,13 @@ function initAT(){
  			}
  		]
  	});
+  }
+  
+  /***********************************
+  確認ダイアログ表示
+  ***********************************/
+  function doenload_attached_file(work_result_no){
+	  window.open("../pdfjs/web/viewer.html?file=/preview_attached_file?WORK_RESULT_NO="+work_result_no);
   }
   
 </script>

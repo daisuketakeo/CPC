@@ -77,14 +77,48 @@ $(function() {
 	// UserLotNoPrintボタンクリック時の処理
 	$(userlotnoprintbtn).click(function() {
 		if($(userlotno).val()!=''){
-			//PDF作成処理
-	        var docDef = {
-	          content:[
-	            {qr: $(userlotno).val()}
-	          ],
-	        };
-	        pdfMake.createPdf(docDef).download("UserLotNo.pdf");
-	        //pdfMake.createPdf(docDef).open();
+			// 受入テーブル取得
+			var args = 
+				"?MATERIAL_NO="+$("#material_no").val();
+			$.ajax({
+			type: "GET", 
+			url: '/rest/accept/select'+args,
+			}).done(function(data, dataType) {
+				var usage_arr = JSON.parse(data);
+			    if(usage_arr.list.length>0){
+		 	    	ACCEPT_TABLE = usage_arr.list[0];
+		 		    //PDF作成処理
+			        var docDef = {
+			          content:[
+			        	  {
+			        		  columns: [
+			      				{
+			      					width: 'auto',
+			      					margin: [ 0, 0, 20, 0 ],
+			      					qr: $(userlotno).val()
+			      				},
+			      				{
+			      					width: '*',
+			      					table: {
+			      		                widths: ['auto', '*'],
+			      		                body: [
+			      		                    ['Material Name', ACCEPT_TABLE.material_NAME],
+			      		                    ['Lot #', ACCEPT_TABLE.lot_NO],
+			      		                  ['Exp. Date', ACCEPT_TABLE.exp_DATE]
+			      		                ]
+			      		            }
+			      				}
+			      				
+			      			]
+			        	  }
+			          ],
+			        };
+			        pdfMake.createPdf(docDef).download("UserLotNo.pdf");
+			        //pdfMake.createPdf(docDef).open();
+		 	    }
+			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+				console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+			});
 		}
 	});
 	

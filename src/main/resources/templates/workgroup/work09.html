@@ -17,12 +17,11 @@ $(function() {
 	var tdcoa = '#tdcoa'+wgrp;
 	var td = '#td'+wgrp;
 	var startbtn = '#startbtn'+wgrp;
- 	var sequence = '#sequence'+wgrp;
  	var mtbl = '#mtbl'+wgrp;
- 	 	
+ 	
  	// 一覧行クリック時の処理
 	$(setbtn).click(function(event, id) {
-		
+	    
 		// 作業手順取得
 		var wm = wmjson.list.filter((u) => u.work_GROUP == wgrp);
 		Object.keys(wm).forEach(function (key) {
@@ -71,6 +70,43 @@ $(function() {
 		    	// 作業完了ならヘッダメニューの「Batch progress」「Post-batch overview」有効にする
 			    $("#hamberger_menu4_li").show();
 			    $("#hamberger_menu5_li").show();
+			    
+			 	// 処理シーケンス表示
+				$.ajax({
+				    type: "GET", 
+				    url: '/ajax/get_sequence',
+				}).done(function(data, dataType) {
+					
+					// tbodyをクリア
+ 					$(mtbl+" > tbody").html("");
+ 					var csvfile = data.SEQUENCE.split("\r\n");
+ 				    //データをテーブル形式にする 
+ 				    $.each(csvfile,function(i,csvstr){
+ 				    	
+				        	if(csvstr === ""){
+				        		return false;
+				        	}
+				        	
+				        	csvstr = csvstr.slice( 1 ) ;	// 先頭の["]を削除
+				    		csvstr = csvstr.slice( 0, -1 ) ;	// 末尾の["]を削除
+				        	var csv_arry = csvstr.split("\",\"");	// 区切り文字：[","]
+				        	
+				        	var tbody = $('<tbody />');
+				        	
+				    		var tr1 = $('<tr/>');
+				            tr1.append($('<td/>').text(csv_arry[0]));
+				            tr1.append($('<td/>').text(csv_arry[1]));
+				            tr1.append($('<td/>').text(csv_arry[2]));
+				            
+				            tbody.append(tr1);
+				            $(mtbl).append(tbody);
+ 				        
+ 				    });
+ 				    
+				}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+				  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+				});
+			 	
 			});
 		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 			console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
@@ -187,11 +223,11 @@ function execsequence(csvfile, tbl, interval, autointerval){
         
     });
 }
+
 </script>
 
 <!-- コンテンツ -->
 <input type="hidden" th:id="'work_id'+${wgrp}" >
-<input type="hidden" th:id="'sequence'+${wgrp}" >
 <input type="button" th:id="'setbtn'+${wgrp}" style="display:none;">
 <table style="width:100%;">
 <tr th:id="'tr_header'+${wgrp}"><td>

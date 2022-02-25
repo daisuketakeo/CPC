@@ -251,12 +251,13 @@ function search(){
 					td_deviation.text('');
 					tr.css({'background':no_deviation_color,'cursor':'pointer'});
 					tr.click(function() {
-						sessionStorage.removeItem('BR_PROCESS_ID');
-						sessionStorage.removeItem('BR_WORK_GROUP');
-						$('<form/>', {action: $("#RETURN_URL").val(), method: 'post'})
-						  .append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: $("#BATCH_ID").val()}))
-						  .appendTo(document.body)
-						  .submit();
+						// 作業手順の画面へ遷移				
+						$('<form/>', {action: PROCESS.get(WORK_GROUP_MASTER.process_ID)[2], method: 'post'})
+						.append($('<input/>', {type: 'hidden', name: 'PROCESS_ID', value: WORK_GROUP_MASTER.process_ID}))
+						.append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: $("#BATCH_ID").val()}))
+						.append($('<input/>', {type: 'hidden', name: 'RETURN_URL', value: "/batchrelease"}))
+						.appendTo(document.body)
+						.submit();
 		            });
 				}
 			

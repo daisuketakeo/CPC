@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="common/head :: head_fragment(title = 'dummy', scripts = ~{::script}, links = ~{::link})"></head>
+<body class="text-center">
+
+  	<!-- コンテンツ -->
+  	<h4 style="width:1000px">Pre-batch overview</h4>
+  	<div th:insert="manufacturing/pre_batch_over_view::paramset('__${BATCH_ID}__')"></div>
+  	<div style="width:1000px;height: 50px;"></div>
+  	<div>
+	    <input type="button" id="closebtn" value="Close" class="btn custombtn fixed_btn">
+    </div>
+  	<script>
+	$(function(){
+		$('#setbtnPreBatchOverview').trigger('click');
+		/*
+		 * キャンセルクリック
+		 */
+		$("#closebtn").click(function(){
+			window.close();
+		});
+		
+	});
+	</script>
+
+</body>
+</html>

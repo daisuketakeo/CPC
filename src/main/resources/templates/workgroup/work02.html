@@ -27,6 +27,7 @@ $(function() {
  	var downfile_text = '#downfile_text'+wgrp;
   	var upfile_text = '#upfile_text'+wgrp;
   	var upfile = '#upfile'+wgrp;
+  	var work_result_no = '#work_result_no'+wgrp;
 	
 	// 作業手順取得
 	var wm = wmjson.list.filter((u) => u.work_GROUP == wgrp);
@@ -144,7 +145,7 @@ $(function() {
 	    // 作業実績取得
 	 	args = 
 			"?WORK_GROUP="+wgrp+
-			"&WORK_ID="+$("#work_id"+wgrp).val()+
+			"&WORK_ID="+$(work_id).val()+
 			"&ID="+id;
 		$.ajax({
 		type: "GET", 
@@ -155,7 +156,6 @@ $(function() {
 	 	    	
 	 	    	// 作業実績が存在する場合
 	 		    var WORK_RESULT_TABLE = usage_arr.list[0];
-	 	    	
 	 			if(WORK_RESULT_TABLE.check_FILE_NAME!=''){
 	 				// ファイル登録済みの場合
 	 				
@@ -164,10 +164,10 @@ $(function() {
 	 				$(btnSubmit).prop("disabled",true);
 	 				// ダウンロードリンク：表示
 	 		 		$(downfile_text).text(WORK_RESULT_TABLE.check_FILE_NAME);
-	 		 		$(downfile_text).attr("href", WORK_RESULT_TABLE.check_FILE_BASE64);
-	 		 		$(downfile_text).attr("download", WORK_RESULT_TABLE.check_FILE_NAME);
 	 		 		$(downfile_text).show();
 	 		 		$(upfile_text).hide();
+	 		 		
+	 		 		$(work_result_no).val(WORK_RESULT_TABLE.work_RESULT_NO);
 	 		 		
 	 			}else{
 	 				// ファイル登録未登録の場合
@@ -297,26 +297,99 @@ $(function() {
 	    reader.readAsDataURL(files[0]);
 	    reader.onload = function() {
 
-			// ファイルアプロード
-	    	fileupload(wgrp,$(work_id).val(),files[0].name,reader.result);
-	    	
-	    	// アップロードボタン：無効
-			$(btnBrowse).prop("disabled",true);
-			$(btnSubmit).prop("disabled",true);
-			// ダウンロードリンク：表示
-	 		$(downfile_text).text(files[0].name);
-	 		$(downfile_text).attr("href", reader.result);
-	 		$(downfile_text).attr("download", files[0].name);
-	 		$(downfile_text).show();
-	 		$(upfile_text).hide();
-			
+	    	//PDF取得
+	        const pdf = files[0];
+	        const type = pdf.type;
+	        console.log(type);
+	        //PDFかどうかチェック
+	        if( !type.match("application/pdf") ){
+	            alertdialog(MESSAGE.W025);
+				return;
+	        }
+	        
+			// ファイルアプロード			
+	        initnewWRT();
+	        new_WORK_RESULT_TABLE.process_ID        = $("#PROCESS_ID").val();
+	        new_WORK_RESULT_TABLE.work_GROUP        = wgrp;
+	        new_WORK_RESULT_TABLE.work_ID           = $(work_id).val();
+	        new_WORK_RESULT_TABLE.id                = $("#material_no").val();
+	        new_WORK_RESULT_TABLE.check_RESULT      = null;　//　新規登録 or 更新しないのでNULL
+	        new_WORK_RESULT_TABLE.check_REASON      = null;　//　新規登録 or 更新しないのでNULL
+	        new_WORK_RESULT_TABLE.check_COA         = null;　//　新規登録 or 更新しないのでNULL
+	        new_WORK_RESULT_TABLE.check_COA_REASON  = null;　//　新規登録 or 更新しないのでNULL
+	        new_WORK_RESULT_TABLE.check_FILE_NAME   = files[0].name;
+	        new_WORK_RESULT_TABLE.check_FILE_BASE64 = reader.result;
+	       
+	    	//データを送信
+	    	var XHR = new XMLHttpRequest();
+	    	XHR.open( "POST", "/ajax/workresult_regist" );
+	    	XHR.setRequestHeader('Content-Type', 'application/json');
+	    	XHR.send(JSON.stringify(new_WORK_RESULT_TABLE));
+	    	XHR.onreadystatechange = function() {
+	    	  if( XHR.readyState === 4 && XHR.status === 200 ) {
+	    		// 正常終了時に処理
+	    		
+	    		// 作業実績取得
+			 	args = 
+					"?WORK_GROUP="+wgrp+
+					"&WORK_ID="+$(work_id).val()+
+					"&ID="+$("#material_no").val();
+				$.ajax({
+				type: "GET", 
+				url: '/rest/workresult/select'+args,
+				}).done(function(data, dataType) {
+					var usage_arr = JSON.parse(data);
+			 	    if(usage_arr.list.length>0){
+			 	    	
+			 	    	// 作業実績が存在する場合
+			 		    var WORK_RESULT_TABLE = usage_arr.list[0];
+			 			if(WORK_RESULT_TABLE.check_FILE_NAME!=''){
+			 				// ファイル登録済みの場合
+			 				// アップロードボタン：無効
+			 				$(btnBrowse).prop("disabled",true);
+			 				$(btnSubmit).prop("disabled",true);
+			 				// ダウンロードリンク：表示
+			 		 		$(downfile_text).text(WORK_RESULT_TABLE.check_FILE_NAME);
+			 		 		$(downfile_text).show();
+			 		 		$(upfile_text).hide();
+			 		 		$(work_result_no).val(WORK_RESULT_TABLE.work_RESULT_NO);
+			 		 		
+			 			}	 			
+			 	    }
+			 	    
+				}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+					console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+				});
+
+	    	  }else{
+	    			if(XHR.status === 409){
+	    				console.log(XHR.responseText);
+	    				location.href = '/login';
+	    			}else{
+	    				if(XHR.responseText==''){
+	    				}else{
+	    					error(XHR.responseText); //エラーダイアログ表示
+	    				}
+	    			}
+	    	  }
+	    	}
 	     }
+	});
+	
+	// ファイルリンククリック時の処理
+	$(downfile_text).click(function() {
+		// ファイルダウンロード
+		if($(work_result_no).val()!=''){
+			doenload_attached_file($(work_result_no).val());
+		}
 	});
  	
 });
+
 </script>
 <!-- コンテンツ -->
 <input type="hidden" th:id="'work_id'+${wgrp}" >
+<input type="hidden" th:id="'work_result_no'+${wgrp}" >
 <input type="button" th:id="'setbtn'+${wgrp}" style="display:none;">
 <table style="width:100%;">
 <tr th:id="'tr_header'+${wgrp}">
@@ -446,7 +519,7 @@ $(function() {
 								<label for="file_upload">
 									Attached file：
 									<input type="text" th:id="'upfile_text'+${wgrp}" value="" size="40" readonly>
-									<a href="" th:id="'downfile_text'+${wgrp}"></a>
+									<a href="javascript:void(0);" th:id="'downfile_text'+${wgrp}"></a>
 									<input type="file" th:id="'upfile'+${wgrp}" th:onchange="|$('#upfile_text__${wgrp}__').val($(this).val())|" style="display:none;">
 								</label>
 							</td>

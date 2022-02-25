@@ -94,6 +94,7 @@ const MESSAGE = {
 	W023: 'Please select material.',
 	W024: 'Different materials checked.',
 	W025: 'Pre-batch overview cannot be selected.',
+	W025: 'Please select PDF file.',
 	E001: '',
 	E002: '',
 	E003: '',

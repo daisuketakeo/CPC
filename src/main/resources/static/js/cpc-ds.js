@@ -286,12 +286,14 @@ function header_click(disp_flg){
 	
 	if ($("#header_check"+disp_flg).prop("checked") == true) {
 		$("#header_check"+disp_flg).prop("checked", false);
-		$("#proc_table"+disp_flg).hide();
+		//$("#proc_table"+disp_flg).hide();
+		$("#proc_table"+disp_flg).css('visibility','collapse');
 		$("#allow"+disp_flg).text("▼");
    } else {
-   	$("#header_check"+disp_flg).prop("checked", true);
-   	$("#proc_table"+disp_flg).show();
-   	$("#allow"+disp_flg).text("▲");
+	   	$("#header_check"+disp_flg).prop("checked", true);
+	   	//$("#proc_table"+disp_flg).show();
+	   	$("#proc_table"+disp_flg).css('visibility','visible');
+	   	$("#allow"+disp_flg).text("▲");
    }
 }
 
@@ -299,7 +301,6 @@ function header_click(disp_flg){
 作業グループの枠操作
 ***********************************/
 function open_work(no, open){
-	/*
 	if(open){
 		// 作業グループの枠を開ける
 		$("#header_check"+no).prop("checked", false);header_click(no);
@@ -307,11 +308,12 @@ function open_work(no, open){
 		// 作業グループの枠を閉じる
 		$("#header_check"+no).prop("checked", true);header_click(no);		
 	}
-	*/
+	/*
 	if(open){
 		// 仕掛位置まで移動
 		$("html,body").animate({scrollTop:$("#tr_header"+no).offset().top-50});
 	}
+	*/
 }
  /*
   * 要素ごとに有効無効 設定

@@ -59,55 +59,7 @@ $(function(){
         	   }
           }]
   	});
-    
-	// Batcvh Progress　ダイアログ
-	$('#batch_progress_dialog').dialog({
-	  autoOpen: false,
-  	  modal:true, //モーダル表示
-  	  title:"Batch progress", //タイトル
- 	  height: 800,
-      width: "100%",
-      buttons:[
-          {text: "Close",
-           class:"btn custombtn",
-           click: function() {
-        	   $(this).dialog("close");
-        	   }
-          }]
-  	});
-	
-	// Pre batch overview　ダイアログ
-	$('#pre_batch_dialog').dialog({
-	  autoOpen: false,
-  	  modal:true, //モーダル表示
-  	  title:"Pre-batch overview", //タイトル
- 	  height: 800,
-      width: "100%",
-      buttons:[
-          {text: "Close",
-           class:"btn custombtn",
-           click: function() {
-        	   $(this).dialog("close");
-        	   }
-          }]
-  	});
-	
-	// Post batch overview　ダイアログ
-	$('#post_batch_dialog').dialog({
-	  autoOpen: false,
-  	  modal:true, //モーダル表示
-  	  title:"Post-batch overview", //タイトル
- 	  height: 800,
-      width: "100%",
-      buttons:[
-          {text: "Close",
-           class:"btn custombtn",
-           click: function() {
-        	   $(this).dialog("close");
-        	   }
-          }]
-  	});
-	
+
 	// 製造指図メニュークリック
 	$("#hamberger_menu1").click(function() {
 		$("#detail").tabs(
@@ -207,17 +159,5 @@ $(function(){
 	<!-- CellQualia Top　ダイアログ  -->
 	<div id="cellqualia_top_dialog">
 		<div th:insert="manufacturing/cellqualia_top::paramset('__${batch_id}__')"></div>
-	</div>
-	<!-- Batch Progress　ダイアログ  -->
-	<div id="batch_progress_dialog">
-		<div th:insert="manufacturing/batch_progress::paramset('__${batch_id}__')"></div>
-	</div>
-	<!-- Pre batch overview　ダイアログ  -->
-	<div id="pre_batch_dialog">
-		<div th:insert="manufacturing/pre_batch_over_view::paramset('__${batch_id}__')"></div>
-	</div>
-	<!-- Post batch overview　ダイアログ  -->
-	<div id="post_batch_dialog">
-		<div th:insert="manufacturing/post_batch_over_view::paramset('__${batch_id}__')"></div>
 	</div>
 </div>

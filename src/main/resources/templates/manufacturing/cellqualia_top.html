@@ -48,44 +48,44 @@ $(function(){
 		if(AUTOTRANS!==""){
 			if(DIALOG_FLG=='batch_progress'){
 				setTimeout(function(){
-					$('#batch_progress_dialog').dialog("open");
-					$('#setbtnBatchProgress').trigger('click');
+					// Batch progressを別タブで表示
+					window.open("batch_progress_window?BATCH_ID="+BATCH_ID,"batch_progress_window");
 					$('#cellqualia_top_dialog').dialog("close");
 		          }, AUTOTRANS*1000);
 			}
 			if(DIALOG_FLG=='post_batch'){
 				setTimeout(function(){
-					$('#post_batch_dialog').dialog("open");
-					$('#setbtnPostBatchOverView').trigger('click');
+					// Post-batch overviewを別タブで表示
+					window.open("post_batch_over_view_window?BATCH_ID="+BATCH_ID,"post_batch_over_view_window");
 					$('#cellqualia_top_dialog').dialog("close");
 		          }, AUTOTRANS*1000);
 			}
 			if(DIALOG_FLG=='pre_batch'){
 				setTimeout(function(){
-					$('#pre_batch_dialog').dialog("open");
-					$('#setbtnPreBatchOverview').trigger('click');
+					// Pre-batch overviewを別タブで表示
+					window.open("pre_batch_over_view_window?BATCH_ID="+BATCH_ID,"pre_batch_over_view_window");
 					$('#cellqualia_top_dialog').dialog("close");
 		          }, AUTOTRANS*1000);
 			}
 		}else{
 			// Prebatchクリック時の処理
 			$(btnPrebatch).click(function() {
-				$('#pre_batch_dialog').dialog("open");
-				$('#setbtnPreBatchOverview').trigger('click');
+				// Pre-batch overviewを別タブで表示
+				window.open("pre_batch_over_view_window?BATCH_ID="+BATCH_ID,"pre_batch_over_view_window");
 				$('#cellqualia_top_dialog').dialog("close");
 			});
 			
 			// Batchprogressクリック時の処理
 			$(btnBatchprogress).click(function() {
-				$('#batch_progress_dialog').dialog("open");
-				$('#setbtnBatchProgress').trigger('click');
+				// Batch progressを別タブで表示
+				window.open("batch_progress_window?BATCH_ID="+BATCH_ID,"batch_progress_window");
 				$('#cellqualia_top_dialog').dialog("close");
 			});
 			
 			// Postbatchクリック時の処理
 			$(btnPostbatch).click(function() {
-				$('#post_batch_dialog').dialog("open");
-				$('#setbtnPostBatchOverView').trigger('click');
+				// Post-batch overviewを別タブで表示
+				window.open("post_batch_over_view_window?BATCH_ID="+BATCH_ID,"post_batch_over_view_window");
 				$('#cellqualia_top_dialog').dialog("close");
 			});
 		}

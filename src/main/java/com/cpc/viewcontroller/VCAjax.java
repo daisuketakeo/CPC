@@ -2,7 +2,13 @@ package com.cpc.viewcontroller;
 
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +17,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -1663,6 +1670,46 @@ public class VCAjax extends VCCommon{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/*
+     * 受入一覧 添付ファイルダウンロード
+     */
+	@GetMapping("preview_attached_file")
+	public void preview_attached_file(
+		@RequestParam(param_work_result_no) String work_result_no,
+		HttpServletRequest request,
+		HttpServletResponse response) {
+
+		if(!super.loginCheck()) {
+			try{response.setStatus(HttpServletResponse.SC_CONFLICT);}catch(Exception e) {}
+			return;
+		}
+		
+		String url = rest_workresult+"select"
+                + "?"+param_work_result_no+"="+work_result_no;
+		
+        // 作業実績取得
+        List<WORK_RESULT_TABLE> list = getRest(url, WORK_RESULT_TABLE.class);
+        if(list.size()>0) {
+        	
+        	String filename = list.get(0).getCHECK_FILE_NAME();
+        	String base64data = list.get(0).getCHECK_FILE_BASE64().replaceAll("data:application/pdf;base64,","");
+        	
+    		try (OutputStream os = response.getOutputStream();) {
+            	
+                byte[] fb1 = Base64.getDecoder().decode(base64data.getBytes());
+                response.setContentType("application/octet-stream");
+                response.setHeader("Content-Disposition", "attachment; filename="+filename);
+                response.setContentLength(fb1.length);
+                os.write(fb1);
+                os.flush();
+                
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+    		
+        }
 	}
    
 }

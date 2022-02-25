@@ -77,6 +77,7 @@ function refrech_work(){
 	const work_group_json = JSON.parse($("#WORK_GROUP_JSON").val());
 	Object.keys(work_group_json).forEach(function (key) {
 		WORK_GROUP = work_group_json[key];
+		open_work(WORK_GROUP.work_GROUP, false);	// 作業手順非表示
 		var setwork = 'setwork'+WORK_GROUP.work_GROUP;
 		// 各作業グループのセットボタン押下
 		$('#setbtn'+WORK_GROUP.work_GROUP).trigger('click');

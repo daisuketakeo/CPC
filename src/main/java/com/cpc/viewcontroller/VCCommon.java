@@ -74,25 +74,27 @@ public class VCCommon {
 	/*
 	 * 画面パラメータ
 	 */
-	public static final String param_process_id    = "PROCESS_ID";		// 工程
-	public static final String param_work_group    = "WORK_GROUP";		// 作業グループ
-	public static final String param_id            = "ID";				// ID(MATERIAL_NO or BACTH_ID)
-	public static final String param_work_id       = "WORK_ID";			// WORK_ID
-	public static final String param_material_no   = "MATERIAL_NO";		// MATERIAL_NO
-	public static final String param_material_group_id   = "MATERIAL_GROUP_ID";		// MATERIAL_GROUP_ID
-	public static final String param_batch_id      = "BATCH_ID";		// BATCH_ID
-	public static final String param_im_id         = "IM_ID";			// IM_ID
-	public static final String param_ins_proc_id      = "INS_PROC_ID";	// INS_PROC_ID
-	public static final String param_work_group_json  = "WORK_GROUP_JSON";	// 画面へ渡す作業グループ情報(Json)
-	public static final String param_work_group_map   = "WORK_GROUP_MAP";	// 画面へ渡す作業グループ情報(MAP)
-	public static final String param_status_list      = "STATUS_LIST";		// 画面へ渡すステータスリスト
-	public static final String param_disp_flg      = "DISP_FLG";		// 画面へ渡すステータスリスト
-	public static final String param_return_url      = "RETURN_URL";		// 遷移元URL
-	public static final String param_barcode_reader      = "BARCODE_READER";		// 画面へ渡すBARCODE_READER
-	public static final String param_status_storage_end      = "Q06";		// 受入 保管済みステータス
+	public static final String param_process_id         = "PROCESS_ID";			// 工程
+	public static final String param_work_group         = "WORK_GROUP";			// 作業グループ
+	public static final String param_id                 = "ID";					// ID(MATERIAL_NO or BACTH_ID)
+	public static final String param_work_id            = "WORK_ID";			// WORK_ID
+	public static final String param_work_result_no     = "WORK_RESULT_NO";		// WORK_RESULT_NO
+	public static final String param_material_no        = "MATERIAL_NO";		// MATERIAL_NO
+	public static final String param_material_group_id  = "MATERIAL_GROUP_ID";	// MATERIAL_GROUP_ID
+	public static final String param_batch_id           = "BATCH_ID";			// BATCH_ID
+	public static final String param_im_id              = "IM_ID";				// IM_ID
+	public static final String param_ins_proc_id        = "INS_PROC_ID";		// INS_PROC_ID
+	public static final String param_work_group_json    = "WORK_GROUP_JSON";	// 画面へ渡す作業グループ情報(Json)
+	public static final String param_work_group_map     = "WORK_GROUP_MAP";		// 画面へ渡す作業グループ情報(MAP)
+	public static final String param_status_list        = "STATUS_LIST";		// 画面へ渡すステータスリスト
+	public static final String param_disp_flg           = "DISP_FLG";			// 画面へ渡すステータスリスト
+	public static final String param_return_url         = "RETURN_URL";			// 遷移元URL
+	public static final String param_barcode_reader     = "BARCODE_READER";		// 画面へ渡すBARCODE_READER
+	public static final String param_status_storage_end = "Q06";				// 受入 保管済みステータス
 	public static final String param_errmsg_session = "Session disconnect!　Please sign in　agein.";		// セッション切れエラーメッセージ
-	public static final String param_ok      = "OK";		// 画面戻り値 OK
-	public static final String param_ng      = "NG";		// 画面戻り値 NG
+	public static final String param_ok                 = "OK";					// 画面戻り値 OK
+	public static final String param_ng                 = "NG";					// 画面戻り値 NG
+	
 	/*
 	 * REST URL
 	 */
