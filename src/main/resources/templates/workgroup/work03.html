@@ -88,6 +88,14 @@ $(function() {
 			    if(usage_arr.list.length>0){
 		 	    	ACCEPT_TABLE = usage_arr.list[0];
 		 		    //PDF作成処理
+		 		    pdfMake.fonts = {
+		 		    		ipagp: {
+			                normal: 'ipagp.ttf',
+			                bold: 'ipagp.ttf',
+			                italics: 'ipagp.ttf',
+			                bolditalics: 'ipagp.ttf',
+			            }
+			        };
 			        var docDef = {
 			          content:[
 			        	  {
@@ -102,9 +110,12 @@ $(function() {
 			      					table: {
 			      		                widths: ['auto', '*'],
 			      		                body: [
-			      		                    ['Material Name', ACCEPT_TABLE.material_NAME],
-			      		                    ['Lot #', ACCEPT_TABLE.lot_NO],
-			      		                  ['Exp. Date', ACCEPT_TABLE.exp_DATE]
+			      		                  ['Material Name', ACCEPT_TABLE.material_NAME],
+			      		                  ['Cat. #', ACCEPT_TABLE.category_NO],
+			      		                  ['Manufacturer', ACCEPT_TABLE.manufacturer],
+			      		                  ['Lot #', ACCEPT_TABLE.lot_NO],
+			      		                  ['Exp. Date', ACCEPT_TABLE.exp_DATE],
+			      		                  ['User lot #', ACCEPT_TABLE.user_LOT_NO]
 			      		                ]
 			      		            }
 			      				}
@@ -112,6 +123,9 @@ $(function() {
 			      			]
 			        	  }
 			          ],
+			          defaultStyle: {
+		                  font: 'ipagp'
+		              }
 			        };
 			        pdfMake.createPdf(docDef).download("UserLotNo.pdf");
 			        //pdfMake.createPdf(docDef).open();
