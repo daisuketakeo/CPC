@@ -311,6 +311,7 @@
 
 /*作業手順明細の設定*/
 .worktable{
+    min-width:800px;
     width:95%;
     border: 1px solid black;
     background    : #e1f4ff;

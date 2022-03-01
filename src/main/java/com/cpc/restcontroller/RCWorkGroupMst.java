@@ -58,11 +58,19 @@ public class RCWorkGroupMst {
     public String select(
          @RequestParam(name="PROCESS_ID", required = false) String PROCESS_ID
          ,@RequestParam(name="WORK_GROUP", required = false) String WORK_GROUP
+         ,@RequestParam(name="WORK_GROUP_NAME", required = false) String WORK_GROUP_NAME
+         ,@RequestParam(name="BEFORE_WORK_GROUP", required = false) String BEFORE_WORK_GROUP
+         ,@RequestParam(name="STATUS", required = false) String STATUS
+         ,@RequestParam(name="DISPLAY_TYPE", required = false) String DISPLAY_TYPE
          ) {
      
         WORK_GROUP_MASTER data = new WORK_GROUP_MASTER();
         data.setPROCESS_ID(PROCESS_ID);
         data.setWORK_GROUP(WORK_GROUP);
+        data.setWORK_GROUP_NAME(WORK_GROUP_NAME);
+        data.setBEFORE_WORK_GROUP(BEFORE_WORK_GROUP);
+        data.setSTATUS(STATUS);
+        data.setDISPLAY_TYPE(DISPLAY_TYPE);
         
         String json = "";
         try {

@@ -76,6 +76,7 @@ public class VCCommon {
 	 */
 	public static final String param_process_id         = "PROCESS_ID";			// 工程
 	public static final String param_work_group         = "WORK_GROUP";			// 作業グループ
+	public static final String param_display_type       = "DISPLAY_TYPE";		// 画面種別
 	public static final String param_id                 = "ID";					// ID(MATERIAL_NO or BACTH_ID)
 	public static final String param_work_id            = "WORK_ID";			// WORK_ID
 	public static final String param_work_result_no     = "WORK_RESULT_NO";		// WORK_RESULT_NO
@@ -147,6 +148,11 @@ public class VCCommon {
 	public static final String ke_rt = "EP301"; // Kitting expansion RT
 	public static final String ke_p4t = "EP302"; // Kitting expansion p4t
 	public static final String ke_m20 = "EP303"; // Kitting expansion m20t
+	public static final String qc2_confirm = "ET202"; // QC-2 Confirm
+	public static final String qc3_confirm = "ET306"; // QC-3 Confirm
+	public static final String qc4_confirm = "ET407"; // QC-4 Confirm
+	public static final String confirm_display_type = "101"; // Confirm DISPLAY_TYPE
+	public static final String approve_display_type = "102"; // Approve DISPLAY_TYPE
 			
 	/*
 	 * ログイン状態チェック
@@ -569,9 +575,29 @@ public class VCCommon {
 	 
     	if(list.size()>0) {
         	int no = 1;
+        	WORK_GROUP_MASTER confirm = new WORK_GROUP_MASTER();
+        	WORK_GROUP_MASTER approve = new WORK_GROUP_MASTER();
         	for(WORK_GROUP_MASTER wgrp : list) {
+        		if(wgrp.getDISPLAY_TYPE().equals(confirm_display_type)) {
+        			confirm = wgrp;
+        			continue;
+        		}
+        		if(wgrp.getDISPLAY_TYPE().equals(approve_display_type)) {
+        			approve = wgrp;
+        			continue;
+        		}
         		rtnmap.put(String.format("%02d", no), 
         				new DisplayParameter(wgrp.getWORK_GROUP(), wgrp.getDISPLAY_TYPE()));
+        		no++;
+        	}
+        	if(confirm.getWORK_GROUP()!=null && !confirm.getWORK_GROUP().isEmpty()) {
+        		rtnmap.put(String.format("%02d", no), 
+        				new DisplayParameter(confirm.getWORK_GROUP(), confirm.getDISPLAY_TYPE()));
+        		no++;
+        	}
+        	if(approve.getWORK_GROUP()!=null && !approve.getWORK_GROUP().isEmpty()) {
+        		rtnmap.put(String.format("%02d", no), 
+        				new DisplayParameter(approve.getWORK_GROUP(), approve.getDISPLAY_TYPE()));
         		no++;
         	}
     	}

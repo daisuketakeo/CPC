@@ -45,6 +45,7 @@ import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.Table;
 import com.lowagie.text.pdf.BaseFont;
 import com.lowagie.text.pdf.PdfWriter;
@@ -1599,6 +1600,79 @@ public class VCAjax extends VCCommon{
             	}
             }
             
+			WORK_RESULT_TABLE qc_approve = new WORK_RESULT_TABLE(); 
+
+			// QC-2 Approve 作業実績取得
+			url = rest_workgroupmst+"select"
+					+ "?"+param_process_id+"="+ET2
+					+ "&"+param_display_type+"="+approve_display_type;
+			List<WORK_GROUP_MASTER> qc2_wgrp_list = getRest(url, WORK_GROUP_MASTER.class);
+			if(qc2_wgrp_list.size()>0){
+				url = rest_workresult+"select"
+						+ "?"+param_process_id+"="+ET2
+						+ "&"+param_work_group+"="+qc2_wgrp_list.get(0).getWORK_GROUP()
+						+ "&"+param_id+"="+batch_id;
+				List<WORK_RESULT_TABLE> qc2_approve_list = getRest(url, WORK_RESULT_TABLE.class);
+				if(qc2_approve_list.size()>0){
+					qc_approve = qc2_approve_list.get(0);
+				}
+			}
+			
+
+			// QC-3 Approve 作業実績取得
+			url = rest_workgroupmst+"select"
+					+ "?"+param_process_id+"="+ET3
+					+ "&"+param_display_type+"="+approve_display_type;
+			List<WORK_GROUP_MASTER> qc3_wgrp_list = getRest(url, WORK_GROUP_MASTER.class);
+			if(qc3_wgrp_list.size()>0){
+				url = rest_workresult+"select"
+						+ "?"+param_process_id+"="+ET3
+						+ "&"+param_work_group+"="+qc3_wgrp_list.get(0).getWORK_GROUP()
+						+ "&"+param_id+"="+batch_id;
+				List<WORK_RESULT_TABLE> qc3_approve_list = getRest(url, WORK_RESULT_TABLE.class);
+				if(qc3_approve_list.size()>0){
+					if(qc_approve.getWORK_DATE()==null || 
+							qc_approve.getWORK_DATE().isEmpty()) {
+						qc_approve = qc3_approve_list.get(0);
+					}else {
+						if(qc3_approve_list.get(0).getWORK_DATE()!=null || 
+								!qc3_approve_list.get(0).getWORK_DATE().isEmpty()) {
+							
+							if(qc3_approve_list.get(0).getWORK_DATE().compareTo(qc_approve.getWORK_DATE())>0) {
+								qc_approve = qc3_approve_list.get(0);
+							}
+						}
+					}
+				}
+			}
+			
+			// QC-4 Approve 作業実績取得
+			url = rest_workgroupmst+"select"
+					+ "?"+param_process_id+"="+ET4
+					+ "&"+param_display_type+"="+approve_display_type;
+			List<WORK_GROUP_MASTER> qc4_wgrp_list = getRest(url, WORK_GROUP_MASTER.class);
+			if(qc4_wgrp_list.size()>0){
+				url = rest_workresult+"select"
+						+ "?"+param_process_id+"="+ET4
+						+ "&"+param_work_group+"="+qc4_wgrp_list.get(0).getWORK_GROUP()
+						+ "&"+param_id+"="+batch_id;
+				List<WORK_RESULT_TABLE> qc4_approve_list = getRest(url, WORK_RESULT_TABLE.class);
+				if(qc4_approve_list.size()>0){
+					if(qc_approve.getWORK_DATE()==null || 
+							qc_approve.getWORK_DATE().isEmpty()) {
+						qc_approve = qc4_approve_list.get(0);
+					}else {
+						if(qc4_approve_list.get(0).getWORK_DATE()!=null || 
+								!qc4_approve_list.get(0).getWORK_DATE().isEmpty()) {
+							
+							if(qc4_approve_list.get(0).getWORK_DATE().compareTo(qc_approve.getWORK_DATE())>0) {
+								qc_approve = qc4_approve_list.get(0);
+							}
+						}
+					}
+				}
+			}
+            
 			Document doc = new Document();
 			ByteArrayOutputStream baOutStr = new ByteArrayOutputStream();
 			PdfWriter writer = PdfWriter.getInstance(doc, baOutStr);
@@ -1614,6 +1688,7 @@ public class VCAjax extends VCCommon{
 			BaseFont bf = BaseFont.createFont(ttf,encoding,false);
 			Font font12 = new Font(bf, 12, Font.NORMAL);
 			Font font12_underline = new Font(bf, 12, Font.UNDERLINE);
+			Font font10_underline = new Font(bf, 10, Font.UNDERLINE);
 			Font font20_header = new Font(bf, 20, Font.BOLD);
 			
 			//doc.addAuthor("CPC"); 
@@ -1698,16 +1773,55 @@ public class VCAjax extends VCCommon{
             }
 
             doc.add( table );
-            doc.add(new Paragraph("\n"));
-			doc.add(new Paragraph("\n"));
 			
-            Paragraph para1 = new Paragraph( "Approved by_____________", font12 );
-            para1.setAlignment(Element.ALIGN_RIGHT);
-            doc.add( para1 );
+			// 表の作成
+            Table table_app = new Table(2);
+            table_app.setWidth( 100 );
+            int table_app_width[] = {80, 20};
+            table_app.setWidths( table_app_width );
+            table_app.setBorderWidth(0);
+            
+            //罫線の設定
+            table_app.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+
+            // 横の表示位置
+            //table.setDefaultHorizontalAlignment( Element.ALIGN_CENTER );
+            // 縦の表示位置
+            //table.setDefaultVerticalAlignment( Element.ALIGN_MIDDLE );
+            // 表の余白を指定
+            table_app.setPadding(1);
+            // 表のセル間の感覚を指定
+            table_app.setSpacing(1);
+            // 表の線の色を指定
+            table_app.setBorderColor( new Color( 0, 0, 0 ) );
 			
-            Paragraph para2 = new Paragraph( "Date             _____________", font12 );
-            para2.setAlignment(Element.ALIGN_RIGHT);
-            doc.add( para2 );
+			Cell cell12 = new Cell( new Phrase( "Approved by ", font12));
+			cell12.setHorizontalAlignment(Element.ALIGN_RIGHT);
+			
+			Cell cell13 = new Cell( new Phrase( qc_approve.getWORK_USERNAME(), font10_underline));
+			cell13.setHorizontalAlignment(Element.ALIGN_LEFT);
+			
+			Cell cell22 = new Cell( new Phrase( "Date               ", font12));
+			cell22.setHorizontalAlignment(Element.ALIGN_RIGHT);
+			
+			Cell cell23 = new Cell( new Phrase( qc_approve.getWORK_DATE(), font10_underline));
+			cell23.setHorizontalAlignment(Element.ALIGN_LEFT);
+           
+            table_app.addCell( cell12 );
+            table_app.addCell( cell13 );
+
+            table_app.addCell( cell22 );
+            table_app.addCell( cell23 );
+            
+            doc.add( table_app );
+            
+//            Paragraph para1 = new Paragraph( "Approved by_____________", font12 );
+//            para1.setAlignment(Element.ALIGN_RIGHT);
+//            doc.add( para1 );
+//			
+//            Paragraph para2 = new Paragraph( "Date             _____________", font12 );
+//            para2.setAlignment(Element.ALIGN_RIGHT);
+//            doc.add( para2 );
             
 			doc.close();
 			writer.close();
