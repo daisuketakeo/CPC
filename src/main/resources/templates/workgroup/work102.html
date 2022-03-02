@@ -102,6 +102,7 @@ $(function() {
  				var BR_WORK_GROUP = sessionStorage.getItem(['BR_WORK_GROUP']);
  				if(BR_WORK_GROUP!=null && BR_WORK_GROUP!=''){
  					$("html,body").animate({scrollTop:$("#tr_header"+BR_WORK_GROUP).offset().top-50});
+ 					$("#header_check"+BR_WORK_GROUP).prop("checked", false);header_click(BR_WORK_GROUP);
  				}
  				
  			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
