@@ -1,36 +1,58 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
- 	<meta charset="utf-8" />
-	<!-- スタイル読み込み(CSSフレームワーク) -->
-	<link rel="stylesheet" href="/css/spectre.min.css">
-	<link rel="stylesheet" href="/css/cpc-ds.css">
+<meta charset="utf-8" />
+<!-- スタイル読み込み(CSSフレームワーク) -->
+<link rel="stylesheet" href="/css/spectre.min.css">
+<link rel="stylesheet" href="/css/cpc-ds.css">
+<style type="text/css">
+html, body, form {
+  height: 100%;
+  margin:0;
+  padding:0;
+}
+.container  {
+  width: 100%;
+  height: 100%;
+  display: table;
+}
+.box {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  display: table-cell;
+  vertical-align: middle;
+}
+</style>
 </head>
 	
-	<body class="text-center">
+	<body>
 	  	<!-- コンテンツ -->
-	  	<form class="form-signin" action="main" method="post">
-	  		<div></div>
-	  		<img src="/images/login.png">
-	  		<table style="margin:auto">
-	  			<tr><td>
-	  				<input type="tel" name="USERID" placeholder="User ID" required autofocus>
-	  			</td></tr>
-	  			<tr><td>
-	  				<input type="password" name="PASSWORD" id="floatingPassword" placeholder="Password" required>
-	  			</td></tr>
-	  			<tr><td>
-	  				<button class="btn loginbtn" type="submit">Sign In</button>
-	  			</td></tr>
-	  			<tr><td>
-					<div class="label label-error" role="alert" th:if="${error}=='1'">
-			            Invalid userid.
-			        </div>
-			        <div class="label label-error" role="alert" th:if="${error}=='2'">
-			            Invalid password.
-			        </div>
-	  			</td></tr>
-	  		</table>
+	  	<form action="main" method="post">
+	  		<div class="container">
+		  		<div class="box">
+			  		<img src="/images/login.png">
+			  		<table style="margin:auto">
+			  			<tr><td>
+			  				<input type="tel" name="USERID" placeholder="User ID" required autofocus>
+			  			</td></tr>
+			  			<tr><td>
+			  				<input type="password" name="PASSWORD" id="floatingPassword" placeholder="Password" required>
+			  			</td></tr>
+			  			<tr><td>
+			  				<button class="btn loginbtn" type="submit">Sign In</button>
+			  			</td></tr>
+			  			<tr><td>
+							<div class="label label-error" role="alert" th:if="${error}=='1'">
+					            Invalid userid.
+					        </div>
+					        <div class="label label-error" role="alert" th:if="${error}=='2'">
+					            Invalid password.
+					        </div>
+			  			</td></tr>
+			  		</table>
+			  	</div>
+	  		</div>
 		</form>
 	</body>
 </html>
