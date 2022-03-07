@@ -179,6 +179,7 @@ $(function() {
 	 	    	initAT();
 	 		    select_ACCEPT_TABLE = usage_arr.list[0];
 	 		    setTextBox(storage,select_ACCEPT_TABLE.storage);
+	 		    setCheckBoxPassFail(accept, reject, select_ACCEPT_TABLE.qa_APP_STATUS);
 	 	    }
 
 		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
