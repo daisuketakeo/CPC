@@ -34,6 +34,9 @@ $(function() {
 	var PerformedDate = '#PerformedDate'+wgrp;
 	var ApprovedName = '#ApprovedName'+wgrp;
 	var ApprovedDate = '#ApprovedDate'+wgrp;
+	var approvalheader = '#approvalheader'+wgrp;
+	var checklistcheckbox = '#checklistcheckbox'+wgrp;
+	var approvallist = '#approvallist'+wgrp;
 	
 	// 作業手順取得
 	var wm = wmjson.list.filter((u) => u.work_GROUP == wgrp);
@@ -90,6 +93,10 @@ $(function() {
 		// アプロードファイル名クリア
 		$(upfile_text).val('');
 		$(downfile_text).text('');
+		
+		$(approvalheader).hide();
+		$(checklistcheckbox).hide();
+		$(approvallist).hide();
 		
 		// ステータスチェック
 		var args = 
@@ -236,6 +243,11 @@ $(function() {
 	 		    var WORK_RESULT_TABLE = usage_arr.list[0];
 	 			$(ApprovedName).text(WORK_RESULT_TABLE.work_USERNAME);
 	 	 		$(ApprovedDate).text(WORK_RESULT_TABLE.work_DATE);
+	 	 		
+	 	 		$(approvalheader).show();
+	 			$(checklistcheckbox).show();
+	 			$(approvallist).show();
+	 			
 	 	    }else{
 	 	    	$(ApprovedName).text('');
 	 	 		$(ApprovedDate).text('');
@@ -576,14 +588,14 @@ $(function() {
 			</table>
 		</td>
 	</tr>
-	<tr class="approvalheader">
+	<tr th:id="'approvalheader'+${wgrp}" class="approvalheader">
 		<td>
 			<label>
 				Judgment
 			</label>
 		</td>
 	</tr>
-	<tr class="checklistcheckbox">
+	<tr th:id="'checklistcheckbox'+${wgrp}" class="checklistcheckbox">
 		<td>
 			<label>
 				<input type="checkbox" th:id="'accept'+${wgrp}">
@@ -595,7 +607,7 @@ $(function() {
 			</label>
 		</td>
 	</tr>
-	<tr>
+	<tr th:id="'approvallist'+${wgrp}">
 		<td>
 			<table class="approvallist">
 				<thead>
