@@ -32,6 +32,8 @@ var wgrp_kitting_expansion_m20t = 'EP303';
 
 var wgrp_preclture_work   = 'EP201';
 
+var wgrp_qa_approve = 'QA01';
+
 // 工程情報
 // PROCESS_ID, 要素名, 画面フラグ 
 var PROCESS = new Map([

@@ -28,6 +28,12 @@ $(function() {
   	var upfile_text = '#upfile_text'+wgrp;
   	var upfile = '#upfile'+wgrp;
   	var work_result_no = '#work_result_no'+wgrp;
+  	var accept = '#accept'+wgrp;
+	var reject = '#reject'+wgrp;
+	var PerformedName = '#PerformedName'+wgrp;
+	var PerformedDate = '#PerformedDate'+wgrp;
+	var ApprovedName = '#ApprovedName'+wgrp;
+	var ApprovedDate = '#ApprovedDate'+wgrp;
 	
 	// 作業手順取得
 	var wm = wmjson.list.filter((u) => u.work_GROUP == wgrp);
@@ -75,6 +81,9 @@ $(function() {
         $(this).prop('checked', true);
 	});
 	
+	setDisabled(accept,true);
+	setDisabled(reject,true);
+	 
 	// 一覧行クリック時の処理
 	$(setbtn).click(function(event, id) {
 		
@@ -136,6 +145,7 @@ $(function() {
 	 		    select_ACCEPT_TABLE = usage_arr.list[0];
 	 		    setTextBox(lotno,select_ACCEPT_TABLE.lot_NO);
 	 		    setTextBox(expdate,select_ACCEPT_TABLE.exp_DATE);
+	 		   　setCheckBoxPassFail(accept, reject, select_ACCEPT_TABLE.qa_APP_STATUS);
 	 	    }
 
 		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
@@ -178,6 +188,7 @@ $(function() {
 	 				// ダウンロードリンク：非表示
 	 		  		$(downfile_text).hide();
 	 		  		$(upfile_text).show();
+	 		  		
 	 			}
 	 			
 	 			// チェックリストのデータ設定
@@ -185,6 +196,9 @@ $(function() {
 	 			setTextBox(coareason, WORK_RESULT_TABLE.check_COA_REASON);
 	 			setCheckBoxPassFail(checkpass, checkfail, WORK_RESULT_TABLE.check_RESULT);
 	 			setCheckBoxPassFail(coapass, coafail, WORK_RESULT_TABLE.check_COA);
+	 			
+	 			$(PerformedName).text(WORK_RESULT_TABLE.work_USERNAME);
+		 	 	$(PerformedDate).text(WORK_RESULT_TABLE.work_DATE);
 	 			
 	 	    }else{
 		 	    // 作業実績が存在しない場合
@@ -197,8 +211,35 @@ $(function() {
 	 			setTextBox(coareason, '');
 	 			setCheckBoxPassFail(checkpass, checkfail, '');
 	 			setCheckBoxPassFail(coapass, coafail, '');
+	 			
+ 		  		$(PerformedName).text('');
+		        $(PerformedDate).text('');
 	 	    }
 	 	    
+		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+			console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+		});
+		
+		// QA承認の作業実績取得
+	 	args = 
+			"?WORK_GROUP="+wgrp_qa_approve+
+			"&WORK_ID=001"+
+			"&ID="+id;
+	    
+		$.ajax({
+		type: "GET", 
+		url: '/rest/workresult/select'+args,
+		}).done(function(data, dataType) {
+			var usage_arr = JSON.parse(data);
+	 	    if(usage_arr.list.length>0){
+	 	    	// 作業実績が存在する場合
+	 		    var WORK_RESULT_TABLE = usage_arr.list[0];
+	 			$(ApprovedName).text(WORK_RESULT_TABLE.work_USERNAME);
+	 	 		$(ApprovedDate).text(WORK_RESULT_TABLE.work_DATE);
+	 	    }else{
+	 	    	$(ApprovedName).text('');
+	 	 		$(ApprovedDate).text('');
+	 	    }
 		}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 			console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 		});
@@ -532,6 +573,50 @@ $(function() {
 					</table>
 					</td>
 				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr class="approvalheader">
+		<td>
+			<label>
+				Judgment
+			</label>
+		</td>
+	</tr>
+	<tr class="checklistcheckbox">
+		<td>
+			<label>
+				<input type="checkbox" th:id="'accept'+${wgrp}">
+				Accept
+			</label>
+			<label class="checklistcheckbox">
+				<input type="checkbox" th:id="'reject'+${wgrp}">
+				Reject
+			</label>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<table class="approvallist">
+				<thead>
+					<tr>
+						<th>Status</th>
+						<th>Name</th>
+						<th>Date</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>Performed</td>
+						<td th:id="'PerformedName'+${wgrp}"></td>
+						<td th:id="'PerformedDate'+${wgrp}"></td>
+					</tr>
+					<tr>
+						<td>Approved</td>
+						<td th:id="'ApprovedName'+${wgrp}"></td>
+						<td th:id="'ApprovedDate'+${wgrp}"></td>
+					</tr>
+				</tbody>
 			</table>
 		</td>
 	</tr>
