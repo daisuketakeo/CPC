@@ -1454,7 +1454,7 @@ public class VCAjax extends VCCommon{
 	 		
 	 		INSTRUCTIONS_TABLE data = list.get(0);
 	 		data.setSTATUS("I02");
-	 		data.setSTARTING_TIME(super.getWorkDate());
+	 		//data.setSTARTING_TIME(super.getWorkDate());
 	 		url= rest_instructions+"update";
 	 		if(!postRest(url, data)) {
 	 			return param_ng;
@@ -1478,6 +1478,43 @@ public class VCAjax extends VCCommon{
 	 	        }
 	 		}
 	 	}
+        
+        return param_ok;
+        
+    }
+    
+    /*
+     * 指図の開始日時登録
+     * 引数：Json形式
+     */
+    @RequestMapping(value = "/ajax/start_instructions", 
+    		consumes = "application/json",
+    		method = RequestMethod.POST)
+    @ResponseBody
+    public String start_instructions(@RequestBody String req,
+    		HttpServletRequest request,
+    		HttpServletResponse response) {
+    	
+    	if(!super.loginCheck()) {
+    		try{response.setStatus(HttpServletResponse.SC_CONFLICT);}catch(Exception e) {}
+    		return param_errmsg_session;
+    	}
+    	
+    	if(!isKO()) {
+    		return param_ok;
+    	}
+    	
+        String url = "";
+        Map<String ,Object> map = getMap(req.toString());
+        String batch_id = map.get("BATCH_ID").toString();
+        
+        INSTRUCTIONS_TABLE data = new INSTRUCTIONS_TABLE();
+        data.setBATCH_ID(batch_id);
+        data.setSTARTING_TIME(super.getWorkDate());
+ 		url= rest_instructions+"update";
+ 		if(!postRest(url, data)) {
+ 			return param_ng;
+ 		}
         
         return param_ok;
         

@@ -288,13 +288,91 @@ $(function(){
 				alertdialog(MESSAGE.W011);
 			}else{
 				if(disp_flg==value[1]){
-					// 作業手順の画面へ遷移				
-					  $('<form/>', {action: value[2], method: 'post'})
-					  .append($('<input/>', {type: 'hidden', name: 'PROCESS_ID', value: key}))
-					  .append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: $("#batch_id").val()}))
-					  .append($('<input/>', {type: 'hidden', name: 'RETURN_URL', value: "instructions"}))
-					  .appendTo(document.body)
-					  .submit();
+					// Kitting for the preculture 初回クリック判定
+					if(key==proc_kitting_preclture){
+						
+						// Kitting for the preculture 工程
+						
+						// 指図情報取得
+						$.ajax({
+						type: "GET", 
+						url: '/rest/instructions/select?BATCH_ID='+$("#batch_id").val(),
+						}).done(function(data3, dataType) {
+							var usage_arr3 = JSON.parse(data3);
+							if(usage_arr3.list.length>0){
+								
+								INSTRUCTIONS_TABLE = usage_arr3.list[0];
+								if(INSTRUCTIONS_TABLE.starting_TIME=='' ||
+										INSTRUCTIONS_TABLE.starting_TIME==null){
+									// 開始日時がNULL
+									// Kitting for the preculture 初回クリック
+									console.log("データ送信");
+									// データを送信
+									var start_data = { BATCH_ID: $("#batch_id").val() };
+									var XHR = new XMLHttpRequest();
+									XHR.open( "POST", "/ajax/start_instructions");
+									XHR.setRequestHeader('Content-Type', 'application/json');
+									XHR.send(JSON.stringify(start_data));
+									XHR.onreadystatechange = function() {
+										if( XHR.readyState === 4 && XHR.status === 200 ) {
+											// 正常終了時に処理
+											// 作業手順の画面へ遷移				
+											  $('<form/>', {action: value[2], method: 'post'})
+											  .append($('<input/>', {type: 'hidden', name: 'PROCESS_ID', value: key}))
+											  .append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: $("#batch_id").val()}))
+											  .append($('<input/>', {type: 'hidden', name: 'RETURN_URL', value: "instructions"}))
+											  .appendTo(document.body)
+											  .submit();
+											    
+										}else{
+											if(XHR.status === 409){
+												console.log(XHR.responseText);
+												location.href = '/login';
+											}else{
+												if(XHR.responseText==''){
+												}else{
+													error(XHR.responseText); //エラーダイアログ表示
+												}
+											}
+										}
+									}
+									
+								}else{
+									// 開始日時設定済み
+									// Kitting for the preculture 初回クリックではない
+									// 作業手順の画面へ遷移				
+									  $('<form/>', {action: value[2], method: 'post'})
+									  .append($('<input/>', {type: 'hidden', name: 'PROCESS_ID', value: key}))
+									  .append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: $("#batch_id").val()}))
+									  .append($('<input/>', {type: 'hidden', name: 'RETURN_URL', value: "instructions"}))
+									  .appendTo(document.body)
+									  .submit();
+								}
+								
+							}else{
+								// 指図情報が存在しない
+								// 作業手順の画面へ遷移				
+								  $('<form/>', {action: value[2], method: 'post'})
+								  .append($('<input/>', {type: 'hidden', name: 'PROCESS_ID', value: key}))
+								  .append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: $("#batch_id").val()}))
+								  .append($('<input/>', {type: 'hidden', name: 'RETURN_URL', value: "instructions"}))
+								  .appendTo(document.body)
+								  .submit();
+							}
+						}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+							console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+						});
+						
+					}else{
+						// Kitting for the preculture 以外の工程
+						// 作業手順の画面へ遷移				
+						  $('<form/>', {action: value[2], method: 'post'})
+						  .append($('<input/>', {type: 'hidden', name: 'PROCESS_ID', value: key}))
+						  .append($('<input/>', {type: 'hidden', name: 'BATCH_ID', value: $("#batch_id").val()}))
+						  .append($('<input/>', {type: 'hidden', name: 'RETURN_URL', value: "instructions"}))
+						  .appendTo(document.body)
+						  .submit();
+					}
 				}else{
 					// 対象工程以外は操作不可
 					alertdialog(MESSAGE.W010);
