@@ -95,6 +95,10 @@ $(function() {
  			    	if(WORK_RESULT_TABLE.check_RESULT=='0'){
  			    		$(suspension_check).prop('checked', true);
  			    	}
+ 			    	if(WORK_RESULT_TABLE.work_DATE!=null &&
+ 			    			WORK_RESULT_TABLE.work_DATE != ''){
+ 			    		$(apppanel).show();
+ 			    	}
  		 	    }
  		 	    
  				// Batch release画面から遷移した場合

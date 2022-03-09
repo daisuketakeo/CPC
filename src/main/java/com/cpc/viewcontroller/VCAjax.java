@@ -77,6 +77,29 @@ public class VCAjax extends VCCommon{
     }
     
     /*
+     * 確認者以上か？
+     */
+    @GetMapping("/ajax/isoverconfirm")
+    public boolean isoverconfirm(
+    		@RequestParam(param_process_id) String process_id,
+    		HttpServletRequest request,
+    		HttpServletResponse response) { 
+    	
+    	if(!super.loginCheck()) {
+    		try{response.setStatus(HttpServletResponse.SC_CONFLICT);}catch(Exception e) {}
+    		return false;
+    	}
+    	
+    	if(process_id.equals(ET2) ||
+    			process_id.equals(ET3) ||
+    			process_id.equals(ET4)) {
+    		return super.isQC_OverConfirm();
+    	}
+    	
+    	return super.isCP_OverConfirm();
+    }
+    
+    /*
      * 承認者か？
      */
     @GetMapping("/ajax/isapp")

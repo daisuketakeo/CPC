@@ -184,6 +184,17 @@ public class VCCommon {
     }
 	
 	/*
+	 * QC確認者以上か？
+	 */
+	public boolean isQC_OverConfirm() {
+    	USER_MASTER user = (USER_MASTER)session.getAttribute(seeeson_user);
+    	if(user==null) return false;
+    	if(user.getAUTHORITY().equals("QC02")) return true;
+    	if(user.getAUTHORITY().equals("QA01")) return true;
+        return false;
+    }
+	
+	/*
 	 * 製造か？
 	 */
 	public boolean isCP() {
@@ -202,6 +213,17 @@ public class VCCommon {
     	USER_MASTER user = (USER_MASTER)session.getAttribute(seeeson_user);
     	if(user==null) return false;
     	if(user.getAUTHORITY().equals("KO01")) return true;
+        return false;
+    }
+	
+	/*
+	 * 製造確認者以上か？
+	 */
+	public boolean isCP_OverConfirm() {
+    	USER_MASTER user = (USER_MASTER)session.getAttribute(seeeson_user);
+    	if(user==null) return false;
+    	if(user.getAUTHORITY().equals("CP02")) return true;
+    	if(user.getAUTHORITY().equals("CP03")) return true;
         return false;
     }
 	

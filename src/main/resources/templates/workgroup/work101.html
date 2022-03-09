@@ -10,6 +10,7 @@ $(function() {
 	getWorkGroupName(wgrp, wgrp, "work_group_name");
 	
 	// 要素名
+	var confirmpanel = '#confirmpanel'+wgrp;
 	var setbtn = '#setbtn'+wgrp;
 	var okbtn = '#okbtn'+wgrp;
 	var pass = '#pass'+wgrp;
@@ -26,6 +27,8 @@ $(function() {
         $(this).prop('checked', true);
 	});
  	
+	$(confirmpanel).hide();
+	
  	// 一覧行クリック時の処理
 	$(setbtn).click(function() {
 		// 作業手順取得
@@ -76,11 +79,25 @@ $(function() {
  			    	if(WORK_RESULT_TABLE.check_RESULT=='0'){
  			    		$(fail).prop('checked', true);
  			    	}
+ 			    	$(confirmpanel).show();
  				});
  		 	    
  			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
  				console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
  			});
+ 			
+ 		    // 確認者以上か？
+ 			$.ajax({
+ 			type: "GET", 
+ 			url: '/ajax/isoverconfirm?PROCESS_ID='+process_id,
+ 			}).done(function(data, dataType) {
+ 				if(data){
+ 					$(confirmpanel).show();
+ 		 	    }
+ 			}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
+ 				console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
+ 			});
+ 		
 		});
 	
 	})
@@ -111,7 +128,7 @@ $(function() {
 <!-- コンテンツ -->
 <input type="hidden" th:id="'work_id'+${wgrp}" >
 <input type="button" th:id="'setbtn'+${wgrp}" style="display:none;">
-<table style="width:100%;">
+<table th:id="'confirmpanel'+${wgrp}" style="width:100%;">
 <tr th:id="'tr_header'+${wgrp}"><td>
 <input type="checkbox" th:id="'header_check'+${wgrp}" checked="checked" style="display:none;">
 
