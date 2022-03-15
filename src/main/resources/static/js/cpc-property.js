@@ -1,9 +1,11 @@
 
-var deviation = 'Deviation';			// 逸脱
-var wgrp_diviation_status = 'W99';		// 作業グループの逸脱ステータス
-var is_release_status = 'I02';			// 指図リリース済ステータス
-var end_status = ['P05','T05','B03'];	// 工程の完了ステータス
-var current_status = ['P02','P03','P04','T02','T03','T04','B02'];	// 工程の仕掛ステータス
+var deviation = 'Deviation';					// 逸脱
+var wgrp_diviation_status = 'W99';				// 作業グループの逸脱ステータス
+var is_release_status = 'I02';					// 指図リリース済ステータス
+var confirm_pending_status = ['P03','T03'];		// 工程の確認待ちステータス
+var approval_pending_status = ['P04','T04'];	// 工程の承認待ちステータス
+var end_status = ['P05','T05','B03'];			// 工程の完了ステータス
+var suspension_status = ['P06','T06'];			// 工程の中止ステータス
 
 var proc_instructions      = 'IS';
 var proc_kitting_preclture = 'EP1';
@@ -33,6 +35,10 @@ var wgrp_kitting_expansion_m20t = 'EP303';
 var wgrp_preclture_work   = 'EP201';
 
 var wgrp_qa_approve = 'QA01';
+
+var display_type_confirm = '101';
+var display_type_approve = '102';
+
 
 // 工程情報
 // PROCESS_ID, 要素名, 画面フラグ 

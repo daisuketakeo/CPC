@@ -558,16 +558,27 @@ function search(){
 	        	select_row(this);
 	        });
 	        
-	        if($("#batch_id").val()==INSTRUCTIONS_TABLE.batch_ID){
-	        	select_row(tr1);
-	        	$('#tbl1').animate({scrollTop:tbody.offset().top-200});
-	        }
 	        /*
 	        if(create_flg){
 	        	$('#tbl1').animate({scrollTop:tbody.offset().top});
 	        }
 	        */
 	    });
+	    
+	 	// 一覧取得
+		var tbodys = $("#tbl1 tbody");//全行を取得
+		for( var i=0,l=tbodys.length;i<l;i++ ){
+			// 選択行のMATERIAL_NO取得
+			var childtr = tbodys.eq(i).children();
+			var childtd = $(childtr).children();
+			var batch_id = $(childtd.eq(0)).text();
+			if(batch_id==$("#batch_id").val()){
+				var targetY = childtr.offset().top-160;
+	        	select_row(childtr);
+	        	//$("#tbl1").scrollTop(targetY);
+	        	$('#tbl1').animate({scrollTop:targetY});
+			}
+		}
 
 	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 	  console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
@@ -615,9 +626,56 @@ function select_row(obj){
 			
 			if(process_id!=proc_instructions){	// 指図工程は工程フロー図に存在しないため除外
 				
-				var end_flg = false;
+				// 確認待ちチェック
+				var cp_flg = false;
+				for (const confirm_pending of confirm_pending_status) {
+					if(PROCESS_STATUS_TABLE.status==confirm_pending){
+						cp_flg = true;
+					}
+				}
+				if(cp_flg){
+					// 確認待ちアイコン表示
+					$('#cp'+PROCESS.get(process_id)[0]).show();
+					PROCESS.get(process_id)[4] = true;
+				}else{
+					$('#cp'+PROCESS.get(process_id)[0]).hide();
+					PROCESS.get(process_id)[4] = false;
+				}
+				
+				// 承認待ちチェック
+				var ap_flg = false;
+				for (const approval_pending of approval_pending_status) {
+					if(PROCESS_STATUS_TABLE.status==approval_pending){
+						ap_flg = true;
+					}
+				}
+				if(ap_flg){
+					// 承認待ちアイコン表示
+					$('#ap'+PROCESS.get(process_id)[0]).show();
+					PROCESS.get(process_id)[4] = true;
+				}else{
+					$('#ap'+PROCESS.get(process_id)[0]).hide();
+					PROCESS.get(process_id)[4] = false;
+				}
+				
+				// 中止チェック
+				var sp_flg = false;
+				for (const suspension of suspension_status) {
+					if(PROCESS_STATUS_TABLE.status==suspension){
+						sp_flg = true;
+					}
+				}
+				if(sp_flg){
+					// 中止アイコン表示
+					$('#sp'+PROCESS.get(process_id)[0]).show();
+					PROCESS.get(process_id)[4] = true;
+				}else{
+					$('#sp'+PROCESS.get(process_id)[0]).hide();
+					PROCESS.get(process_id)[4] = false;
+				}
 				
 				// 完了チェック
+				var end_flg = false;
 				for (const end of end_status) {
 					if(PROCESS_STATUS_TABLE.status==end){
 						end_flg = true;
@@ -668,55 +726,59 @@ function select_row(obj){
 		}
 		
 		if(!PROCESS.get(proc_kitting_preclture)[4]){
-			$('#ar'+PROCESS.get(proc_kitting_preclture)[0]).show();
-			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get(proc_kitting_preclture)[0]).offset().left-30});
+			current_process(proc_kitting_preclture);
 		}
 		if(!PROCESS.get(proc_preclture)[4] && PROCESS.get(proc_kitting_preclture)[4]){
-			$('#ar'+PROCESS.get(proc_preclture)[0]).show();
-			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get(proc_preclture)[0]).offset().left-30});
+			current_process(proc_preclture);
 		}
 		if(!PROCESS.get(proc_QC1)[4] && PROCESS.get(proc_preclture)[4]){
-			$('#ar'+PROCESS.get(proc_QC1)[0]).show();
-			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get(proc_QC1)[0]).offset().left-30});
+			current_process(proc_QC1);
 		}
 		if(!PROCESS.get(proc_kitting_expansion)[4] && PROCESS.get(proc_QC1)[4]){
-			$('#ar'+PROCESS.get(proc_kitting_expansion)[0]).show();
-			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get(proc_kitting_expansion)[0]).offset().left-30});
+			current_process(proc_kitting_expansion);
 		}
 		if(!PROCESS.get(proc_expansion)[4] && PROCESS.get(proc_kitting_expansion)[4]){
-			$('#ar'+PROCESS.get(proc_expansion)[0]).show();
-			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get(proc_expansion)[0]).offset().left-30});
+			current_process(proc_expansion);
 		}
 		if(!PROCESS.get(proc_buffer_exchange)[4] && PROCESS.get(proc_expansion)[4]){
-			$('#ar'+PROCESS.get(proc_buffer_exchange)[0]).show();
-			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get(proc_buffer_exchange)[0]).offset().left-30});
+			current_process(proc_buffer_exchange);
 		}
 		if(!PROCESS.get(proc_freezing)[4] && PROCESS.get(proc_buffer_exchange)[4]){
-			$('#ar'+PROCESS.get(proc_freezing)[0]).show();
-			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get(proc_freezing)[0]).offset().left-30});
+			current_process(proc_freezing);
 		}
 		if(!PROCESS.get(proc_QC2)[4] && PROCESS.get(proc_expansion)[4]){
-			$('#ar'+PROCESS.get(proc_QC2)[0]).show();
-			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get(proc_QC2)[0]).offset().left-30});
+			current_process(proc_QC2);
 		}
 		if(!PROCESS.get(proc_QC3)[4] && PROCESS.get(proc_buffer_exchange)[4]){
-			$('#ar'+PROCESS.get(proc_QC3)[0]).show();
-			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get(proc_QC3)[0]).offset().left-30});
+			current_process(proc_QC3);
 		}
 		if(!PROCESS.get(proc_QC4)[4] && PROCESS.get(proc_freezing)[4]){
-			$('#ar'+PROCESS.get(proc_QC4)[0]).show();
-			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get(proc_QC4)[0]).offset().left-30});
+			current_process(proc_QC4);
 		}
 		if(!PROCESS.get(proc_batch_release)[4] 
 			&& PROCESS.get(proc_QC2)[4] && PROCESS.get(proc_QC3)[4] && PROCESS.get(proc_QC4)[4]){
-			$('#ar'+PROCESS.get(proc_batch_release)[0]).show();
-			$("#process_flow").animate({scrollLeft:$('#lbl'+PROCESS.get(proc_batch_release)[0]).offset().left-30});
+			current_process(proc_batch_release);
 		}
 		
 	}).fail(function(XMLHttpRequest, textStatus, errorThrown) {
 		console.log('Error : ' + errorThrown + ", Reason: " + textStatus);
 	});
 	
+}
+
+function current_process(process_id){
+	$("#process_flow").scrollLeft(-1000);
+	var wgrpfilter = wgrpjson.list.filter((u) => u.process_ID == process_id);
+	var DISPLAY_TYPE = wgrpfilter[0].display_TYPE;
+	if(DISPLAY_TYPE==display_type_confirm){
+		$('#cp'+PROCESS.get(process_id)[0]).show();
+	}else if(DISPLAY_TYPE==display_type_approve){
+		$('#ap'+PROCESS.get(process_id)[0]).show();
+	}else{
+		$('#ar'+PROCESS.get(process_id)[0]).show();
+	}
+	var targetX = $('#id'+PROCESS.get(process_id)[0]).offset().left;
+	$("#process_flow").scrollLeft(targetX);
 }
 
 </script>
@@ -760,9 +822,12 @@ function select_row(obj){
 	<table>
 		<tr>
 			<td>
-				<div class="square">
+				<div id="idPrecultureKitting" class="square">
 					<img id="cmPrecultureKitting" alt="" class="aicon square_endaicon" src="/images/check_mark.png">
 					<img id="arPrecultureKitting" alt="" class="aicon square_endaicon" src="/images/arrow.png">
+					<img id="cpPrecultureKitting" alt="" class="aicon square_endaicon" src="/images/confirm_pending.png">
+					<img id="apPrecultureKitting" alt="" class="aicon square_endaicon" src="/images/approval_pending.png">
+					<img id="spPrecultureKitting" alt="" class="aicon square_endaicon" src="/images/suspension.png">
 					<label id="lblPrecultureKitting" class="square_label"></label>
 					<img id="exPrecultureKitting" alt="" class="aicon square_divaicon" src="/images/exclamation_mark.png">
 					<div id="PrecultureKitting" class="click_div"></div>
@@ -770,9 +835,12 @@ function select_row(obj){
 			</td>
 			<td style="width:10px;"><div class="arrow arrow1"></div></td>
 			<td>
-				<div class="square">
+				<div id="idPreculture" class="square">
 					<img id="cmPreculture" alt="" class="aicon square_endaicon" src="/images/check_mark.png">
 					<img id="arPreculture" alt="" class="aicon square_endaicon" src="/images/arrow.png">
+					<img id="cpPreculture" alt="" class="aicon square_endaicon" src="/images/confirm_pending.png">
+					<img id="apPreculture" alt="" class="aicon square_endaicon" src="/images/approval_pending.png">
+					<img id="spPreculture" alt="" class="aicon square_endaicon" src="/images/suspension.png">
 					<label id="lblPreculture" class="square_label"></label>
 					<img id="exPreculture" alt="" class="aicon square_divaicon" src="/images/exclamation_mark.png">
 					<div id="Preculture" class="click_div"></div>
@@ -780,9 +848,12 @@ function select_row(obj){
 			</td>
 			<td style="width:10px;"><div class="arrow arrow1"></div></td>
 			<td>
-				<div class="rhombus" style="left:20px;">
+				<div id="idQC1" class="rhombus" style="left:20px;">
 					<img id="cmQC1" alt="" class="aicon rhombus_endaicon" src="/images/check_mark.png">
 					<img id="arQC1" alt="" class="aicon rhombus_endaicon" src="/images/arrow.png">
+					<img id="cpQC1" alt="" class="aicon rhombus_endaicon" src="/images/confirm_pending.png">
+					<img id="apQC1" alt="" class="aicon rhombus_endaicon" src="/images/approval_pending.png">
+					<img id="spQC1" alt="" class="aicon rhombus_endaicon" src="/images/suspension.png">
 					<label id="lblQC1" class="rhombus_label"></label>
 					<img id="exQC1" alt="" class="aicon rhombus_divaicon" src="/images/exclamation_mark.png">
 					<div id="QC1" class="click_div"></div>
@@ -790,9 +861,12 @@ function select_row(obj){
 			</td>
 			<td style="width:10px;"><div class="arrow arrow1" style="left:38px;"></div></td>
 			<td>
-				<div class="square" style="left:40px;">
+				<div id="idExpansionKitting" class="square" style="left:40px;">
 					<img id="cmExpansionKitting" alt="" class="aicon square_endaicon" src="/images/check_mark.png">
 					<img id="arExpansionKitting" alt="" class="aicon square_endaicon" src="/images/arrow.png">
+					<img id="cpExpansionKitting" alt="" class="aicon square_endaicon" src="/images/confirm_pending.png">
+					<img id="apExpansionKitting" alt="" class="aicon square_endaicon" src="/images/approval_pending.png">
+					<img id="spExpansionKitting" alt="" class="aicon square_endaicon" src="/images/suspension.png">
 					<label id="lblExpansionKitting" class="square_label"></label>
 					<img id="exExpansionKitting" alt="" class="aicon square_divaicon" src="/images/exclamation_mark.png">
 					<div id="ExpansionKitting" class="click_div"></div>
@@ -800,10 +874,13 @@ function select_row(obj){
 			</td>
 			<td style="width:10px;"><div class="arrow arrow1" style="left:38px;"></div></td>
 			<td>
-				<div class="square" style="left:40px;">
+				<div id="idExpansion" class="square" style="left:40px;">
 					<img alt="" class="aicon square_arrow2" src="/images/arrow2.png">
 					<img id="cmExpansion" alt="" class="aicon square_endaicon" src="/images/check_mark.png">
 					<img id="arExpansion" alt="" class="aicon square_endaicon" src="/images/arrow.png">
+					<img id="cpExpansion" alt="" class="aicon square_endaicon" src="/images/confirm_pending.png">
+					<img id="apExpansion" alt="" class="aicon square_endaicon" src="/images/approval_pending.png">
+					<img id="spExpansion" alt="" class="aicon square_endaicon" src="/images/suspension.png">
 					<label id="lblExpansion" class="square_label"></label>
 					<img id="exExpansion" alt="" class="aicon square_divaicon" src="/images/exclamation_mark.png">
 					<div id="Expansion" class="click_div"></div>
@@ -811,10 +888,13 @@ function select_row(obj){
 			</td>
 			<td style="width:10px;"><div class="arrow arrow1" style="left:38px;"></div></td>
 			<td>
-				<div class="square" style="left:40px;">
+				<div id="idBufferExchange" class="square" style="left:40px;">
 					<img alt="" class="aicon square_arrow3" src="/images/arrow3.png">
 					<img id="cmBufferExchange" alt="" class="aicon square_endaicon" src="/images/check_mark.png">
 					<img id="arBufferExchange" alt="" class="aicon square_endaicon" src="/images/arrow.png">
+					<img id="cpBufferExchange" alt="" class="aicon square_endaicon" src="/images/confirm_pending.png">
+					<img id="apBufferExchange" alt="" class="aicon square_endaicon" src="/images/approval_pending.png">
+					<img id="spBufferExchange" alt="" class="aicon square_endaicon" src="/images/suspension.png">
 					<label id="lblBufferExchange" class="square_label"></label>
 					<img id="exBufferExchange" alt="" class="aicon square_divaicon" src="/images/exclamation_mark.png">
 					<div id="BufferExchange" class="click_div"></div>
@@ -822,9 +902,12 @@ function select_row(obj){
 			</td>
 			<td style="width:10px;"><div class="arrow arrow1" style="left:38px;"></div></td>
 			<td>
-				<div class="square" style="left:40px;">
+				<div id="idFreezing" class="square" style="left:40px;">
 					<img id="cmFreezing" alt="" class="aicon square_endaicon" src="/images/check_mark.png">
 					<img id="arFreezing" alt="" class="aicon square_endaicon" src="/images/arrow.png">
+					<img id="cpFreezing" alt="" class="aicon square_endaicon" src="/images/confirm_pending.png">
+					<img id="apFreezing" alt="" class="aicon square_endaicon" src="/images/approval_pending.png">
+					<img id="spFreezing" alt="" class="aicon square_endaicon" src="/images/suspension.png">
 					<label id="lblFreezing" class="square_label"></label>
 					<img id="exFreezing" alt="" class="aicon square_divaicon" src="/images/exclamation_mark.png">
 					<div id="Freezing" class="click_div"></div>
@@ -834,29 +917,38 @@ function select_row(obj){
 			<td>
 				<table>
 					<tr><td style="padding:5px;">
-						<div class="rhombus" style="left:60px;">
+						<div id="idQC2" class="rhombus" style="left:60px;">
 							<img alt="" class="aicon rhombus_arrow4" src="/images/arrow4.png">
 							<img id="cmQC2" alt="" class="aicon rhombus_endaicon" src="/images/check_mark.png">
 							<img id="arQC2" alt="" class="aicon rhombus_endaicon" src="/images/arrow.png">
+							<img id="cpQC2" alt="" class="aicon rhombus_endaicon" src="/images/confirm_pending.png">
+							<img id="apQC2" alt="" class="aicon rhombus_endaicon" src="/images/approval_pending.png">
+							<img id="spQC2" alt="" class="aicon rhombus_endaicon" src="/images/suspension.png">
 							<label id="lblQC2" class="rhombus_label"></label>
 							<img id="exQC2" alt="" class="aicon rhombus_divaicon" src="/images/exclamation_mark.png">
 							<div id="QC2" class="click_div"></div>
 						</div>
 					</td></tr>
 					<tr><td style="padding:5px;">
-						<div class="rhombus" style="left:60px;">
+						<div id="idQC4" class="rhombus" style="left:60px;">
 							<img id="cmQC4" alt="" class="aicon rhombus_endaicon" src="/images/check_mark.png">
 							<img id="arQC4" alt="" class="aicon rhombus_endaicon" src="/images/arrow.png">
+							<img id="cpQC4" alt="" class="aicon rhombus_endaicon" src="/images/confirm_pending.png">
+							<img id="apQC4" alt="" class="aicon rhombus_endaicon" src="/images/approval_pending.png">
+							<img id="spQC4" alt="" class="aicon rhombus_endaicon" src="/images/suspension.png">
 							<label id="lblQC4" class="rhombus_label"></label>
 							<img id="exQC4" alt="" class="aicon rhombus_divaicon" src="/images/exclamation_mark.png">
 							<div id="QC4" class="click_div"></div>
 						</div>
 					</td></tr>
 					<tr><td style="padding:5px;">
-						<div class="rhombus" style="left:60px;">
+						<div id="idQC3" class="rhombus" style="left:60px;">
 							<img alt="" class="aicon rhombus_arrow5" src="/images/arrow5.png">
 							<img id="cmQC3" alt="" class="aicon rhombus_endaicon" src="/images/check_mark.png">
 							<img id="arQC3" alt="" class="aicon rhombus_endaicon" src="/images/arrow.png">
+							<img id="cpQC3" alt="" class="aicon rhombus_endaicon" src="/images/confirm_pending.png">
+							<img id="apQC3" alt="" class="aicon rhombus_endaicon" src="/images/approval_pending.png">
+							<img id="spQC3" alt="" class="aicon rhombus_endaicon" src="/images/suspension.png">
 							<label id="lblQC3" class="rhombus_label"></label>
 							<img id="exQC3" alt="" class="aicon rhombus_divaicon" src="/images/exclamation_mark.png">
 							<div id="QC3" class="click_div"></div>
@@ -866,9 +958,12 @@ function select_row(obj){
 			</td>
 			<td><div class="arrow arrow1" style="left:75px;"></div></td>
 			<td>
-				<div class="square" style="left:80px;">
+				<div id="idBatchRelease" class="square" style="left:80px;">
 					<img id="cmBatchRelease" alt="" class="aicon square_endaicon" src="/images/check_mark.png">
 					<img id="arBatchRelease" alt="" class="aicon square_endaicon" src="/images/arrow.png">
+					<img id="cpBatchRelease" alt="" class="aicon square_endaicon" src="/images/confirm_pending.png">
+					<img id="apBatchRelease" alt="" class="aicon square_endaicon" src="/images/approval_pending.png">
+					<img id="spBatchRelease" alt="" class="aicon square_endaicon" src="/images/suspension.png">
 					<label id="lblBatchRelease" class="square_label"></label>
 					<img id="exBatchRelease" alt="" class="aicon square_divaicon" src="/images/exclamation_mark.png">
 					<div id="BatchRelease" class="click_div"></div>

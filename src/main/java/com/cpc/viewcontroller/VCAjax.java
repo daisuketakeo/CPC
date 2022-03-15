@@ -1009,31 +1009,31 @@ public class VCAjax extends VCCommon{
             		if(data.getWORK_GROUP().substring(3, 5).equals("01")
             				&& data.getWORK_ID().equals("001")) {
             			
-                        // 工程別ステータス取得
-                    	url= rest_processstatus+"select"+
-                				"?"+ param_batch_id+"="+req.getID()+
-                				"&"+ param_process_id+"="+req.getPROCESS_ID();
-                	 	List<PROCESS_STATUS_TABLE> list = 
-                	 			getRest(url, PROCESS_STATUS_TABLE.class);
-                	 	
-                        if(list.size()>0) {
-                        	
-                        	// 工程別ステータス更新
-                        	PROCESS_STATUS_TABLE oldpst = list.get(0);
-                        	oldpst.setSTATUS(status_code);
-                        	url = rest_processstatus+"update";
-                        	postRest(url, oldpst);
-                        	
-                        }else {
-                        	
-                        	// 工程別ステータス登録
-                        	PROCESS_STATUS_TABLE newpst = new PROCESS_STATUS_TABLE();
-                        	newpst.setBATCH_ID(req.getID());
-                        	newpst.setPROCESS_ID(req.getPROCESS_ID());
-                        	newpst.setSTATUS(status_code);
-                            url = rest_processstatus+"insert";
-                            postRest(url, newpst);
-                        }
+//                        // 工程別ステータス取得
+//                    	url= rest_processstatus+"select"+
+//                				"?"+ param_batch_id+"="+req.getID()+
+//                				"&"+ param_process_id+"="+req.getPROCESS_ID();
+//                	 	List<PROCESS_STATUS_TABLE> list = 
+//                	 			getRest(url, PROCESS_STATUS_TABLE.class);
+//                	 	
+//                        if(list.size()>0) {
+//                        	
+//                        	// 工程別ステータス更新
+//                        	PROCESS_STATUS_TABLE oldpst = list.get(0);
+//                        	oldpst.setSTATUS(status_code);
+//                        	url = rest_processstatus+"update";
+//                        	postRest(url, oldpst);
+//                        	
+//                        }else {
+//                        	
+//                        	// 工程別ステータス登録
+//                        	PROCESS_STATUS_TABLE newpst = new PROCESS_STATUS_TABLE();
+//                        	newpst.setBATCH_ID(req.getID());
+//                        	newpst.setPROCESS_ID(req.getPROCESS_ID());
+//                        	newpst.setSTATUS(status_code);
+//                            url = rest_processstatus+"insert";
+//                            postRest(url, newpst);
+//                        }
                         
                     	// 先頭工程の場合
                     	if(data.getWORK_GROUP().equals(top_pid)) {
